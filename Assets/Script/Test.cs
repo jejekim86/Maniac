@@ -1,18 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Test : TestController
 {
     Vehicle vehicle;
-    [SerializeField] Vehicle testvehicle;
     MeshRenderer meshRenderer;
+    CapsuleCollider collider;
     Vector3 translation;
+
+    float buttonpushtime = 0;
     public bool isride { get; private set; }
     private void Start()
     {
         isride = false;
         meshRenderer = GetComponent<MeshRenderer>();
+        collider = GetComponent<CapsuleCollider>();
+        buttonpushtime = 0;
     }
 
     private void Update()
@@ -24,10 +29,26 @@ public class Test : TestController
                 break;
             default:
                 vehicle.Move();
+                Interact();
                 break;
         }
     }
 
+    public void Interact()
+    {
+        if (isride)
+        {
+            if (Input.GetKey(KeyCode.F))
+            {
+                transform.SetParent(null);
+                transform.position = vehicle.transform.position + (Vector3.right * 3);
+                meshRenderer.enabled = true;
+                collider.enabled = true;
+                vehicle = null;
+                isride = false;
+            }
+        }
+    }
 
     public override void Move()
     {
@@ -42,14 +63,18 @@ public class Test : TestController
         transform.Translate(translation, Space.World);
     }
 
-
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag("Vehicle"))
         {
-            vehicle = collision.gameObject.GetComponent<Vehicle>();
-            meshRenderer.enabled = false;
-            transform.SetParent(vehicle.gameObject.transform);
+            if (Input.GetKey(KeyCode.E))
+            {
+                vehicle = collision.gameObject.GetComponent<Vehicle>();
+                meshRenderer.enabled = false;
+                collider.enabled = false;
+                transform.SetParent(vehicle.gameObject.transform);
+                isride = true;
+            }
         }
     }
 }

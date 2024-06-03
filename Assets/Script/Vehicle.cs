@@ -1,24 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class Vehicle : TestController
 {
     Vector3 translation;
-
+    [SerializeField] WheelCollider[] wheelColliders;
+    [SerializeField] int hp = 10;
 
     public override void Move()
     {
-        // TODO : 임시 용이니깐 나중에 Car Object에 따라서 수정해야함 
-        float horizontalMove = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-
-        float speed = 10;
-
-        translation = Vector3.forward * (vertical * Time.deltaTime);
-        translation += Vector3.right * (horizontalMove * Time.deltaTime);
-        translation *= speed;
-        transform.Translate(translation, Space.World);
+        wheelColliders[0].steerAngle = wheelColliders[1].steerAngle = Input.GetAxis("Horizontal") * 20f;
+        for(int i = 0; i <  wheelColliders.Length; i++)
+            wheelColliders[i].motorTorque = -1 * Input.GetAxis("Vertical") * (2000f * 0.25f);
     }
-
 }
