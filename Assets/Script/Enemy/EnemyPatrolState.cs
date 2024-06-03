@@ -24,21 +24,26 @@ public class EnemyPatrolState : MonoBehaviour, State
         }
 
         ani.SetBool("isWalking", true);
-        SetNextDestination();
     }
 
     public void UpdateState()
     {
+        // 현재 위치랑 다음 순찰 위치 간의 거리 확인
         if (Vector3.Distance(walkPoints[curEnemyPos].transform.position, transform.position) < walkingPointRadius)
         {
-            SetNextDestination();
-        }
-    }
+            // 다음 방문 지점 랜덤으로 선택
+            curEnemyPos = Random.Range(0, walkPoints.Length);
 
-    private void SetNextDestination()
-    {
-        curEnemyPos = (curEnemyPos + 1) % walkPoints.Length;
+            // 배열 초과시 인덱스 초기화
+            if (curEnemyPos >= walkPoints.Length)
+            {
+                curEnemyPos = 0;
+            }
+        }
+
+        // 이동 명령
         enemyAgent.SetDestination(walkPoints[curEnemyPos].transform.position);
+
     }
 
     public void ExitState()

@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 5786097810451525583}
+  itemType: 
 --- !u!65 &5906139180414097949
 BoxCollider:
   m_ObjectHideFlags: 0
