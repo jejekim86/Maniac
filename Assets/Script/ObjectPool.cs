@@ -7,7 +7,7 @@ public class ObjectPool<T> where T : MonoBehaviour
 {
     [SerializeField] T targetObject;
     
-    [SerializeField][Range(1, 100)] int poolingAmount = 1;
+    [SerializeField][Range(1, 10000)] int poolingAmount = 1;
     Transform containerObject;
 
     Queue<T> objectPool;

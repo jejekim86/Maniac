@@ -22,7 +22,7 @@ public class Bullet : MonoBehaviour
             PoolManager.instance.bulletPool.PutInPool(this);
             timeCount = 0;
         }
-        transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * 3, timeCount);
+        transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * 10, timeCount);
         timeCount += Time.deltaTime;  
     }
 

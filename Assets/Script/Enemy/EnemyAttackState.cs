@@ -37,18 +37,23 @@ public class EnemyAttackState : MonoBehaviour, State
 
     public void UpdateState()
     {
+        // 공격 중이 아니면 공격 시작
         if (!isAttack)
         {
             isAttack = true;
-
-            // 공격시 플레이어 바라보기
-            transform.LookAt(target);
-
-            // 공격시 위치 고정
-            enemyAgent.SetDestination(transform.position);
-
             StartCoroutine(Attack());
         }
+
+        // 타겟이 존재하면 타겟을 천천히 바라보도록 회전
+        if (target != null)
+        {
+            Vector3 direction = (target.position - transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        }
+
+        // 공격 시 위치 고정
+        enemyAgent.SetDestination(transform.position);
     }
 
     private IEnumerator Attack()

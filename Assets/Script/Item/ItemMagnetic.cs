@@ -1,4 +1,4 @@
-using System.Collections;
+/*using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,4 +24,4 @@ public class ItemMagnetic : MonoBehaviour
             transform.position = Vector3.Lerp(transform.position, target.position, moveSpeed * Time.deltaTime);
         }
     }
-}
+}*/

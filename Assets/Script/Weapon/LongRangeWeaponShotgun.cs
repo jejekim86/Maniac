@@ -22,6 +22,8 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
     {
         base.Update();
     }
+
+    Bullet newBullet;
     public override bool Attack()
     {
         if (timeCount < reloadT)
@@ -43,7 +45,6 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
 
         jobHandle.Complete();
 
-        Bullet newBullet;
         for (int i = 0; i < numberBulletsFire; i++)
         {
             PoolManager.instance.bulletPool.GetObject(out newBullet);
@@ -62,7 +63,6 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
         public int numberBulletsFire;
 
         public NativeArray<Quaternion> rot;
-
         public void Execute(int index)
         {
             Quaternion rotation = Quaternion.Lerp(startAngle, endAngle, (float)1 / numberBulletsFire * index);
