@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
+using static UnityEditor.Progress;
 
 public class Test : TestController
 {
@@ -10,14 +12,13 @@ public class Test : TestController
     CapsuleCollider collider;
     Vector3 translation;
 
-    float buttonpushtime = 0;
-    public bool isride { get; private set; }
+
+    private bool isride;
     private void Start()
     {
         isride = false;
         meshRenderer = GetComponent<MeshRenderer>();
         collider = GetComponent<CapsuleCollider>();
-        buttonpushtime = 0;
     }
 
     private void Update()
@@ -38,15 +39,16 @@ public class Test : TestController
     {
         if (isride)
         {
-            if (Input.GetKey(KeyCode.F))
-            {
-                transform.SetParent(null);
-                transform.position = vehicle.transform.position + (Vector3.right * 3);
-                meshRenderer.enabled = true;
-                collider.enabled = true;
-                vehicle = null;
-                isride = false;
-            }
+            //if (Input.GetKey(KeyCode.F))
+            //{
+            //    transform.SetParent(null);
+            //    transform.position = vehicle.transform.position + (Vector3.right * 3);
+            //    SetColliderEnabled(true);
+            //    vehicle = null;
+            //    isride = false;
+            //}
+            if (Input.GetKeyDown(KeyCode.E))
+                StartCoroutine(ClickButton(null));
         }
     }
 
@@ -55,11 +57,9 @@ public class Test : TestController
         float horizontalMove = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
-        float speed = 10;
-
         translation = Vector3.forward * (vertical * Time.deltaTime);
         translation += Vector3.right * (horizontalMove * Time.deltaTime);
-        translation *= speed;
+        translation *= 10;
         transform.Translate(translation, Space.World);
     }
 
@@ -67,14 +67,48 @@ public class Test : TestController
     {
         if (collision.gameObject.CompareTag("Vehicle"))
         {
-            if (Input.GetKey(KeyCode.E))
-            {
-                vehicle = collision.gameObject.GetComponent<Vehicle>();
-                meshRenderer.enabled = false;
-                collider.enabled = false;
-                transform.SetParent(vehicle.gameObject.transform);
-                isride = true;
-            }
+            //if (Input.GetKeyDown(KeyCode.E))
+            //{
+            //    vehicle = collision.gameObject.GetComponent<Vehicle>();
+            //    SetColliderEnabled(false);
+            //    transform.SetParent(vehicle.gameObject.transform);
+            //    isride = true;
+            //}
+            //
+            if(Input.GetKeyDown(KeyCode.E))
+                StartCoroutine(ClickButton(collision.gameObject.GetComponent<Vehicle>()));
         }
+    }
+
+
+    IEnumerator ClickButton(Vehicle item)
+    {
+        switch (isride)
+        {
+            case true:
+                yield return null;
+                transform.SetParent(null);
+                transform.position = vehicle.transform.position + (Vector3.right * 3);
+                SetColliderEnabled(true);
+                vehicle = null;
+                isride = false;
+                break;
+            case false:
+                if (!item) yield break;
+                Debug.Log("ClickButton");
+                yield return new WaitForSeconds(3f);
+                SetColliderEnabled(isride);
+                isride = true;
+                vehicle = item;
+                transform.SetParent(vehicle.gameObject.transform);
+                break;
+        }
+        yield break;
+    }
+
+    public void SetColliderEnabled(bool check)
+    {
+        collider.enabled = check;
+        meshRenderer.enabled = check;
     }
 }
