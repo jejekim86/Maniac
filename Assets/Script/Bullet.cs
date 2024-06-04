@@ -1,9 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Bullet;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public class Bullet : MonoBehaviour
 {
+    public delegate bool BackInPool();
+    public BackInPool backInPool;
+
     [SerializeField]
     private float bulletSpeed;
 
@@ -12,8 +18,6 @@ public class Bullet : MonoBehaviour
 
     public void SetData(Vector3 firPos, Vector3 dir)
     {
-        /*transform.position = firPos; // ÃÑ¾ËÀÇ À§Ä¡¸¦ ¹ß»ç À§Ä¡·Î ÃÊ±âÈ­
-        this.dir = dir.normalized; // ¹æÇâ º¤ÅÍ¸¦ Á¤±ÔÈ­*/
         this.dir = dir;
     }
 
@@ -22,6 +26,7 @@ public class Bullet : MonoBehaviour
         if(timeCount >= 1)  
         {
             PoolManager.instance.bulletPool.PutInPool(this);
+            //backInPool.Invoke();
             timeCount = 0;
         }
         transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * 10, timeCount);
@@ -33,12 +38,12 @@ public class Bullet : MonoBehaviour
         if (other.CompareTag("Enemy"))
         {
             other.gameObject.GetComponent<Enemy>().GetDamage(5f);
-            PoolManager.instance.bulletPool.PutInPool(this); // ÃÑ¾ËÀ» Ç®¿¡ ´Ù½Ã ³ÖÀ½
+            PoolManager.instance.bulletPool.PutInPool(this); // ì´ì•Œì„ í’€ì— ë‹¤ì‹œ ë„£ìŒ
         }
         else if (other.CompareTag("Player"))
         {
             other.gameObject.GetComponent<Player>().GetDamage(0.1f);
-            PoolManager.instance.bulletPool.PutInPool(this); // ÃÑ¾ËÀ» Ç®¿¡ ´Ù½Ã ³ÖÀ½
+            PoolManager.instance.bulletPool.PutInPool(this); // ì´ì•Œì„ í’€ì— ë‹¤ì‹œ ë„£ìŒ
         }
     }
 }

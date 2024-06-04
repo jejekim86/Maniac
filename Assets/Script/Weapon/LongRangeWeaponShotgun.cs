@@ -22,7 +22,6 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
     {
         base.Update();
     }
-
     Bullet newBullet;
     public override bool Attack()
     {
@@ -30,6 +29,8 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
         {
             return false;
         }
+        
+        /*
         Quaternion startAngle = fireTr.rotation * Quaternion.Euler(0, -15, 0);
         Quaternion endAngle = fireTr.rotation * Quaternion.Euler(0, 15, 0);
 
@@ -45,15 +46,16 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
 
         jobHandle.Complete();
 
-        for (int i = 0; i < numberBulletsFire; i++)
+        Bullet[] bullets;
+        PoolManager.instance.bulletPool.GetObjects(out bullets, numberBulletsFire);
+        for (int i = 0; i < bullets.Length; i++)
         {
-            if (PoolManager.instance.bulletPool.GetObject(out newBullet))
-            {
-                newBullet.transform.position = fireTr.position;
-                newBullet.transform.rotation = rotation[i];
-            }
+            bullets[i].backInPool += () => PoolManager.instance.bulletPool.PutInPool(bullets[i]);
+            bullets[i].transform.position = fireTr.position;
+            bullets[i].transform.rotation = rotation[i];
         }
-
+        */
+        StartCoroutine(CoShootBullet());
         timeCount = 0;
         return true;
     }
@@ -69,6 +71,37 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
         {
             Quaternion rotation = Quaternion.Lerp(startAngle, endAngle, (float)1 / numberBulletsFire * index);
             rot[index] = rotation;
+        }
+    }
+    
+    IEnumerator CoShootBullet()
+    {
+        Quaternion startAngle = fireTr.rotation * Quaternion.Euler(0, -15, 0);
+        Quaternion endAngle = fireTr.rotation * Quaternion.Euler(0, 15, 0);
+
+        ShootBulletJob shootBulletJob;
+
+        var rotation = new NativeArray<Quaternion>(numberBulletsFire, Allocator.TempJob);
+        shootBulletJob.startAngle = startAngle;
+        shootBulletJob.endAngle = endAngle;
+        shootBulletJob.numberBulletsFire = numberBulletsFire;
+        shootBulletJob.rot = rotation;
+
+        JobHandle jobHandle = shootBulletJob.Schedule(numberBulletsFire, numberBulletsFire / 3);
+
+        jobHandle.Complete();
+
+        Bullet[] bullets;
+        PoolManager.instance.bulletPool.GetObjects(out bullets, numberBulletsFire);
+        for (int i = 0; i < bullets.Length; i++)
+        {
+            bullets[i].backInPool += () => PoolManager.instance.bulletPool.PutInPool(bullets[i]);
+            bullets[i].transform.position = fireTr.position;
+            bullets[i].transform.rotation = rotation[i];
+            if (i % 1000 == 0)
+            {
+                yield return null;
+            }
         }
     }
 }
