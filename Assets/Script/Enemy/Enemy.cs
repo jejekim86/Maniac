@@ -61,7 +61,8 @@ public class Enemy : MonoBehaviour
     {
         if (curHp <= 0)
         {
-            Debug.Log("Àû ÆÄ±«");
+            Destroy(gameObject);
+            Debug.Log("Àû »ç¸Á");
         }
         curHp -= damage;
     }

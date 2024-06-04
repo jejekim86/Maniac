@@ -16,6 +16,9 @@ public class Player : Controller
     [SerializeField] Weapon meleeWeapon;
     [SerializeField] Text moneyText;
     [SerializeField] Image playerimage;
+    [SerializeField] private float itemMoveSpeed = 1.0f; // 아이템 이동 속도
+    [SerializeField] private float itemRange = 5f; // 아이템 끌어당기는 범위
+
     CapsuleCollider collider;
     private Animator animator;
     private int money;
@@ -52,13 +55,13 @@ public class Player : Controller
         canDash = true;
         rigidbody = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
-        money = 1000; 
         collider = GetComponent<CapsuleCollider>();
         meshRenderer = GetComponent<MeshRenderer>();
         walkSpeed = 10;
+        money = 1000; 
         maxHp = 10;
-        playerimage.fillAmount = maxHp;
         curHp = maxHp;
+        playerimage.fillAmount = maxHp;
     }
     public override void Move()
     {
@@ -126,7 +129,30 @@ public class Player : Controller
                 Interact();
                 break;
         }
+
+        // 아이템 끌어당기기
+        AttractItems();
     }
+
+    private void AttractItems()
+    {
+        // "Item" 태그를 가진 모든 게임 오브젝트를 찾음
+        GameObject[] items = GameObject.FindGameObjectsWithTag("Item");
+
+        foreach (GameObject item in items)
+        {
+            // 플레이어와 아이템 사이의 상대적인 거리 계산
+            Vector3 relativePos = item.transform.position - transform.position;
+
+            // 플레이어와의 거리가 일정 범위 내에 있을 때만 이동
+            if (relativePos.magnitude <= itemRange)
+            {
+                // 아이템을 플레이어에게 부드럽게 이동
+                item.transform.position = Vector3.Lerp(item.transform.position, transform.position, itemMoveSpeed * Time.deltaTime);
+            }
+        }
+    }
+
     public void Interact()
     {
         if (isride)
