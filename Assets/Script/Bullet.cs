@@ -26,17 +26,19 @@ public class Bullet : MonoBehaviour
         this.owner = owner;
     }
 
+    /*
     void Update()
     {
-        if(timeCount >= 1)  
+        if(timeCount >= 3)  
         {
             PoolManager.instance.bulletPool.PutInPool(this);
             //backInPool.Invoke();
             timeCount = 0;
         }
-        transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * 10, timeCount);
+        //transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * 10, timeCount);
         timeCount += Time.deltaTime;  
     }
+    */
 
     private void OnTriggerEnter(Collider other)
     {

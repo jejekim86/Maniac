@@ -13,12 +13,12 @@ public class Player : Controller
     Vector3 translation;
 
     [SerializeField] Weapon longRangeWeapon;
-    [SerializeField] Weapon meleeWeapon;
-    [SerializeField] Text moneyText;
-    [SerializeField] Image playerimage;
+    //[SerializeField] Weapon meleeWeapon;
+    //[SerializeField] Text moneyText;
+    //[SerializeField] Image playerimage;
     CapsuleCollider collider;
     private Animator animator;
-    private int money;
+    //private int money;
     private float walkAnimationSpeed;
     private float dashPower;
     private bool isride;
@@ -38,13 +38,13 @@ public class Player : Controller
 
     public void SetMeleeWeapon(Weapon weapon)
     {
-        meleeWeapon = weapon;
+        //meleeWeapon = weapon;
     }
 
     public void AddMoney(int amount)
     {
-        money += amount;
-        moneyText.text = money.ToString();
+        //money += amount;
+        //moneyText.text = money.ToString();
     }
 
     private void Start()
@@ -52,12 +52,12 @@ public class Player : Controller
         canDash = true;
         rigidbody = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
-        money = 1000; 
+        //money = 1000; 
         collider = GetComponent<CapsuleCollider>();
         meshRenderer = GetComponent<MeshRenderer>();
         walkSpeed = 10;
         maxHp = 10;
-        playerimage.fillAmount = maxHp;
+        //playerimage.fillAmount = maxHp;
         curHp = maxHp;
     }
     public override void Move()
@@ -94,11 +94,11 @@ public class Player : Controller
         transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
 
         
-        if (Input.GetMouseButton(1))
-        {
-            if (meleeWeapon.Attack())
-                animator.SetTrigger("MeleeAttack");
-        }
+        //if (Input.GetMouseButton(1))
+        //{
+        //    if (meleeWeapon.Attack())
+        //        animator.SetTrigger("MeleeAttack");
+        //}
         
         if (Input.GetMouseButton(0))
         {
