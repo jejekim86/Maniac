@@ -90,16 +90,16 @@ public class Player : Controller
         transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
 
         
-        if (Input.GetMouseButton(1))
-        {
-            if (meleeWeapon.Attack())
-                animator.SetTrigger("MeleeAttack");
-        }
-        
-        if (Input.GetMouseButton(0))
-        {
-            longRangeWeapon.Attack();
-        }
+        //if (Input.GetMouseButton(1))
+        //{
+        //    if (meleeWeapon.Attack())
+        //        animator.SetTrigger("MeleeAttack");
+        //}
+        //
+        //if (Input.GetMouseButton(0))
+        //{
+        //    longRangeWeapon.Attack();
+        //}
     }
 
     private void OnCollisionStay(Collision collision)

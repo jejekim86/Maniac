@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static Bullet;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public class Bullet : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class Bullet : MonoBehaviour
 
     Vector3 dir;
     float timeCount;
+
+    public GameObject owner; // 총알을 발사한 객체
 
     public void SetData(Vector3 firPos, Vector3 dir)
     {
@@ -34,11 +37,28 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Enemy"))
+        // 최상위 부모 오브젝트 가져오기
+        Transform parent = other.transform;
+        while (parent.parent != null)
         {
-            
+            parent = parent.parent;
         }
 
-        // 오브젝트풀로 돌아가기
+        // 자기가 쏜 총알 무시
+        if (parent.gameObject == owner || other.gameObject == owner)
+        {
+            return;
+        }
+
+        if (other.CompareTag("Enemy"))
+        {
+            other.gameObject.GetComponent<Enemy>().GetDamage(5f);
+            //PoolManager.instance.bulletPool.PutInPool(this); // 총알을 풀에 다시 넣음
+        }
+        else if (other.CompareTag("Player"))
+        {
+            other.gameObject.GetComponent<Player>().GetDamage(0.1f);
+            //PoolManager.instance.bulletPool.PutInPool(this); // 총알을 풀에 다시 넣음
+        }
     }
 }
