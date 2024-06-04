@@ -6,7 +6,7 @@ public class ItemGet : MonoBehaviour
 {
     [SerializeField] private GameObject itemPrefab; // 아이템 프리팹
     private int amount = 20; // 획득 골드량
-    private float healAmount = 1f; // 체력 회복량
+    private int healAmount = 1; // 체력 회복량
 
     public void ItemGet_Gun(GameObject target)
     {        
@@ -23,7 +23,7 @@ public class ItemGet : MonoBehaviour
         newItem.transform.localRotation = Quaternion.Euler(0, 90, 0);
 
         // 플레이어 Controller에 할당
-        Controller controller = target.GetComponent<Controller>();
+        Player controller = target.GetComponent<Player>();
         if (controller != null )
         {
             controller.SetLongRangeWeapon(newItem.GetComponent<Weapon>());
@@ -32,7 +32,7 @@ public class ItemGet : MonoBehaviour
 
     public void ItemGet_Money(GameObject target)
     {
-        Controller controller = target.GetComponent<Controller>();
+        Player controller = target.GetComponent<Player>();
         if (controller != null)
         {
             controller.AddMoney(amount);
@@ -41,7 +41,7 @@ public class ItemGet : MonoBehaviour
 
     public void ItemGet_HP(GameObject target)
     {
-        Controller controller = target.GetComponent<Controller>();
+        Player controller = target.GetComponent<Player>();
         if (controller != null)
         {
             controller.AddHp(healAmount);
