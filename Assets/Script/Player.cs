@@ -15,6 +15,7 @@ public class Player : Controller
     [SerializeField] Weapon longRangeWeapon;
     [SerializeField] Weapon meleeWeapon;
     [SerializeField] Text moneyText;
+    [SerializeField] Image playerimage;
     CapsuleCollider collider;
     private Animator animator;
     private int money;
@@ -45,16 +46,19 @@ public class Player : Controller
         money += amount;
         moneyText.text = money.ToString();
     }
+
     private void Start()
     {
         canDash = true;
         rigidbody = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         money = 1000; 
-        curHp = 1; 
         collider = GetComponent<CapsuleCollider>();
         meshRenderer = GetComponent<MeshRenderer>();
         walkSpeed = 10;
+        maxHp = 10;
+        playerimage.fillAmount = maxHp;
+        curHp = maxHp;
     }
     public override void Move()
     {
@@ -79,9 +83,9 @@ public class Player : Controller
         }
 
 
-        //animator.SetFloat("Vertical", vertical, 0.1f, Time.deltaTime);
-        //animator.SetFloat("Horizontal", horizontalMove, 0.1f, Time.deltaTime);
-        //animator.SetFloat("WalkSpeed", animSpeed);
+        animator.SetFloat("Vertical", vertical, 0.1f, Time.deltaTime);
+        animator.SetFloat("Horizontal", horizontalMove, 0.1f, Time.deltaTime);
+        animator.SetFloat("WalkSpeed", animSpeed);
 
         
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -90,16 +94,16 @@ public class Player : Controller
         transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
 
         
-        //if (Input.GetMouseButton(1))
-        //{
-        //    if (meleeWeapon.Attack())
-        //        animator.SetTrigger("MeleeAttack");
-        //}
-        //
-        //if (Input.GetMouseButton(0))
-        //{
-        //    longRangeWeapon.Attack();
-        //}
+        if (Input.GetMouseButton(1))
+        {
+            if (meleeWeapon.Attack())
+                animator.SetTrigger("MeleeAttack");
+        }
+        
+        if (Input.GetMouseButton(0))
+        {
+            longRangeWeapon.Attack();
+        }
     }
 
     private void OnCollisionStay(Collision collision)
@@ -156,10 +160,16 @@ public class Player : Controller
         yield break;
     }
 
-    public override void AddHp(int heal)
+    public override void AddHp(float heal)
     {
         base.AddHp(heal);
     }
+
+    public override void GetDamage(float damage)
+    {
+        base.GetDamage(damage);
+    }
+
     public void SetColliderEnabled(bool check)
     {
         GetComponent<Collider>().enabled = check;
