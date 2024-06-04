@@ -47,9 +47,11 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
 
         for (int i = 0; i < numberBulletsFire; i++)
         {
-            PoolManager.instance.bulletPool.GetObject(out newBullet);
-            newBullet.transform.position = fireTr.position;
-            newBullet.transform.rotation = rotation[i];
+            if (PoolManager.instance.bulletPool.GetObject(out newBullet))
+            {
+                newBullet.transform.position = fireTr.position;
+                newBullet.transform.rotation = rotation[i];
+            }
         }
 
         timeCount = 0;

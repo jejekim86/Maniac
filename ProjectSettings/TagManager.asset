@@ -6,11 +6,13 @@ TagManager:
   tags:
   - Item
   - Enemy
+  - Vehicle
+  - Gun
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Gun
   - Water
   - UI
   - Player

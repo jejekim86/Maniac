@@ -91,12 +91,12 @@ PrefabInstance:
     - target: {fileID: -5270153713987799098, guid: 845a646869bbb9449b4bb2c5973d6dc7,
         type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: -202970075991539560, guid: 845a646869bbb9449b4bb2c5973d6dc7,
         type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 845a646869bbb9449b4bb2c5973d6dc7,
         type: 3}
@@ -106,7 +106,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 845a646869bbb9449b4bb2c5973d6dc7,
         type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8777599244062983081, guid: 845a646869bbb9449b4bb2c5973d6dc7,
         type: 3}
@@ -155,6 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletSpeed: 2
+  weapon: {fileID: 5786097810451525583, guid: 088ac7068bbb41a4fbbf45e86373eb4d, type: 3}
 --- !u!65 &7281644786208057624
 BoxCollider:
   m_ObjectHideFlags: 0
