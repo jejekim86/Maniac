@@ -10,8 +10,9 @@ public class LongRangeWeaponAR : LongRangeWeapon
         {
             return false;
         }
+        // 이거 LongRangeWeapon에 Bullet을 갖고있는데 이것도 수정하면 좋을듯
         Bullet newBullet;
-        PoolManager.instance.bulletPool.GetObject(out newBullet);
+        PoolManager.instance.bulletPool.GetObject(out newBullet); // 이것도 살짝 애매함 
         newBullet.transform.position = fireTr.transform.position;
         newBullet.transform.rotation = fireTr.rotation;
         timeCount = 0;
@@ -20,16 +21,7 @@ public class LongRangeWeaponAR : LongRangeWeapon
 
     public override void SetData()
     {
-        base.SetData();
+
     }
 
-    protected override void Start()
-    {
-        base.Start();
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-    }
 }

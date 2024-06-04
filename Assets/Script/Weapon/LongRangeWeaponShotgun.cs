@@ -8,21 +8,7 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
 {
     [SerializeField] private int numberBulletsFire;
 
-    public override void SetData()
-    {
-        base.SetData();
-    }
-
-    protected override void Start()
-    {
-        base.Start();
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-    }
-    Bullet newBullet;
+    
     public override bool Attack()
     {
         if (timeCount < reloadT)
