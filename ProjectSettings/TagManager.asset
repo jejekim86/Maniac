@@ -4,7 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Vehicle
+  - Item
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -12,9 +13,9 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Player
+  - Enemy
+  - Bullet
   - 
   - 
   - 

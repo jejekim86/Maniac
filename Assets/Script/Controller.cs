@@ -19,20 +19,20 @@ public class Controller : MonoBehaviour
     [SerializeField] Image HP_image;
     [SerializeField] private float maxHp = 10f; // 최대 체력
 
+    [SerializeField] private float itemMoveSpeed = 1.0f; // 아이템 이동 속도
+    [SerializeField] private float itemRange = 5f; // 아이템 끌어당기는 범위
+
     private int money; // 소유 돈
     private float curHp; // 현재 체력
 
     Vector3 translation;
-    bool canDash;
 
+    bool canDash;
     void Start()
     {
         canDash = true;
         rigidbody = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
-        money = 1000; // 초기 돈
-        curHp = 0.1f; // 초기 체력
-
         //StartCoroutine(LongRangeWeapon());
     }
 
@@ -80,6 +80,8 @@ public class Controller : MonoBehaviour
         {
             longRangeWeapon.Attack();
         }
+
+        AttractItems();
     }
 
     IEnumerator Dash()
@@ -115,5 +117,24 @@ public class Controller : MonoBehaviour
 
         }
             HP_image.fillAmount = curHp / maxHp;
+    }
+
+    private void AttractItems()
+    {
+        // "Item" 태그를 가진 모든 게임 오브젝트를 찾음
+        GameObject[] items = GameObject.FindGameObjectsWithTag("Item");
+
+        foreach (GameObject item in items)
+        {
+            // 플레이어와 아이템 사이의 상대적인 거리 계산
+            Vector3 relativePos = item.transform.position - transform.position;
+
+            // 플레이어와의 거리가 일정 범위 내에 있을 때만 이동
+            if (relativePos.magnitude <= itemRange)
+            {
+                // 아이템을 플레이어에게 부드럽게 이동
+                item.transform.position = Vector3.Lerp(item.transform.position, transform.position, itemMoveSpeed * Time.deltaTime);
+            }
+        }
     }
 }
