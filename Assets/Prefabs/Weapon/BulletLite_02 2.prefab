@@ -11,7 +11,7 @@ PrefabInstance:
     - target: {fileID: -9075410880279111927, guid: 845a646869bbb9449b4bb2c5973d6dc7,
         type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -9075410880279111927, guid: 845a646869bbb9449b4bb2c5973d6dc7,
         type: 3}
@@ -156,7 +156,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 845a646869bbb9449b4bb2c5973d6dc7,
         type: 3}
       propertyPath: m_Name
-      value: BulletLite_02 1
+      value: BulletLite_02 2
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 845a646869bbb9449b4bb2c5973d6dc7,
         type: 3}
@@ -166,7 +166,7 @@ PrefabInstance:
     - target: {fileID: 8777599244062983081, guid: 845a646869bbb9449b4bb2c5973d6dc7,
         type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8777599244062983081, guid: 845a646869bbb9449b4bb2c5973d6dc7,
         type: 3}
@@ -184,7 +184,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 6381a2822798cc041b99cf46b7a1eebc, type: 2}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: -5270153713987799098, guid: 845a646869bbb9449b4bb2c5973d6dc7, type: 3}
+    - {fileID: -202970075991539560, guid: 845a646869bbb9449b4bb2c5973d6dc7, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 845a646869bbb9449b4bb2c5973d6dc7,
