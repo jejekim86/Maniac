@@ -6,7 +6,7 @@ public class ItemGet : MonoBehaviour
 {
     [SerializeField] private GameObject itemPrefab; // 아이템 프리팹
     private int amount = 20; // 획득 골드량
-    private int healAmount = 1; // 체력 회복량
+    private float healAmount = 0.1f; // 체력 회복량
 
     public void ItemGet_Gun(GameObject target)
     {        

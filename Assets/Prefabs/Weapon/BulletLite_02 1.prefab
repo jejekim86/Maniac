@@ -155,6 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletSpeed: 2
+  weapon: {fileID: 5786097810451525583, guid: 088ac7068bbb41a4fbbf45e86373eb4d, type: 3}
 --- !u!65 &7281644786208057624
 BoxCollider:
   m_ObjectHideFlags: 0

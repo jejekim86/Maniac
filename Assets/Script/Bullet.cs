@@ -16,11 +16,14 @@ public class Bullet : MonoBehaviour
     Vector3 dir;
     float timeCount;
 
-    public GameObject owner; // ÃÑ¾ËÀ» ¹ß»çÇÑ °´Ã¼
+    public GameObject owner; // ì´ì•Œì„ ë°œì‚¬í•œ ê°ì²´
 
-    public void SetData(Vector3 firPos, Vector3 dir)
+    public void SetData(Vector3 firPos, Vector3 dir, GameObject owner)
     {
+        transform.position = firPos; // ì´ì•Œì˜ ìœ„ì¹˜ë¥¼ ë°œì‚¬ ìœ„ì¹˜ë¡œ ì´ˆê¸°í™”
+        this.dir = dir.normalized; // ë°©í–¥ ë²¡í„°ë¥¼ ì •ê·œí™”
         this.dir = dir;
+        this.owner = owner;
     }
 
     void Update()
@@ -37,14 +40,14 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // ÃÖ»óÀ§ ºÎ¸ğ ¿ÀºêÁ§Æ® °¡Á®¿À±â
+        // ìµœìƒìœ„ ë¶€ëª¨ ì˜¤ë¸Œì íŠ¸ ê°€ì ¸ì˜¤ê¸°
         Transform parent = other.transform;
         while (parent.parent != null)
         {
             parent = parent.parent;
         }
 
-        // ÀÚ±â°¡ ½ğ ÃÑ¾Ë ¹«½Ã
+        // ìê¸°ê°€ ìœ ì´ì•Œ ë¬´ì‹œ
         if (parent.gameObject == owner || other.gameObject == owner)
         {
             return;
@@ -53,12 +56,12 @@ public class Bullet : MonoBehaviour
         if (other.CompareTag("Enemy"))
         {
             other.gameObject.GetComponent<Enemy>().GetDamage(5f);
-            //PoolManager.instance.bulletPool.PutInPool(this); // ÃÑ¾ËÀ» Ç®¿¡ ´Ù½Ã ³ÖÀ½
+            //PoolManager.instance.bulletPool.PutInPool(this); // ì´ì•Œì„ í’€ì— ë‹¤ì‹œ ë„£ìŒ
         }
         else if (other.CompareTag("Player"))
         {
             other.gameObject.GetComponent<Player>().GetDamage(0.1f);
-            //PoolManager.instance.bulletPool.PutInPool(this); // ÃÑ¾ËÀ» Ç®¿¡ ´Ù½Ã ³ÖÀ½
+            //PoolManager.instance.bulletPool.PutInPool(this); // ì´ì•Œì„ í’€ì— ë‹¤ì‹œ ë„£ìŒ
         }
     }
 }
