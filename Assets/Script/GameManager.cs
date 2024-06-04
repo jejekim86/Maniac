@@ -12,7 +12,6 @@ public sealed class GameManager : MonoBehaviour
     [SerializeField] private Text timerText;
     public Image[] images;
 
-
     int Level = 0;
     float curTime;
     float maxTime;

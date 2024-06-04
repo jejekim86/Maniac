@@ -2,30 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Weapon : MonoBehaviour
+public abstract class Weapon : MonoBehaviour
 {
     protected WeaponData w_data;
-
+    protected float reloadT;
     protected float timeCount;
-    public float reloadT = 1.0f; // 임시 값 추후에 w_data.reloadTime 으로 교체
 
-    virtual protected void Start()
-    {
-        timeCount = 100;
-    }
+    abstract public void SetData();
 
-    virtual protected void Update()
-    {
-        timeCount += Time.deltaTime;
-    }
-
-    virtual public void SetData()
-    {
-        //TODO DBDATA가져와야함
-    }
-
-    virtual public bool Attack()
-    {
-        return false;
-    }
+    abstract public bool Attack();
 }

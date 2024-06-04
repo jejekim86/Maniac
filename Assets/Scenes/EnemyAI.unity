@@ -292,8 +292,8 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 119709592}
   m_PrefabAsset: {fileID: 0}
---- !u!135 &38812893
-SphereCollider:
+--- !u!136 &38812897
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -310,9 +310,11 @@ SphereCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 2
+  m_Radius: 0.28
+  m_Height: 2.11
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.84, z: 0.05}
 --- !u!1 &40628729
 GameObject:
   m_ObjectHideFlags: 0
@@ -691,7 +693,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectPool:
     targetObject: {fileID: 38812886}
-    poolingAmount: 40
+    poolingAmount: 100
   spawnAreaMin: {x: -27.8, y: 0, z: 28.93}
   spawnAreaMax: {x: 29.7, y: 5.45, z: -29.6}
   spawnInterval: 2
@@ -1275,6 +1277,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1532020556118192233, guid: 2b9f8ba8e69e70f41b16695a5982e19e,
         type: 3}
       insertIndex: -1
+      addedObject: {fileID: 38812897}
+    - targetCorrespondingSourceObject: {fileID: 1532020556118192233, guid: 2b9f8ba8e69e70f41b16695a5982e19e,
+        type: 3}
+      insertIndex: -1
       addedObject: {fileID: 38812883}
     - targetCorrespondingSourceObject: {fileID: 1532020556118192233, guid: 2b9f8ba8e69e70f41b16695a5982e19e,
         type: 3}
@@ -1292,10 +1298,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 38812879}
-    - targetCorrespondingSourceObject: {fileID: 1532020556118192233, guid: 2b9f8ba8e69e70f41b16695a5982e19e,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 38812893}
   m_SourcePrefab: {fileID: 100100000, guid: 2b9f8ba8e69e70f41b16695a5982e19e, type: 3}
 --- !u!1 &157443895
 GameObject:
@@ -4322,6 +4324,8 @@ MonoBehaviour:
     type: 3}
   moneyText: {fileID: 166971333}
   playerimage: {fileID: 175561963}
+  itemMoveSpeed: 2
+  itemRange: 2
 --- !u!1 &829946331
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,8 +10,8 @@ public abstract class Controller : MonoBehaviour
 {
     protected float walkSpeed;
     protected float maxHp; 
-    public abstract void Move();
     [SerializeField] protected Image HP_image;
+    public abstract void Move();
     protected MeshRenderer meshRenderer;
 
     protected new Rigidbody rigidbody;
