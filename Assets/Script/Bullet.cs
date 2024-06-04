@@ -1,9 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Bullet;
 
 public class Bullet : MonoBehaviour
 {
+    public delegate bool BackInPool();
+    public BackInPool backInPool;
+
     [SerializeField]
     private float bulletSpeed;
 
@@ -20,6 +25,7 @@ public class Bullet : MonoBehaviour
         if(timeCount >= 1)  
         {
             PoolManager.instance.bulletPool.PutInPool(this);
+            //backInPool.Invoke();
             timeCount = 0;
         }
         transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * 10, timeCount);

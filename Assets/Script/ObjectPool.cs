@@ -1,15 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Threading;
 [System.Serializable]
 public class ObjectPool<T> where T : MonoBehaviour
 {
     [SerializeField] T targetObject;
-    
+
     [SerializeField][Range(1, 10000)] int poolingAmount = 1;
     Transform containerObject;
-
+    bool issleep = false;
     Queue<T> objectPool;
 
     public bool Initialize(T value = null)
@@ -40,9 +40,52 @@ public class ObjectPool<T> where T : MonoBehaviour
         objectPool = new Queue<T>();
 
         MakeAndPooling();
-
+        Debug.Log("objectPool.Count : " + objectPool.Count);
         return true;
     }
+
+
+    public void TestInitialize(int index)
+    {
+
+        if (!targetObject || containerObject)
+            return;
+
+        
+        
+
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+        sb.Append(targetObject.name);
+        sb.Append("을 담고 있는 Pool Container");
+
+        containerObject = new GameObject(sb.ToString()).transform;
+        objectPool = new Queue<T>();
+
+        TestMakeAndPooling(index);
+        //MakeAndPooling();
+        Debug.Log("objectPool.Count : " + objectPool.Count);
+        return;
+    }
+
+    bool TestMakeAndPooling(int index)
+    {
+        if (!containerObject)
+            return false;
+
+        T poolObject;
+        for (int i = 0; index > i; i++)
+        {
+            poolObject = MonoBehaviour.Instantiate(targetObject, containerObject);
+            poolObject.name = targetObject.name;
+            poolObject.gameObject.SetActive(false);
+            objectPool.Enqueue(poolObject);
+        }
+        return true;
+    }
+
+
+
 
     bool MakeAndPooling()
     {
@@ -52,14 +95,25 @@ public class ObjectPool<T> where T : MonoBehaviour
         }
 
         T poolObject;
-
-        for (int i = 0; poolingAmount > i; i++)
+        while(objectPool.Count < poolingAmount)
         {
+            if (poolingAmount * 0.5f == objectPool.Count)
+            {
+                Debug.Log("objectPool.Count : " + objectPool.Count);
+                Thread.Sleep(5000);
+            }
             poolObject = MonoBehaviour.Instantiate(targetObject, containerObject);
             poolObject.name = targetObject.name;
             poolObject.gameObject.SetActive(false);
             objectPool.Enqueue(poolObject);
         }
+        //for (int i = 0; poolingAmount > i; i++)
+        //{
+        //    poolObject = MonoBehaviour.Instantiate(targetObject, containerObject);
+        //    poolObject.name = targetObject.name;
+        //    poolObject.gameObject.SetActive(false);
+        //    objectPool.Enqueue(poolObject);
+        //}
         return true;
     }
 
@@ -80,6 +134,30 @@ public class ObjectPool<T> where T : MonoBehaviour
 
         item = objectPool.Dequeue();
         item.gameObject.SetActive(true);
+        return true;
+    }
+
+    public bool GetObjects(out T[] items, int num)
+    {
+        items = new T[num];
+
+        if (!containerObject)
+        {
+            return false;
+        }
+
+
+        if (0 >= objectPool.Count)
+        {
+            if (!MakeAndPooling()) return false;
+        }
+
+        for (int i = 0; i < num; i++)
+        {
+            T item = objectPool.Dequeue();
+            item.gameObject.SetActive(true);
+            items[i] = item;
+        }
         return true;
     }
 
