@@ -13,6 +13,9 @@ public class Bullet : MonoBehaviour
     [SerializeField]
     private float bulletSpeed;
 
+    [SerializeField]
+    private Collider myCollider;
+
     Vector3 dir;
     float timeCount;
 
@@ -31,6 +34,11 @@ public class Bullet : MonoBehaviour
         }
         transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * 10, timeCount);
         timeCount += Time.deltaTime;  
+    }
+
+    public void SetCollider(bool value)
+    {
+        myCollider.enabled = value;
     }
 
     private void OnTriggerEnter(Collider other)
