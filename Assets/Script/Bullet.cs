@@ -13,6 +13,9 @@ public class Bullet : MonoBehaviour
     [SerializeField]
     private float bulletSpeed;
 
+    [SerializeField]
+    private Collider myCollider;
+
     Vector3 dir;
     float timeCount;
 
@@ -40,6 +43,11 @@ public class Bullet : MonoBehaviour
     }
     */
 
+    public void SetCollider(bool value)
+    {
+        myCollider.enabled = value;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         // 최상위 부모 오브젝트 가져오기
@@ -62,7 +70,7 @@ public class Bullet : MonoBehaviour
         }
         else if (other.CompareTag("Player"))
         {
-            other.gameObject.GetComponent<Player>().GetDamage(0.1f);
+            //other.gameObject.GetComponent<Player>().GetDamage(0.1f);
             //PoolManager.instance.bulletPool.PutInPool(this); // 총알을 풀에 다시 넣음
         }
     }

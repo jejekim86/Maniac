@@ -15,23 +15,13 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
     {
         base.SetData();
     }
-
-    protected override void Start()
-    {
-        base.Start();
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-    }
- 
+    
     public override bool Attack()
     {
         if (timeCount < reloadT)
         {
             return false;
-        }
+        }   
 
         StartCoroutine(CoShootBullet());
         
@@ -59,9 +49,9 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
         Quaternion startAngle = fireTr.rotation * Quaternion.Euler(0, -15, 0);
         Quaternion endAngle = fireTr.rotation * Quaternion.Euler(0, 15, 0);
 
-        ShootBulletJob shootBulletJob;
-
         rotation = new NativeArray<Quaternion>(numberBulletsFire, Allocator.TempJob);
+
+        ShootBulletJob shootBulletJob;
         shootBulletJob.startAngle = startAngle;
         shootBulletJob.endAngle = endAngle;
         shootBulletJob.numberBulletsFire = numberBulletsFire;
@@ -103,6 +93,8 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
         moveBulletJob.bulletsTargetTransform = bulletsTargetTransform;
         moveBulletJob.lerpTransform = lerpTransform;
 
+        bool onCollider = false;
+
         while (Time.time - StartTime <= 1.0f)
         {
             moveBulletJob.lerpT = Time.time - StartTime;
@@ -113,6 +105,14 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
             for (int i = 0; i < numberBulletsFire; i++)
             {
                 bullets[i].transform.position = lerpTransform[i];
+            }
+
+            if (!onCollider)
+            {
+                for(int i = 0; i < numberBulletsFire; i++)
+                {
+                    bullets[i].SetCollider(true);
+                }
             }
 
             BulletRenderer.Instance.RenderBulletsAtPositions(lerpTransform, rotation);

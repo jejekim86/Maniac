@@ -35,7 +35,7 @@ public class BulletRenderer : MonoBehaviour
         }
 
         // Render using Graphics.DrawMeshInstanced
-        Graphics.DrawMeshInstanced(bulletMeshHead, 0, bulletMaterial, instanceDataHead, positions.Length);
-        Graphics.DrawMeshInstanced(bulletMeshBody, 0, bulletMaterial, instanceDataBody, positions.Length);
+        Graphics.DrawMeshInstanced(bulletMeshHead, 0, bulletMaterial, instanceDataHead, positions.Length, null, UnityEngine.Rendering.ShadowCastingMode.Off);
+        Graphics.DrawMeshInstanced(bulletMeshBody, 0, bulletMaterial, instanceDataBody, positions.Length, null, UnityEngine.Rendering.ShadowCastingMode.Off);
     }
 }

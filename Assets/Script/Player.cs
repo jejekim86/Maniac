@@ -26,9 +26,21 @@ public class Player : Controller
     bool canDash;
     IEnumerator Dash()
     {
-        rigidbody.AddForce(translation * dashPower, ForceMode.Impulse);
-        yield return new WaitForSeconds(0.5f);
-        rigidbody.velocity = Vector3.zero;
+        float lerpT = 0;
+        Vector3 startTransform = transform.position;
+        Vector3 endTransform = transform.position + (transform.forward * 5);
+
+        Transform startTransform2 = transform;
+
+        while (lerpT <= 0.5f)
+        {
+            lerpT += Time.deltaTime * 2;
+
+            transform.position = Vector3.Lerp(startTransform, endTransform, lerpT);
+            //rigidbody.AddForce(translation * dashPower, ForceMode.Impulse);
+            yield return null;
+        }
+        Debug.Log("대쉬 종료");
         canDash = true;
     }
     public void SetLongRangeWeapon(Weapon weapon)
@@ -76,7 +88,7 @@ public class Player : Controller
         transform.Translate(translation, Space.World);
 
 
-        if (Input.GetKey(KeyCode.LeftShift) && canDash)
+        if (Input.GetKey(KeyCode.Space) && canDash)
         {
             canDash = false;
             StartCoroutine(Dash());
@@ -87,19 +99,19 @@ public class Player : Controller
         animator.SetFloat("Horizontal", horizontalMove, 0.1f, Time.deltaTime);
         animator.SetFloat("WalkSpeed", animSpeed);
 
-        
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         Physics.Raycast(ray, out hit);
         transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
 
-        
+
         //if (Input.GetMouseButton(1))
         //{
         //    if (meleeWeapon.Attack())
         //        animator.SetTrigger("MeleeAttack");
         //}
-        
+
         if (Input.GetMouseButton(0))
         {
             longRangeWeapon.Attack();
