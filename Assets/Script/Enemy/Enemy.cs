@@ -4,12 +4,18 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    [SerializeField] RandomSpawner spawner;
+
     [Header("적 상태")]
     [SerializeField] private EnemyPatrolState patrol;
     [SerializeField] private EnemyChaseState chase;
     [SerializeField] private EnemyAttackState attack;
 
     private EnemyAI enemyAI;
+
+    [SerializeField] private Transform fireTr; // 총알 발사 위치
+    [SerializeField] private float reloadT = 1f; // 재장전 시간
+    private float timeCount = 0f;
 
     [SerializeField] private float visionRadius = 10f;
     [SerializeField] private float attackRadius = 2f;
@@ -55,16 +61,32 @@ public class Enemy : MonoBehaviour
         }
 
         enemyAI.UpdateCurrentState();
+
+        timeCount += Time.deltaTime;
     }
+
+    public void Attack()
+    {
+        if (timeCount < reloadT)
+        {
+            return;
+        }
+        Bullet newBullet;
+        PoolManager.instance.bulletPool.GetObject(out newBullet);
+        newBullet.transform.position = fireTr.transform.position;
+        newBullet.transform.rotation = fireTr.rotation;
+        timeCount = 0;
+    }
+
 
     public void GetDamage(float damage)
     {
+        curHp -= damage;
         if (curHp <= 0)
         {
-            Destroy(gameObject);
+            spawner.objectPool.PutInPool(this); // 총알을 풀에 다시 넣음
             Debug.Log("적 사망");
         }
-        curHp -= damage;
     }
 
     private void UpdateState(AI state)

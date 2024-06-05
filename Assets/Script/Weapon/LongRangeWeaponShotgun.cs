@@ -2,10 +2,24 @@ using System.Collections;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LongRangeWeaponShotgun : LongRangeWeapon
 {
     [SerializeField] private int numberBulletsFire;
+    [SerializeField] private Slider coolTime_Slider;
+
+    private void Start()
+    {
+        coolTime_Slider.gameObject.SetActive(false);
+        coolTime_Slider.maxValue = reloadT;
+        coolTime_Slider.value = reloadT;
+    }
+
+    public override void SetData()
+    {
+        // ���� ������ ���� ���� (�ʿ� �� �߰�)
+    }
 
     NativeArray<Vector3> bulletsTransform;
     NativeArray<Vector3> bulletsTargetTransform;
@@ -18,16 +32,54 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
     
     public override bool Attack()
     {
+        if (timeCount >= reloadT)
+        {
+            StartCoroutine(FireBullet());
+            StartCoroutine(UpdateCooldownSlider());
+            timeCount = 0;
+            return true;
+        }
+        return false;
+    }
+
+    private IEnumerator FireBullet()
+    {
+        Bullet newBullet;
+        PoolManager.instance.bulletPool.GetObject(out newBullet);
+        newBullet.transform.position = fireTr.position;
+        newBullet.transform.rotation = fireTr.rotation;
+        yield return null;
+    }
+
+    private IEnumerator UpdateCooldownSlider()
+    {
+        coolTime_Slider.gameObject.SetActive(true);
+        float elapsed = 0f;
+
+        while (elapsed < reloadT)
+        {
+            elapsed += Time.deltaTime;
+            coolTime_Slider.value = Mathf.Lerp(0, coolTime_Slider.maxValue, elapsed / reloadT);
+            yield return null;
+        }
+
+        coolTime_Slider.value = coolTime_Slider.maxValue;
+        coolTime_Slider.gameObject.SetActive(false);
+    }
+
+
+    /*public override bool Attack()
+    {
         if (timeCount < reloadT)
         {
             return false;
         }   
-
+        
         StartCoroutine(CoShootBullet());
         
         timeCount = 0;
         return true;
-    }
+    }*/
 
     struct ShootBulletJob : IJobParallelFor
     {
