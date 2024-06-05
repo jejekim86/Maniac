@@ -21,7 +21,7 @@ public class Player : Controller
 
     CapsuleCollider collider;
     private Animator animator;
-    //private int money;
+    private int money;
     private float walkAnimationSpeed;
     private float dashPower;
     private bool isride;
@@ -53,13 +53,13 @@ public class Player : Controller
 
     public void SetMeleeWeapon(Weapon weapon)
     {
-        //meleeWeapon = weapon;
+        meleeWeapon = weapon;
     }
 
     public void AddMoney(int amount)
     {
-        //money += amount;
-        //moneyText.text = money.ToString();
+        money += amount;
+        moneyText.text = money.ToString();
     }
 
     private void Start()
@@ -110,11 +110,11 @@ public class Player : Controller
         transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
 
 
-        //if (Input.GetMouseButton(1))
-        //{
-        //    if (meleeWeapon.Attack())
-        //        animator.SetTrigger("MeleeAttack");
-        //}
+        if (Input.GetMouseButton(1))
+        {
+            if (meleeWeapon.Attack())
+                animator.SetTrigger("MeleeAttack");
+        }
 
         if (Input.GetMouseButton(0))
         {

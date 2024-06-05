@@ -24,7 +24,7 @@ public class Bullet : MonoBehaviour
         this.dir = dir;
     }
 
-    /*
+    
     void Update()
     {
         if(timeCount >= 3)  
@@ -33,15 +33,10 @@ public class Bullet : MonoBehaviour
             //backInPool.Invoke();
             timeCount = 0;
         }
-        //transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * 10, timeCount);
+        transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * 10, timeCount);
         timeCount += Time.deltaTime;  
     }
-    */
-
-    public void SetCollider(bool value)
-    {
-        myCollider.enabled = value;
-    }
+    
 
     public void SetCollider(bool value)
     {
