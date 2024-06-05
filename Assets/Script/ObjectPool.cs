@@ -12,6 +12,8 @@ public class ObjectPool<T> where T : MonoBehaviour
     bool issleep = false;
     Queue<T> objectPool;
 
+    private Queue<T> inUseObject;
+
     public bool Initialize(T value = null)
     {
         if (value)
