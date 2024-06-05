@@ -19,6 +19,11 @@ public class LongRangeWeaponAR : LongRangeWeapon
         return true;
     }
 
+    private void Update()
+    {
+        timeCount += Time.deltaTime;
+    }
+
     public override void SetData()
     {
 

@@ -29,8 +29,7 @@ public class EnemyAttackState : MonoBehaviour, State
         }
 
         ani.SetBool("isAttack", true); // 공격 애니메이션 시작
-        EnemyAttack enemyAttack = GetComponent<EnemyAttack>();
-        enemyAttack.Attack();
+        enemy.Attack();
         weapon.SetActive(true); // 무기 활성화
     }
 
@@ -48,7 +47,7 @@ public class EnemyAttackState : MonoBehaviour, State
         {
             Vector3 direction = (target.position - transform.position).normalized;
             Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime);
+            transform.rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
         }
 
         // 공격 시 위치 고정
@@ -57,6 +56,7 @@ public class EnemyAttackState : MonoBehaviour, State
 
     private IEnumerator Attack()
     {
+        enemy.Attack();
         yield return new WaitForSeconds(coolTime); // 쿨타임 동안 대기
         isAttack = false; // 공격이 끝났음을 표시
     }

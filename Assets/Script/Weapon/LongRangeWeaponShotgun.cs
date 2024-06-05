@@ -3,20 +3,71 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LongRangeWeaponShotgun : LongRangeWeapon
 {
     [SerializeField] private int numberBulletsFire;
+    [SerializeField] private Slider coolTime_Slider;
 
-    
+    private void Start()
+    {
+        coolTime_Slider.gameObject.SetActive(false);
+        coolTime_Slider.maxValue = reloadT;
+        coolTime_Slider.value = reloadT;
+    }
+
+    public override void SetData()
+    {
+        // 무기 데이터 설정 로직 (필요 시 추가)
+    }
+
     public override bool Attack()
+    {
+        if (timeCount >= reloadT)
+        {
+            StartCoroutine(FireBullet());
+            StartCoroutine(UpdateCooldownSlider());
+            timeCount = 0;
+            return true;
+        }
+        return false;
+    }
+
+    private IEnumerator FireBullet()
+    {
+        Bullet newBullet;
+        PoolManager.instance.bulletPool.GetObject(out newBullet);
+        newBullet.transform.position = fireTr.position;
+        newBullet.transform.rotation = fireTr.rotation;
+        yield return null;
+    }
+
+    private IEnumerator UpdateCooldownSlider()
+    {
+        coolTime_Slider.gameObject.SetActive(true);
+        float elapsed = 0f;
+
+        while (elapsed < reloadT)
+        {
+            elapsed += Time.deltaTime;
+            coolTime_Slider.value = Mathf.Lerp(0, coolTime_Slider.maxValue, elapsed / reloadT);
+            yield return null;
+        }
+
+        coolTime_Slider.value = coolTime_Slider.maxValue;
+        coolTime_Slider.gameObject.SetActive(false);
+    }
+
+
+    /*public override bool Attack()
     {
         if (timeCount < reloadT)
         {
             return false;
         }
         
-        /*
+        *//*
         Quaternion startAngle = fireTr.rotation * Quaternion.Euler(0, -15, 0);
         Quaternion endAngle = fireTr.rotation * Quaternion.Euler(0, 15, 0);
 
@@ -40,11 +91,11 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
             bullets[i].transform.position = fireTr.position;
             bullets[i].transform.rotation = rotation[i];
         }
-        */
+        *//*
         StartCoroutine(CoShootBullet());
         timeCount = 0;
         return true;
-    }
+    }*/
 
     struct ShootBulletJob : IJobParallelFor
     {
