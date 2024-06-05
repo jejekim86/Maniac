@@ -5,11 +5,14 @@ using UnityEngine;
 public class ItemGet : MonoBehaviour
 {
     [SerializeField] private GameObject itemPrefab; // 아이템 프리팹
+    [SerializeField] private GameObject itemGun;
+
     private int amount = 20; // 획득 골드량
     private float healAmount = 0.1f; // 체력 회복량
 
     public void ItemGet_Gun(GameObject target)
-    {        
+    {
+        itemGun.SetActive(true);
         // Item 프리팹을 현재 오브젝트 위치에 생성. 기본 회전 값(Quaternion.identity) 사용
         GameObject newItem = Instantiate(itemPrefab, transform.position, Quaternion.identity);
 
