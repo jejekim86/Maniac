@@ -13,9 +13,12 @@ public class Player : Controller
     Vector3 translation;
 
     [SerializeField] Weapon longRangeWeapon;
-    //[SerializeField] Weapon meleeWeapon;
-    //[SerializeField] Text moneyText;
-    //[SerializeField] Image playerimage;
+    [SerializeField] Weapon meleeWeapon;
+    [SerializeField] Text moneyText;
+    [SerializeField] Image playerimage;
+    [SerializeField] private float itemMoveSpeed = 1.0f; // ������ �̵� �ӵ�
+    [SerializeField] private float itemRange = 5f; // ������ ������� ����
+
     CapsuleCollider collider;
     private Animator animator;
     //private int money;
@@ -40,7 +43,7 @@ public class Player : Controller
             //rigidbody.AddForce(translation * dashPower, ForceMode.Impulse);
             yield return null;
         }
-        Debug.Log("�뽬 ����");
+        Debug.Log("�뽬 ����");
         canDash = true;
     }
     public void SetLongRangeWeapon(Weapon weapon)
@@ -68,9 +71,10 @@ public class Player : Controller
         collider = GetComponent<CapsuleCollider>();
         meshRenderer = GetComponent<MeshRenderer>();
         walkSpeed = 10;
+        money = 1000; 
         maxHp = 10;
-        //playerimage.fillAmount = maxHp;
         curHp = maxHp;
+        playerimage.fillAmount = maxHp;
     }
     public override void Move()
     {
@@ -138,7 +142,30 @@ public class Player : Controller
                 Interact();
                 break;
         }
+
+        // ������ �������
+        AttractItems();
     }
+
+    private void AttractItems()
+    {
+        // "Item" �±׸� ���� ��� ���� ������Ʈ�� ã��
+        GameObject[] items = GameObject.FindGameObjectsWithTag("Item");
+
+        foreach (GameObject item in items)
+        {
+            // �÷��̾�� ������ ������ ������� �Ÿ� ���
+            Vector3 relativePos = item.transform.position - transform.position;
+
+            // �÷��̾���� �Ÿ��� ���� ���� ���� ���� ���� �̵�
+            if (relativePos.magnitude <= itemRange)
+            {
+                // �������� �÷��̾�� �ε巴�� �̵�
+                item.transform.position = Vector3.Lerp(item.transform.position, transform.position, itemMoveSpeed * Time.deltaTime);
+            }
+        }
+    }
+
     public void Interact()
     {
         if (isride)

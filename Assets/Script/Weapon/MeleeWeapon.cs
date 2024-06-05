@@ -7,20 +7,15 @@ public class MeleeWeapon : Weapon
 {
     [SerializeField] protected Collider attackRange;
     [SerializeField] protected AnimationClip animationClip; // 근거리 공격 모션
-    override protected void Start()
+    void Start()
     {
-        base.Start();
         if (attackRange != null)
             attackRange.enabled = false;
     }
-
-    override protected void Update()
-    {
-        base.Update();
-    }
+  
     public override void SetData()
     {
-        base.SetData();
+
     }
 
     public override bool Attack()
