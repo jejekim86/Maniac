@@ -9,14 +9,14 @@ public class Player : Controller
 {
     Vehicle vehicle;
     Vector3 translation;
-    Vector3 lastMoveDirection = Vector3.forward; // ¸¶Áö¸· ÀÌµ¿ ¹æÇâÀ» ÀúÀåÇÒ º¯¼ö
+    Vector3 lastMoveDirection = Vector3.forward; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     [SerializeField] Weapon longRangeWeapon;
     [SerializeField] Weapon meleeWeapon;
     [SerializeField] Text moneyText;
     [SerializeField] Image playerimage;
-    [SerializeField] private float itemMoveSpeed = 1.0f; // ¾ÆÀÌÅÛ ÀÌµ¿ ¼Óµµ
-    [SerializeField] private float itemRange = 5f; // ¾ÆÀÌÅÛ ²ø¾î´ç±â´Â ¹üÀ§
+    [SerializeField] private float itemMoveSpeed = 1.0f; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½Óµï¿½
+    [SerializeField] private float itemRange = 5f; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     [SerializeField] private Slider coolTime_Bag;
     [SerializeField] private Slider coolTime_Dash;
@@ -28,7 +28,7 @@ public class Player : Controller
     private float walkAnimationSpeed;
     private float dashPower = 15f;
     private float dashCooldown = 2f;
-    private float dashDuration = 0.5f; // ´ë½¬ Áö¼Ó ½Ã°£
+    private float dashDuration = 0.5f; // ï¿½ë½¬ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
     private bool isride;
     private bool canDash;
     private bool isDashing;
@@ -72,21 +72,21 @@ public class Player : Controller
 
     IEnumerator Dash(Vector3 dashDirection)
     {
-        // ´ë½¬°¡ ½ÃÀÛµÇ¾úÀ½À» Ç¥½Ã
+        // ï¿½ë½¬ï¿½ï¿½ ï¿½ï¿½ï¿½ÛµÇ¾ï¿½ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
         canDash = false;
         isDashing = true;
-        dashTarget = transform.position + dashDirection.normalized * dashPower; // ´ë½¬ ¸ñÇ¥ À§Ä¡ °è»ê
-        float elapsed = 0f; // °æ°ú ½Ã°£ ÃÊ±âÈ­
+        dashTarget = transform.position + dashDirection.normalized * dashPower; // ï¿½ë½¬ ï¿½ï¿½Ç¥ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½
+        float elapsed = 0f; // ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½Ê±ï¿½È­
         Vector3 startPos = transform.position;
-        while (elapsed < dashDuration) // ´ë½¬ Áö¼Ó ½Ã°£ µ¿¾È ¹Ýº¹
+        while (elapsed < dashDuration) // ï¿½ë½¬ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ýºï¿½
         {
-            transform.position = Vector3.Lerp(startPos, dashTarget, elapsed / dashDuration); // ÇöÀç À§Ä¡¸¦ ¸ñÇ¥ À§Ä¡·Î ¼±Çü º¸°£
-            elapsed += Time.deltaTime; // °æ°ú ½Ã°£ ¾÷µ¥ÀÌÆ®
-            yield return null; // ´ÙÀ½ ÇÁ·¹ÀÓ±îÁö ´ë±â
+            transform.position = Vector3.Lerp(startPos, dashTarget, elapsed / dashDuration); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            elapsed += Time.deltaTime; // ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
+            yield return null; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         }
 
-        isDashing = false; // ´ë½¬°¡ ³¡³µÀ½À» Ç¥½Ã
-        StartCoroutine(UpdateCooldownSlider(coolTime_Dash, dashCooldown)); // Äð´Ù¿î ½½¶óÀÌ´õ ¾÷µ¥ÀÌÆ® ½ÃÀÛ
+        isDashing = false; // ï¿½ë½¬ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
+        StartCoroutine(UpdateCooldownSlider(coolTime_Dash, dashCooldown)); // ï¿½ï¿½Ù¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
     }
 
     public override void Move()
@@ -100,7 +100,7 @@ public class Player : Controller
         translation = new Vector3(horizontalMove, 0, vertical);
         if (translation.magnitude > 0)
         {
-            lastMoveDirection = translation; // ¸¶Áö¸· ÀÌµ¿ ¹æÇâ ¾÷µ¥ÀÌÆ®
+            lastMoveDirection = translation; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
         }
 
         translation *= speed * Time.deltaTime;
@@ -109,7 +109,7 @@ public class Player : Controller
         if (Input.GetKey(KeyCode.Space) && canDash && !isDashing)
         {
             coolTime_Dash.gameObject.SetActive(true);
-            Vector3 dashDirection = (translation.magnitude > 0) ? translation : lastMoveDirection; // Á¤Áö ÁßÀÌ¸é ¸¶Áö¸· ÀÌµ¿ ¹æÇâÀ¸·Î ´ë½¬
+            Vector3 dashDirection = (translation.magnitude > 0) ? translation : lastMoveDirection; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ë½¬
             StartCoroutine(Dash(dashDirection));
         }
 
@@ -151,7 +151,7 @@ public class Player : Controller
     private IEnumerator UpdateCooldownSlider(Slider slider, float cooldown)
     {
         slider.gameObject.SetActive(true);
-        float elapsed = 0f; // ¾ó¸¶³ª Áö³µ³ª
+        float elapsed = 0f; // ï¿½ó¸¶³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         while (elapsed < cooldown)
         {
             elapsed += Time.deltaTime;
@@ -160,7 +160,7 @@ public class Player : Controller
         }
         slider.value = slider.maxValue;
         slider.gameObject.SetActive(false);
-        canDash = true; // ´ë½¬ Äð´Ù¿î ³¡³ª¾ß ´ë½¬ °¡´É
+        canDash = true; // ï¿½ë½¬ ï¿½ï¿½Ù¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ë½¬ ï¿½ï¿½ï¿½ï¿½
     }
 
     private void OnCollisionStay(Collision collision)
@@ -184,24 +184,24 @@ public class Player : Controller
                 break;
         }
 
-        // ¾ÆÀÌÅÛ ²ø¾î´ç±â±â
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         AttractItems();
     }
 
     private void AttractItems()
     {
-        // "Item" ÅÂ±×¸¦ °¡Áø ¸ðµç °ÔÀÓ ¿ÀºêÁ§Æ®¸¦ Ã£À½
+        // "Item" ï¿½Â±×¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ Ã£ï¿½ï¿½
         GameObject[] items = GameObject.FindGameObjectsWithTag("Item");
 
         foreach (GameObject item in items)
         {
-            // ÇÃ·¹ÀÌ¾î¿Í ¾ÆÀÌÅÛ »çÀÌÀÇ »ó´ëÀûÀÎ °Å¸® °è»ê
+            // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½
             Vector3 relativePos = item.transform.position - transform.position;
 
-            // ÇÃ·¹ÀÌ¾î¿ÍÀÇ °Å¸®°¡ ÀÏÁ¤ ¹üÀ§ ³»¿¡ ÀÖÀ» ¶§¸¸ ÀÌµ¿
+            // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
             if (relativePos.magnitude <= itemRange)
             {
-                // ¾ÆÀÌÅÛÀ» ÇÃ·¹ÀÌ¾î¿¡°Ô ºÎµå·´°Ô ÀÌµ¿
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ ï¿½Îµå·´ï¿½ï¿½ ï¿½Ìµï¿½
                 item.transform.position = Vector3.Lerp(item.transform.position, transform.position, itemMoveSpeed * Time.deltaTime);
             }
         }

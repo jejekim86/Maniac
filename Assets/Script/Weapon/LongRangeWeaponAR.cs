@@ -18,6 +18,10 @@ public class LongRangeWeaponAR : LongRangeWeapon
         timeCount = 0;
         return true;
     }
+    private void Update()
+    {
+        timeCount += Time.deltaTime;
+    }
 
     private void Update()
     {

@@ -24,7 +24,7 @@ public abstract class Controller : MonoBehaviour
         if (curHp > maxHp)
             curHp = maxHp;
 
-        HP_image.fillAmount = curHp / maxHp;
+        //HP_image.fillAmount = curHp / maxHp;
     }
 
     public virtual void GetDamage(float damage)
@@ -35,6 +35,6 @@ public abstract class Controller : MonoBehaviour
             transform.position = Vector3.zero;
         }
         curHp -= damage;
-        HP_image.fillAmount = curHp / maxHp;
+        //HP_image.fillAmount = curHp / maxHp;
     }
 }
