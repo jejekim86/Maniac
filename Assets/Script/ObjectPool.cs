@@ -95,25 +95,13 @@ public class ObjectPool<T> where T : MonoBehaviour
         }
 
         T poolObject;
-        while(objectPool.Count < poolingAmount)
+        for (int i = 0; poolingAmount > i; i++)
         {
-            if (poolingAmount * 0.5f == objectPool.Count)
-            {
-                Debug.Log("objectPool.Count : " + objectPool.Count);
-                Thread.Sleep(5000);
-            }
             poolObject = MonoBehaviour.Instantiate(targetObject, containerObject);
             poolObject.name = targetObject.name;
             poolObject.gameObject.SetActive(false);
             objectPool.Enqueue(poolObject);
         }
-        //for (int i = 0; poolingAmount > i; i++)
-        //{
-        //    poolObject = MonoBehaviour.Instantiate(targetObject, containerObject);
-        //    poolObject.name = targetObject.name;
-        //    poolObject.gameObject.SetActive(false);
-        //    objectPool.Enqueue(poolObject);
-        //}
         return true;
     }
 

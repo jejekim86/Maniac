@@ -12,20 +12,20 @@ public class Player : Controller
     Vehicle vehicle;
     Vector3 translation;
 
-    [SerializeField] Weapon longRangeWeapon;
-    [SerializeField] Weapon meleeWeapon;
-    [SerializeField] Text moneyText;
-    [SerializeField] Image playerimage;
+    //[SerializeField] Weapon longRangeWeapon;
+    //[SerializeField] Weapon meleeWeapon;
+    //[SerializeField] Text moneyText;
+    //[SerializeField] Image playerimage;
     [SerializeField] private float itemMoveSpeed = 1.0f; // 아이템 이동 속도
     [SerializeField] private float itemRange = 5f; // 아이템 끌어당기는 범위
-
+    Image rideKey_Image;
     CapsuleCollider collider;
     private Animator animator;
-    private int money;
+    PlayerInventory inventory = new PlayerInventory();
     private float walkAnimationSpeed;
     private float dashPower;
     private bool isride;
-
+    [SerializeField] Sprite sprite;
     bool canDash;
     IEnumerator Dash()
     {
@@ -36,32 +36,41 @@ public class Player : Controller
     }
     public void SetLongRangeWeapon(Weapon weapon)
     {
-        longRangeWeapon = weapon;
+        // longRangeWeapon = weapon;
     }
 
     public void SetMeleeWeapon(Weapon weapon)
     {
-        meleeWeapon = weapon;
+        //  meleeWeapon = weapon;
     }
 
     public void AddMoney(int amount)
     {
-        money += amount;
-        moneyText.text = money.ToString();
+        inventory.EarnMoney(amount);
+        //moneyText.text = inventory.money.ToString();
     }
-
+    Canvas canvas;
+    private void Awake()
+    {
+        GameObject ob = new GameObject();
+        rideKey_Image = ob.AddComponent<Image>();
+        canvas = FindObjectOfType<Canvas>();
+        rideKey_Image.transform.SetParent(canvas.transform);
+    }
     private void Start()
     {
         canDash = true;
-        rigidbody = GetComponent<Rigidbody>();
-        animator = GetComponent<Animator>();
+        //rigidbody = GetComponent<Rigidbody>();
+        //animator = GetComponent<Animator>();
         collider = GetComponent<CapsuleCollider>();
         meshRenderer = GetComponent<MeshRenderer>();
         walkSpeed = 10;
-        money = 1000; 
+        inventory.EarnMoney(1000);
         maxHp = 10;
         curHp = maxHp;
-        playerimage.fillAmount = maxHp;
+        //playerimage.fillAmount = maxHp;
+        rideKey_Image.sprite = sprite;
+        rideKey_Image.gameObject.SetActive(false);
     }
     public override void Move()
     {
@@ -86,27 +95,27 @@ public class Player : Controller
         }
 
 
-        animator.SetFloat("Vertical", vertical, 0.1f, Time.deltaTime);
-        animator.SetFloat("Horizontal", horizontalMove, 0.1f, Time.deltaTime);
-        animator.SetFloat("WalkSpeed", animSpeed);
+        //animator.SetFloat("Vertical", vertical, 0.1f, Time.deltaTime);
+        //animator.SetFloat("Horizontal", horizontalMove, 0.1f, Time.deltaTime);
+        //animator.SetFloat("WalkSpeed", animSpeed);
 
-        
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         Physics.Raycast(ray, out hit);
         transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
 
-        
-        if (Input.GetMouseButton(1))
-        {
-            if (meleeWeapon.Attack())
-                animator.SetTrigger("MeleeAttack");
-        }
-        
-        if (Input.GetMouseButton(0))
-        {
-            longRangeWeapon.Attack();
-        }
+
+        //if (Input.GetMouseButton(1))
+        //{
+        //    if (meleeWeapon.Attack())
+        //        animator.SetTrigger("MeleeAttack");
+        //}
+        //
+        //if (Input.GetMouseButton(0))
+        //{
+        //    longRangeWeapon.Attack();
+        //}
     }
 
     private void OnCollisionStay(Collision collision)
@@ -115,7 +124,24 @@ public class Player : Controller
         {
             if (Input.GetKeyDown(KeyCode.E))
                 StartCoroutine(ClickButton(collision.gameObject.GetComponent<Vehicle>()));
+            rideKey_Image.gameObject.SetActive(true);
+            Vector3 screenPosition = Camera.main.WorldToScreenPoint(collision.transform.position);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                canvas.transform as RectTransform,
+                screenPosition,
+                canvas.worldCamera,
+                out Vector2 canvasPosition
+            );
+            rideKey_Image.transform.localScale = collision.transform.localScale * 0.25f;
+            rideKey_Image.rectTransform.anchoredPosition = canvasPosition + (Vector2.up * 3);
+
         }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Vehicle"))
+            rideKey_Image.gameObject.SetActive(false);
     }
     private void Update()
     {
@@ -177,9 +203,10 @@ public class Player : Controller
                 if (!item) yield break;
                 Debug.Log("ClickButton");
                 yield return new WaitForSeconds(3f);
-                SetColliderEnabled(isride);
+                SetColliderEnabled(false);
                 isride = true;
                 vehicle = item;
+                transform.position = vehicle.transform.localPosition;
                 transform.SetParent(vehicle.gameObject.transform);
                 break;
         }
@@ -198,7 +225,6 @@ public class Player : Controller
 
     public void SetColliderEnabled(bool check)
     {
-        GetComponent<Collider>().enabled = check;
         meshRenderer.enabled = check;
     }
 }
