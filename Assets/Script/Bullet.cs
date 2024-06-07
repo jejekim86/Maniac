@@ -24,9 +24,10 @@ public class Bullet : MonoBehaviour
         this.dir = dir;
     }
 
+    
     void Update()
     {
-        if(timeCount >= 1)  
+        if(timeCount >= 3)  
         {
             PoolManager.instance.bulletPool.PutInPool(this);
             //backInPool.Invoke();
@@ -35,6 +36,7 @@ public class Bullet : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * 10, timeCount);
         timeCount += Time.deltaTime;  
     }
+    
 
     public void SetCollider(bool value)
     {

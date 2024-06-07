@@ -4,36 +4,56 @@ using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 [RequireComponent(typeof(MeshRenderer))]
-
 public class Player : Controller
 {
     Vehicle vehicle;
     Vector3 translation;
+    Vector3 lastMoveDirection = Vector3.forward; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     [SerializeField] Weapon longRangeWeapon;
     [SerializeField] Weapon meleeWeapon;
     [SerializeField] Text moneyText;
     [SerializeField] Image playerimage;
-    [SerializeField] private float itemMoveSpeed = 1.0f; // ¾ÆÀÌÅÛ ÀÌµ¿ ¼Óµµ
-    [SerializeField] private float itemRange = 5f; // ¾ÆÀÌÅÛ ²ø¾î´ç±â´Â ¹üÀ§
+    [SerializeField] private float itemMoveSpeed = 1.0f; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½Óµï¿½
+    [SerializeField] private float itemRange = 5f; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+
+    [SerializeField] private Slider coolTime_Bag;
+    [SerializeField] private Slider coolTime_Dash;
+    [SerializeField] private Slider coolTime_Gun;
 
     CapsuleCollider collider;
     private Animator animator;
     private int money;
     private float walkAnimationSpeed;
-    private float dashPower;
+    private float dashPower = 15f;
+    private float dashCooldown = 2f;
+    private float dashDuration = 0.5f; // ï¿½ë½¬ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
     private bool isride;
+    private bool canDash;
+    private bool isDashing;
 
-    bool canDash;
-    IEnumerator Dash()
+    private Vector3 dashTarget;
+
+    private void Start()
     {
-        rigidbody.AddForce(translation * dashPower, ForceMode.Impulse);
-        yield return new WaitForSeconds(0.5f);
-        rigidbody.velocity = Vector3.zero;
+        coolTime_Bag.gameObject.SetActive(false);
+        coolTime_Dash.gameObject.SetActive(false);
+        coolTime_Gun.gameObject.SetActive(false);
+
         canDash = true;
+        isDashing = false;
+        rigidbody = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
+        collider = GetComponent<CapsuleCollider>();
+        meshRenderer = GetComponent<MeshRenderer>();
+        walkSpeed = 10;
+        money = 1000;
+        maxHp = 10;
+        curHp = maxHp;
+        playerimage.fillAmount = maxHp;
     }
+
     public void SetLongRangeWeapon(Weapon weapon)
     {
         longRangeWeapon = weapon;
@@ -50,63 +70,97 @@ public class Player : Controller
         moneyText.text = money.ToString();
     }
 
-    private void Start()
+    IEnumerator Dash(Vector3 dashDirection)
     {
-        canDash = true;
-        rigidbody = GetComponent<Rigidbody>();
-        animator = GetComponent<Animator>();
-        collider = GetComponent<CapsuleCollider>();
-        meshRenderer = GetComponent<MeshRenderer>();
-        walkSpeed = 10;
-        money = 1000; 
-        maxHp = 10;
-        curHp = maxHp;
-        playerimage.fillAmount = maxHp;
+        // ï¿½ë½¬ï¿½ï¿½ ï¿½ï¿½ï¿½ÛµÇ¾ï¿½ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
+        canDash = false;
+        isDashing = true;
+        dashTarget = transform.position + dashDirection.normalized * dashPower; // ï¿½ë½¬ ï¿½ï¿½Ç¥ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½
+        float elapsed = 0f; // ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½Ê±ï¿½È­
+        Vector3 startPos = transform.position;
+        while (elapsed < dashDuration) // ï¿½ë½¬ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ýºï¿½
+        {
+            transform.position = Vector3.Lerp(startPos, dashTarget, elapsed / dashDuration); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            elapsed += Time.deltaTime; // ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
+            yield return null; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+        }
+
+        isDashing = false; // ï¿½ë½¬ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
+        StartCoroutine(UpdateCooldownSlider(coolTime_Dash, dashCooldown)); // ï¿½ï¿½Ù¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
     }
+
     public override void Move()
     {
-
         float horizontalMove = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
         float speed = walkSpeed;
         float animSpeed = walkAnimationSpeed;
 
-
-        translation = Vector3.forward * (vertical * Time.deltaTime);
-        translation += Vector3.right * (horizontalMove * Time.deltaTime);
-        translation *= speed;
-        transform.Translate(translation, Space.World);
-
-
-        if (Input.GetKey(KeyCode.LeftShift) && canDash)
+        translation = new Vector3(horizontalMove, 0, vertical);
+        if (translation.magnitude > 0)
         {
-            canDash = false;
-            StartCoroutine(Dash());
+            lastMoveDirection = translation; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
         }
 
+        translation *= speed * Time.deltaTime;
+        transform.Translate(translation, Space.World);
+
+        if (Input.GetKey(KeyCode.Space) && canDash && !isDashing)
+        {
+            coolTime_Dash.gameObject.SetActive(true);
+            Vector3 dashDirection = (translation.magnitude > 0) ? translation : lastMoveDirection; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ë½¬
+            StartCoroutine(Dash(dashDirection));
+        }
 
         animator.SetFloat("Vertical", vertical, 0.1f, Time.deltaTime);
         animator.SetFloat("Horizontal", horizontalMove, 0.1f, Time.deltaTime);
         animator.SetFloat("WalkSpeed", animSpeed);
 
-        
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        Physics.Raycast(ray, out hit);
-        transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
+        if (Physics.Raycast(ray, out hit))
+        {
+            transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
+        }
 
-        
         if (Input.GetMouseButton(1))
         {
             if (meleeWeapon.Attack())
+            {
                 animator.SetTrigger("MeleeAttack");
+                StartCoroutine(UpdateCooldownSlider(coolTime_Bag, meleeWeapon.GetReloadTime()));
+                coolTime_Bag.value = 1;
+            }
         }
-        
+
         if (Input.GetMouseButton(0))
         {
-            longRangeWeapon.Attack();
+            if (longRangeWeapon == null)
+            {
+                return;
+            }
+            if (longRangeWeapon.Attack())
+            {
+                StartCoroutine(UpdateCooldownSlider(coolTime_Gun, longRangeWeapon.GetReloadTime()));
+                coolTime_Gun.value = 1;
+            }
         }
+    }
+
+    private IEnumerator UpdateCooldownSlider(Slider slider, float cooldown)
+    {
+        slider.gameObject.SetActive(true);
+        float elapsed = 0f; // ï¿½ó¸¶³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        while (elapsed < cooldown)
+        {
+            elapsed += Time.deltaTime;
+            slider.value = Mathf.Lerp(slider.maxValue, 0, elapsed / cooldown);
+            yield return null;
+        }
+        slider.value = slider.maxValue;
+        slider.gameObject.SetActive(false);
+        canDash = true; // ï¿½ë½¬ ï¿½ï¿½Ù¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ë½¬ ï¿½ï¿½ï¿½ï¿½
     }
 
     private void OnCollisionStay(Collision collision)
@@ -130,24 +184,24 @@ public class Player : Controller
                 break;
         }
 
-        // ¾ÆÀÌÅÛ ²ø¾î´ç±â±â
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         AttractItems();
     }
 
     private void AttractItems()
     {
-        // "Item" ÅÂ±×¸¦ °¡Áø ¸ðµç °ÔÀÓ ¿ÀºêÁ§Æ®¸¦ Ã£À½
+        // "Item" ï¿½Â±×¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ Ã£ï¿½ï¿½
         GameObject[] items = GameObject.FindGameObjectsWithTag("Item");
 
         foreach (GameObject item in items)
         {
-            // ÇÃ·¹ÀÌ¾î¿Í ¾ÆÀÌÅÛ »çÀÌÀÇ »ó´ëÀûÀÎ °Å¸® °è»ê
+            // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½
             Vector3 relativePos = item.transform.position - transform.position;
 
-            // ÇÃ·¹ÀÌ¾î¿ÍÀÇ °Å¸®°¡ ÀÏÁ¤ ¹üÀ§ ³»¿¡ ÀÖÀ» ¶§¸¸ ÀÌµ¿
+            // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
             if (relativePos.magnitude <= itemRange)
             {
-                // ¾ÆÀÌÅÛÀ» ÇÃ·¹ÀÌ¾î¿¡°Ô ºÎµå·´°Ô ÀÌµ¿
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ ï¿½Îµå·´ï¿½ï¿½ ï¿½Ìµï¿½
                 item.transform.position = Vector3.Lerp(item.transform.position, transform.position, itemMoveSpeed * Time.deltaTime);
             }
         }

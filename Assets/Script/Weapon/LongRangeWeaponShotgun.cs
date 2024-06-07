@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
@@ -8,22 +7,51 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
 {
     [SerializeField] private int numberBulletsFire;
 
+
     NativeArray<Vector3> bulletsTransform;
     NativeArray<Vector3> bulletsTargetTransform;
     NativeArray<Quaternion> rotation;
 
+    public override void SetData()
+    {
+        base.SetData();
+    }
+    
     public override bool Attack()
+    {
+        if (timeCount >= reloadT)
+        {
+            StartCoroutine(FireBullet());
+            timeCount = 0;
+            return true;
+        }
+        return false;
+    }
+
+    private IEnumerator FireBullet()
+    {
+        Bullet newBullet;
+        PoolManager.instance.bulletPool.GetObject(out newBullet);
+        newBullet.transform.position = fireTr.position;
+        newBullet.transform.rotation = fireTr.rotation;
+        yield return null;
+    }
+
+    
+
+
+    /*public override bool Attack()
     {
         if (timeCount < reloadT)
         {
             return false;
         }
         
-        
         StartCoroutine(CoShootBullet());
+        
         timeCount = 0;
         return true;
-    }
+    }*/
 
     struct ShootBulletJob : IJobParallelFor
     {
@@ -76,6 +104,8 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
         }
         StartCoroutine(CoMoveBullet());
     }
+
+
     IEnumerator CoMoveBullet()
     {
         float StartTime = Time.time;
@@ -103,7 +133,7 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
 
             if (!onCollider)
             {
-                for (int i = 0; i < numberBulletsFire; i++)
+                for(int i = 0; i < numberBulletsFire; i++)
                 {
                     bullets[i].SetCollider(true);
                 }
@@ -113,7 +143,7 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
 
             yield return null;
         }
-        for (int i = 0; i < numberBulletsFire; i++)
+        for(int i = 0; i < numberBulletsFire; i++)
         {
             PoolManager.instance.bulletPool.PutInPool(bullets[i]);
         }
@@ -131,4 +161,5 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
             lerpTransform[index] = Vector3.Lerp(bulletsTransform[index], bulletsTargetTransform[index], lerpT);
         }
     }
+
 }

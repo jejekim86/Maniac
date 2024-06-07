@@ -15,7 +15,7 @@ public class BulletRenderer : MonoBehaviour
 
     private void Start()
     {
-        if (Instance == null)
+        if(Instance == null)
             Instance = this;
     }
 
@@ -30,7 +30,7 @@ public class BulletRenderer : MonoBehaviour
             // Create a transformation matrix from the position
             Matrix4x4 matrix = Matrix4x4.TRS(positions[i] + new Vector3(0, 0, z), rotations[i] * Quaternion.Euler(0, 90, 0), Vector3.one);
             instanceDataHead[i] = matrix;
-            matrix = Matrix4x4.TRS(positions[i], rotations[i] * Quaternion.Euler(0, 90, 0), Vector3.one);
+            matrix = Matrix4x4.TRS(positions[i], rotations[i] * Quaternion.Euler(0,90,0), Vector3.one);
             instanceDataBody[i] = matrix;
         }
 
