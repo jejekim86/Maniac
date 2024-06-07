@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Bullet;
 using static UnityEngine.UI.GridLayoutGroup;
 
 public class Bullet : MonoBehaviour
@@ -18,23 +17,49 @@ public class Bullet : MonoBehaviour
 
     Vector3 dir;
     float timeCount;
-
+    float distance = 0;
+    private Vector3 startpos;
+    private Vector3 endpos;
     public void SetData(Vector3 firPos, Vector3 dir)
     {
         this.dir = dir;
     }
 
-    
+    public void SetDirection(transform tr)
+    {
+        this.transform = tr;
+    }
+
+
+
+    void Start()
+    {
+        Terminate();
+    }
+
+    public void Terminate()
+    {
+        startpos = transform.position;
+        endpos = transform.position + transform.forward * 3;
+    }
+
     void Update()
     {
-        if(timeCount >= 3)  
-        {
-            PoolManager.instance.bulletPool.PutInPool(this);
-            //backInPool.Invoke();
-            timeCount = 0;
-        }
-        transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward * 10, timeCount);
+        /*
+        distance += bulletSpeed * Time.deltaTime;
+        if(distance >-)
+        //Debug.Log("distance : " + distance);
+        transform.position += transform.forward * (bulletSpeed * Time.deltaTime);
+        */
         timeCount += Time.deltaTime;  
+        transform.position = Vector3.Lerp(startpos, endpos, timeCount);
+
+        if(timeCount >= 1)  
+        {
+            timeCount = 0;
+            Terminate();
+            PoolManager.instance.bulletPool.PutInPool(this);
+        }
     }
     
 
@@ -45,12 +70,13 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Enemy"))
+        if (other.gameObject.CompareTag("Enemy"))
         {
+            Debug.Log("총알 히트");
             other.gameObject.GetComponent<Enemy>().GetDamage(5f);
             PoolManager.instance.bulletPool.PutInPool(this); // 총알을 풀에 다시 넣음
         }
-        else if (other.CompareTag("Player"))
+        else if (other.gameObject.CompareTag("Player"))
         {
             other.gameObject.GetComponent<Player>().GetDamage(0.1f);
             PoolManager.instance.bulletPool.PutInPool(this); // 총알을 풀에 다시 넣음

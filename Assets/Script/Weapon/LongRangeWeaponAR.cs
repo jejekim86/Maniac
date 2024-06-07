@@ -19,16 +19,12 @@ public class LongRangeWeaponAR : LongRangeWeapon
         // �̰� LongRangeWeapon�� Bullet�� �����ִµ� �̰͵� �����ϸ� ������
         Bullet newBullet;
         PoolManager.instance.bulletPool.GetObject(out newBullet); // �̰͵� ��¦ �ָ��� 
-        newBullet.transform.position = fireTr.transform.position;
-        newBullet.transform.rotation = fireTr.rotation;
+        newBullet.SetDirection(fireTr);
+        //newBullet.transform.position = fireTr.transform.position;
+        //newBullet.transform.rotation = fireTr.rotation;
         timeCount = 0;
         return true;
     }
-    private void Update()
-    {
-        timeCount += Time.deltaTime;
-    }
-
     private void Update()
     {
         timeCount += Time.deltaTime;
