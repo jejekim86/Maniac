@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class LongRangeWeaponAR : LongRangeWeapon
 {
+    
+    private void Start()
+    {
+        reloadT = 1f;
+    }
+
     public override bool Attack()
     {
         if (timeCount < reloadT)
         {
             return false;
         }
-        // ÀÌ°Å LongRangeWeapon¿¡ BulletÀ» °®°íÀÖ´Âµ¥ ÀÌ°Íµµ ¼öÁ¤ÇÏ¸é ÁÁÀ»µí
+        // ï¿½Ì°ï¿½ LongRangeWeaponï¿½ï¿½ Bulletï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´Âµï¿½ ï¿½Ì°Íµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         Bullet newBullet;
-        PoolManager.instance.bulletPool.GetObject(out newBullet); // ÀÌ°Íµµ »ìÂ¦ ¾Ö¸ÅÇÔ 
+        PoolManager.instance.bulletPool.GetObject(out newBullet); // ï¿½Ì°Íµï¿½ ï¿½ï¿½Â¦ ï¿½Ö¸ï¿½ï¿½ï¿½ 
         newBullet.transform.position = fireTr.transform.position;
         newBullet.transform.rotation = fireTr.rotation;
         timeCount = 0;

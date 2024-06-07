@@ -6,7 +6,7 @@ using UnityEngine;
 public class MeleeWeapon : Weapon
 {
     [SerializeField] protected Collider attackRange;
-    [SerializeField] protected AnimationClip animationClip; // ±Ù°Å¸® °ø°Ý ¸ð¼Ç
+    [SerializeField] protected AnimationClip animationClip; // ï¿½Ù°Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     void Start()
     {
         if (attackRange != null)
@@ -31,7 +31,7 @@ public class MeleeWeapon : Weapon
     IEnumerator MeleeRangeCheck()
     {
         attackRange.enabled = true;
-        yield return new WaitForSeconds(0.5f); // °ø°Ý Áö¼Ó ½Ã°£
+        yield return new WaitForSeconds(0.5f); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
         attackRange.enabled = false;
     }
 }

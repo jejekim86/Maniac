@@ -138,7 +138,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   reloadT: 1
-  bullet: {fileID: -8532365134168340071, guid: ce4319a9bc751bf4ea17c9c45f4b03fe, type: 3}
+  bullet: {fileID: 9113843075554734791, guid: 03480c062420f25429e943cf31117d0e, type: 3}
   fireTr: {fileID: 6615357593983727238}
 --- !u!114 &8722029312212587983
 MonoBehaviour:

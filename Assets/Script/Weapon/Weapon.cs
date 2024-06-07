@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class Weapon : MonoBehaviour
 {
     protected WeaponData w_data;
-    protected float reloadT;
+    [SerializeField] protected float reloadT;
     protected float timeCount;
 
     abstract public void SetData();

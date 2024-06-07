@@ -6,7 +6,6 @@ using UnityEngine;
 public class LongRangeWeaponShotgun : LongRangeWeapon
 {
     [SerializeField] private int numberBulletsFire;
-
     NativeArray<Vector3> bulletsTransform;
     NativeArray<Vector3> bulletsTargetTransform;
     NativeArray<Quaternion> rotation;
