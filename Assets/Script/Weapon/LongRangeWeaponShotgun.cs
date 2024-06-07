@@ -17,16 +17,39 @@ public class LongRangeWeaponShotgun : LongRangeWeapon
     
     public override bool Attack()
     {
+        if (timeCount >= reloadT)
+        {
+            StartCoroutine(FireBullet());
+            timeCount = 0;
+            return true;
+        }
+        return false;
+    }
+
+    private IEnumerator FireBullet()
+    {
+        Bullet newBullet;
+        PoolManager.instance.bulletPool.GetObject(out newBullet);
+        newBullet.transform.position = fireTr.position;
+        newBullet.transform.rotation = fireTr.rotation;
+        yield return null;
+    }
+
+    
+
+
+    /*public override bool Attack()
+    {
         if (timeCount < reloadT)
         {
             return false;
-        }   
-
+        }
+        
         StartCoroutine(CoShootBullet());
         
         timeCount = 0;
         return true;
-    }
+    }*/
 
     struct ShootBulletJob : IJobParallelFor
     {

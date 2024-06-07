@@ -2,17 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MeleeWeapon : Weapon
 {
     [SerializeField] protected Collider attackRange;
     [SerializeField] protected AnimationClip animationClip; // �ٰŸ� ���� ���
+    [SerializeField] protected GameObject stick;
+    [SerializeField] private float attackDuration = 0.5f; // ���� ���� �ð�
+    [SerializeField] private float damage = 15f; // ���� �����
+
     void Start()
     {
+        stick.SetActive(false);
+
         if (attackRange != null)
             attackRange.enabled = false;
     }
-  
+
+    private void Update()
+    {
+        timeCount += Time.deltaTime;
+    }
+
     public override void SetData()
     {
 
@@ -31,7 +43,18 @@ public class MeleeWeapon : Weapon
     IEnumerator MeleeRangeCheck()
     {
         attackRange.enabled = true;
-        yield return new WaitForSeconds(0.5f); // ���� ���� �ð�
+        stick.SetActive(true);
+
+        yield return new WaitForSeconds(attackDuration); // ���� ���� �ð�
         attackRange.enabled = false;
+        stick.SetActive(false);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            other.GetComponent<Enemy>().GetDamage(damage);
+        }
     }
 }

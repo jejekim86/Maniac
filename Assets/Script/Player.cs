@@ -4,13 +4,12 @@ using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 [RequireComponent(typeof(MeshRenderer))]
-
 public class Player : Controller
 {
     Vehicle vehicle;
     Vector3 translation;
+    Vector3 lastMoveDirection = Vector3.forward; // ������ �̵� ������ ������ ����
 
     [SerializeField] Weapon longRangeWeapon;
     [SerializeField] Weapon meleeWeapon;
@@ -19,33 +18,42 @@ public class Player : Controller
     [SerializeField] private float itemMoveSpeed = 1.0f; // ������ �̵� �ӵ�
     [SerializeField] private float itemRange = 5f; // ������ ������� ����
 
+    [SerializeField] private Slider coolTime_Bag;
+    [SerializeField] private Slider coolTime_Dash;
+    [SerializeField] private Slider coolTime_Gun;
+
     CapsuleCollider collider;
     private Animator animator;
     private int money;
     private float walkAnimationSpeed;
-    private float dashPower;
+    private float dashPower = 15f;
+    private float dashCooldown = 2f;
+    private float dashDuration = 0.5f; // �뽬 ���� �ð�
     private bool isride;
+    private bool canDash;
+    private bool isDashing;
 
-    bool canDash;
-    IEnumerator Dash()
+    private Vector3 dashTarget;
+
+    private void Start()
     {
-        float lerpT = 0;
-        Vector3 startTransform = transform.position;
-        Vector3 endTransform = transform.position + (transform.forward * 5);
+        coolTime_Bag.gameObject.SetActive(false);
+        coolTime_Dash.gameObject.SetActive(false);
+        coolTime_Gun.gameObject.SetActive(false);
 
-        Transform startTransform2 = transform;
-
-        while (lerpT <= 0.5f)
-        {
-            lerpT += Time.deltaTime * 2;
-
-            transform.position = Vector3.Lerp(startTransform, endTransform, lerpT);
-            //rigidbody.AddForce(translation * dashPower, ForceMode.Impulse);
-            yield return null;
-        }
-        Debug.Log("�뽬 ����");
         canDash = true;
+        isDashing = false;
+        rigidbody = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
+        collider = GetComponent<CapsuleCollider>();
+        meshRenderer = GetComponent<MeshRenderer>();
+        walkSpeed = 10;
+        money = 1000;
+        maxHp = 10;
+        curHp = maxHp;
+        playerimage.fillAmount = maxHp;
     }
+
     public void SetLongRangeWeapon(Weapon weapon)
     {
         longRangeWeapon = weapon;
@@ -62,64 +70,97 @@ public class Player : Controller
         moneyText.text = money.ToString();
     }
 
-    private void Start()
+    IEnumerator Dash(Vector3 dashDirection)
     {
-        canDash = true;
-        rigidbody = GetComponent<Rigidbody>();
-        animator = GetComponent<Animator>();
-        //money = 1000; 
-        collider = GetComponent<CapsuleCollider>();
-        meshRenderer = GetComponent<MeshRenderer>();
-        walkSpeed = 10;
-        money = 1000; 
-        maxHp = 10;
-        curHp = maxHp;
-        playerimage.fillAmount = maxHp;
+        // �뽬�� ���۵Ǿ����� ǥ��
+        canDash = false;
+        isDashing = true;
+        dashTarget = transform.position + dashDirection.normalized * dashPower; // �뽬 ��ǥ ��ġ ���
+        float elapsed = 0f; // ��� �ð� �ʱ�ȭ
+        Vector3 startPos = transform.position;
+        while (elapsed < dashDuration) // �뽬 ���� �ð� ���� �ݺ�
+        {
+            transform.position = Vector3.Lerp(startPos, dashTarget, elapsed / dashDuration); // ���� ��ġ�� ��ǥ ��ġ�� ���� ����
+            elapsed += Time.deltaTime; // ��� �ð� ������Ʈ
+            yield return null; // ���� �����ӱ��� ���
+        }
+
+        isDashing = false; // �뽬�� �������� ǥ��
+        StartCoroutine(UpdateCooldownSlider(coolTime_Dash, dashCooldown)); // ��ٿ� �����̴� ������Ʈ ����
     }
+
     public override void Move()
     {
-
         float horizontalMove = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
         float speed = walkSpeed;
         float animSpeed = walkAnimationSpeed;
 
-
-        translation = Vector3.forward * (vertical * Time.deltaTime);
-        translation += Vector3.right * (horizontalMove * Time.deltaTime);
-        translation *= speed;
-        transform.Translate(translation, Space.World);
-
-
-        if (Input.GetKey(KeyCode.Space) && canDash)
+        translation = new Vector3(horizontalMove, 0, vertical);
+        if (translation.magnitude > 0)
         {
-            canDash = false;
-            StartCoroutine(Dash());
+            lastMoveDirection = translation; // ������ �̵� ���� ������Ʈ
         }
 
+        translation *= speed * Time.deltaTime;
+        transform.Translate(translation, Space.World);
+
+        if (Input.GetKey(KeyCode.Space) && canDash && !isDashing)
+        {
+            coolTime_Dash.gameObject.SetActive(true);
+            Vector3 dashDirection = (translation.magnitude > 0) ? translation : lastMoveDirection; // ���� ���̸� ������ �̵� �������� �뽬
+            StartCoroutine(Dash(dashDirection));
+        }
 
         animator.SetFloat("Vertical", vertical, 0.1f, Time.deltaTime);
         animator.SetFloat("Horizontal", horizontalMove, 0.1f, Time.deltaTime);
         animator.SetFloat("WalkSpeed", animSpeed);
 
-
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        Physics.Raycast(ray, out hit);
-        transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
-
+        if (Physics.Raycast(ray, out hit))
+        {
+            transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
+        }
 
         if (Input.GetMouseButton(1))
         {
             if (meleeWeapon.Attack())
+            {
                 animator.SetTrigger("MeleeAttack");
+                StartCoroutine(UpdateCooldownSlider(coolTime_Bag, meleeWeapon.GetReloadTime()));
+                coolTime_Bag.value = 1;
+            }
         }
 
         if (Input.GetMouseButton(0))
         {
-            longRangeWeapon.Attack();
+            if (longRangeWeapon == null)
+            {
+                return;
+            }
+            if (longRangeWeapon.Attack())
+            {
+                StartCoroutine(UpdateCooldownSlider(coolTime_Gun, longRangeWeapon.GetReloadTime()));
+                coolTime_Gun.value = 1;
+            }
         }
+    }
+
+    private IEnumerator UpdateCooldownSlider(Slider slider, float cooldown)
+    {
+        slider.gameObject.SetActive(true);
+        float elapsed = 0f; // �󸶳� ������
+        while (elapsed < cooldown)
+        {
+            elapsed += Time.deltaTime;
+            slider.value = Mathf.Lerp(slider.maxValue, 0, elapsed / cooldown);
+            yield return null;
+        }
+        slider.value = slider.maxValue;
+        slider.gameObject.SetActive(false);
+        canDash = true; // �뽬 ��ٿ� ������ �뽬 ����
     }
 
     private void OnCollisionStay(Collision collision)
