@@ -5,6 +5,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] RandomSpawner spawner;
+    [SerializeField] ItemSpawn itemSpawn;
 
     [Header("적 상태")]
     [SerializeField] private EnemyPatrolState patrol;
@@ -84,7 +85,12 @@ public class Enemy : MonoBehaviour
         curHp -= damage;
         if (curHp <= 0)
         {
-            spawner.objectPool.PutInPool(this); // 총알을 풀에 다시 넣음
+            // 적을 다시 풀에 집어 넣기 전에 아이템을 생성
+            int itemIndex = Random.Range(0, itemSpawn.itemPrefabs.Length); // 랜덤 인덱스 선택
+            MonoBehaviour item = ItemSpawn.GetItem(itemIndex); // 선택된 인덱스의 아이템을 풀에서 가져옴
+            item.transform.position = transform.position; // 아이템을 적 위치에 생성
+
+            spawner.objectPool.PutInPool(this); // 적을 다시 풀에 집어 넣음
             Debug.Log("적 사망");
         }
     }
