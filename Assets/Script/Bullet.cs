@@ -20,6 +20,7 @@ public class Bullet : MonoBehaviour
     float distance = 0;
     private Vector3 startpos;
     private Vector3 endpos;
+
     public void SetData(Vector3 firPos, Vector3 dir)
     {
         this.dir = dir;
@@ -35,15 +36,15 @@ public class Bullet : MonoBehaviour
     public void Terminate()
     {
         startpos = transform.position;
-        endpos = transform.position + transform.forward * 3;
+        endpos = transform.position + transform.forward * 10;
     }
 
     void Update()
     {
         timeCount += Time.deltaTime;  
-        transform.position = Vector3.Lerp(startpos, endpos, timeCount);
+        transform.position = Vector3.Lerp(startpos, endpos, timeCount * 2);
 
-        if(timeCount >= 1)  
+        if(timeCount >= 0.5)  
         {
             timeCount = 0;
             Terminate();
