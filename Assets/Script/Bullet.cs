@@ -25,15 +25,10 @@ public class Bullet : MonoBehaviour
         this.dir = dir;
     }
 
-    public void SetDirection(transform tr)
+    public void SetDirection(Transform tr)
     {
-        this.transform = tr;
-    }
-
-
-
-    void Start()
-    {
+        transform.position = tr.position;
+        transform.rotation = tr.rotation;
         Terminate();
     }
 
@@ -45,12 +40,6 @@ public class Bullet : MonoBehaviour
 
     void Update()
     {
-        /*
-        distance += bulletSpeed * Time.deltaTime;
-        if(distance >-)
-        //Debug.Log("distance : " + distance);
-        transform.position += transform.forward * (bulletSpeed * Time.deltaTime);
-        */
         timeCount += Time.deltaTime;  
         transform.position = Vector3.Lerp(startpos, endpos, timeCount);
 
