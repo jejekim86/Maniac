@@ -4,12 +4,19 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    [SerializeField] RandomSpawner spawner;
+    [SerializeField] ItemSpawn itemSpawn;
+
     [Header("적 상태")]
     [SerializeField] private EnemyPatrolState patrol;
     [SerializeField] private EnemyChaseState chase;
     [SerializeField] private EnemyAttackState attack;
 
     private EnemyAI enemyAI;
+
+    [SerializeField] private Transform fireTr; // 총알 발사 위치
+    [SerializeField] private float reloadT = 1f; // 재장전 시간
+    private float timeCount = 0f;
 
     [SerializeField] private float visionRadius = 10f;
     [SerializeField] private float attackRadius = 2f;
@@ -55,16 +62,37 @@ public class Enemy : MonoBehaviour
         }
 
         enemyAI.UpdateCurrentState();
+
+        timeCount += Time.deltaTime;
     }
+
+    public void Attack()
+    {
+        if (timeCount < reloadT)
+        {
+            return;
+        }
+        Bullet newBullet;
+        PoolManager.instance.bulletPool.GetObject(out newBullet);
+        newBullet.transform.position = fireTr.transform.position;
+        newBullet.transform.rotation = fireTr.rotation;
+        timeCount = 0;
+    }
+
 
     public void GetDamage(float damage)
     {
+        curHp -= damage;
         if (curHp <= 0)
         {
-            Destroy(gameObject);
+            // 적을 다시 풀에 집어 넣기 전에 아이템을 생성
+            int itemIndex = Random.Range(0, itemSpawn.itemPrefabs.Length); // 랜덤 인덱스 선택
+            MonoBehaviour item = ItemSpawn.GetItem(itemIndex); // 선택된 인덱스의 아이템을 풀에서 가져옴
+            item.transform.position = transform.position; // 아이템을 적 위치에 생성
+
+            spawner.objectPool.PutInPool(this); // 적을 다시 풀에 집어 넣음
             Debug.Log("적 사망");
         }
-        curHp -= damage;
     }
 
     private void UpdateState(AI state)

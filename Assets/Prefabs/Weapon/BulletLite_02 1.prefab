@@ -46,7 +46,7 @@ Light:
   m_Shape: 0
   m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_Intensity: 1
-  m_Range: 0.015316083
+  m_Range: 0.03
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -242,7 +242,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 6381a2822798cc041b99cf46b7a1eebc, type: 2}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: -5270153713987799098, guid: 845a646869bbb9449b4bb2c5973d6dc7, type: 3}
+    - {fileID: -202970075991539560, guid: 845a646869bbb9449b4bb2c5973d6dc7, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 845a646869bbb9449b4bb2c5973d6dc7,
         type: 3}
@@ -283,7 +285,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletSpeed: 2
-  owner: {fileID: 0}
+  myCollider: {fileID: 7281644786208057624}
 --- !u!65 &7281644786208057624
 BoxCollider:
   m_ObjectHideFlags: 0
