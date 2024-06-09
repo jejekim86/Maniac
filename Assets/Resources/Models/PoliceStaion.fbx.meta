@@ -7,6 +7,26 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Flag
+    second: {fileID: 2100000, guid: 0d2d445937e4d59459e48dc8023b4e09, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Flag.001
+    second: {fileID: 2100000, guid: 0d2d445937e4d59459e48dc8023b4e09, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Flag.002
+    second: {fileID: 2100000, guid: 3c92dfc3ef20a684bac19341e0c5b289, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Flag.003
+    second: {fileID: 2100000, guid: c6eaefc3dc23f8645b7f6684b720cc21, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: PoliceStation
     second: {fileID: 2100000, guid: 79d3f8ef14766364f9eaf30dacdedf40, type: 2}
   materials:
@@ -53,7 +73,7 @@ ModelImporter:
     nodeNameCollisionStrategy: 1
     fileIdsGeneration: 2
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1

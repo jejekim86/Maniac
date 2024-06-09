@@ -12,6 +12,8 @@ public class ObjectPool<T> where T : MonoBehaviour
     bool issleep = false;
     Queue<T> objectPool;
 
+    private Queue<T> inUseObject;
+
     public bool Initialize(T value = null)
     {
         if (value)
@@ -95,6 +97,7 @@ public class ObjectPool<T> where T : MonoBehaviour
         }
 
         T poolObject;
+
         for (int i = 0; poolingAmount > i; i++)
         {
             poolObject = MonoBehaviour.Instantiate(targetObject, containerObject);
@@ -102,6 +105,9 @@ public class ObjectPool<T> where T : MonoBehaviour
             poolObject.gameObject.SetActive(false);
             objectPool.Enqueue(poolObject);
         }
+
+        inUseObject = new Queue<T>();
+        
         return true;
     }
 

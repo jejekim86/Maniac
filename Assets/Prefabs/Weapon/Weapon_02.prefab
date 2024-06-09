@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4113625917885360746}
   - component: {fileID: 147346554812401107}
   - component: {fileID: 6954999235188494632}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Weapon_02_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 5669096529280389305}
   - component: {fileID: 8722029312212587983}
   - component: {fileID: 5906139180414097949}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Weapon_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,7 +137,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5755face7d633ca438040319ae726209, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reloadT: 1
   bullet: {fileID: -8532365134168340071, guid: ce4319a9bc751bf4ea17c9c45f4b03fe, type: 3}
   fireTr: {fileID: 6615357593983727238}
 --- !u!114 &8722029312212587983
@@ -153,7 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 5786097810451525583}
-  itemType: 
+  itemType: Gun
 --- !u!65 &5906139180414097949
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -186,7 +185,7 @@ GameObject:
   - component: {fileID: 6602789456199049287}
   - component: {fileID: 1516268732596095734}
   - component: {fileID: 930050485265836895}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Weapon_02_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -269,7 +268,7 @@ GameObject:
   - component: {fileID: 7576839964966942220}
   - component: {fileID: 1114251928721181772}
   - component: {fileID: 452387194236927299}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Weapon_02_7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -352,7 +351,7 @@ GameObject:
   - component: {fileID: 6861224161297276134}
   - component: {fileID: 7269915777578459166}
   - component: {fileID: 4674392848918489184}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Weapon_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -435,7 +434,7 @@ GameObject:
   - component: {fileID: 5708246081686148530}
   - component: {fileID: 8789160855611009177}
   - component: {fileID: 9008831621044463944}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Weapon_02_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -518,7 +517,7 @@ GameObject:
   - component: {fileID: 1000707409690022306}
   - component: {fileID: 7527377165839464338}
   - component: {fileID: 6934935622065414979}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Weapon_02_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -601,7 +600,7 @@ GameObject:
   - component: {fileID: 3599734492901364791}
   - component: {fileID: 4388394057938929558}
   - component: {fileID: 9160123578403175607}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Weapon_02_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -682,7 +681,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6615357593983727238}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: FireTr
   m_TagString: Untagged
   m_Icon: {fileID: 0}

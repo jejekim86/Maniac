@@ -1,5 +1,27 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-3869643122956262246
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70afe9e12c7a7ed47911bb608a23a8ff, type: 3}
+  m_Name: SplitToning
+  m_EditorClassIdentifier: 
+  active: 1
+  shadows:
+    m_OverrideState: 1
+    m_Value: {r: 0.0754717, g: 0.0754717, b: 0.0754717, a: 1}
+  highlights:
+    m_OverrideState: 1
+    m_Value: {r: 0.54901963, g: 0.54901963, b: 0.54901963, a: 1}
+  balance:
+    m_OverrideState: 1
+    m_Value: 15
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20,6 +42,7 @@ MonoBehaviour:
   - {fileID: 5759860665007265908}
   - {fileID: 8683074481285365464}
   - {fileID: 8421656194401490958}
+  - {fileID: -3869643122956262246}
 --- !u!114 &305595962288434616
 MonoBehaviour:
   m_ObjectHideFlags: 3
