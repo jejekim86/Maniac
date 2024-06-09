@@ -18,6 +18,7 @@ public abstract class Controller : MonoBehaviour
 
     protected float curHp; // 현재 체력
 
+
     public virtual void AddHp(float heal)
     {
         curHp += heal;

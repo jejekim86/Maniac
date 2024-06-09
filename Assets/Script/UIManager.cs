@@ -8,6 +8,4 @@ public class UIManager : MonoBehaviour
     [SerializeField] Image[] slots;
 
 
-
-
 }
