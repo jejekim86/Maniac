@@ -96,14 +96,6 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Vehicle"))
-        {
-            GetDamage(15f);
-        }
-    }
-
     private void UpdateState(AI state)
     {
         switch (state)
