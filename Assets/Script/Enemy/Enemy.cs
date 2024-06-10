@@ -74,8 +74,9 @@ public class Enemy : MonoBehaviour
         }
         Bullet newBullet;
         PoolManager.instance.bulletPool.GetObject(out newBullet);
-        newBullet.transform.position = fireTr.transform.position;
-        newBullet.transform.rotation = fireTr.rotation;
+        newBullet.SetDirection(fireTr);
+        //newBullet.transform.position = fireTr.transform.position;
+        //newBullet.transform.rotation = fireTr.rotation;
         timeCount = 0;
     }
 

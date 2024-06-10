@@ -12,7 +12,7 @@ public class ObjectPool<T> where T : MonoBehaviour
     bool issleep = false;
     Queue<T> objectPool;
 
-    private Queue<T> inUseObject;
+    //private Queue<T> inUseObject;
 
     public bool Initialize(T value = null)
     {
@@ -106,7 +106,7 @@ public class ObjectPool<T> where T : MonoBehaviour
             objectPool.Enqueue(poolObject);
         }
 
-        inUseObject = new Queue<T>();
+        //inUseObject = new Queue<T>();
         
         return true;
     }

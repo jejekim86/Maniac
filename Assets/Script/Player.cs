@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(MeshRenderer))]
@@ -26,7 +27,7 @@ public class Player : Controller
     private Animator animator;
     private int money;
     private float walkAnimationSpeed;
-    private float dashPower = 15f;
+    private float dashPower = 5000f;
     private float dashCooldown = 2f;
     private float dashDuration = 0.5f; // �뽬 ���� �ð�
     private bool isride;
@@ -78,13 +79,18 @@ public class Player : Controller
         dashTarget = transform.position + dashDirection.normalized * dashPower; // �뽬 ��ǥ ��ġ ���
         float elapsed = 0f; // ��� �ð� �ʱ�ȭ
         Vector3 startPos = transform.position;
+        rigidbody.AddForce(dashDirection.normalized * dashPower, ForceMode.Impulse);
+        /*
         while (elapsed < dashDuration) // �뽬 ���� �ð� ���� �ݺ�
         {
-            transform.position = Vector3.Lerp(startPos, dashTarget, elapsed / dashDuration); // ���� ��ġ�� ��ǥ ��ġ�� ���� ����
+            rigidbody.MovePosition(Vector3.Lerp(startPos, dashTarget, elapsed / dashDuration)); // ���� ��ġ�� ��ǥ ��ġ�� ���� ����
+            //transform.position = Vector3.Lerp(startPos, dashTarget, elapsed / dashDuration); // ���� ��ġ�� ��ǥ ��ġ�� ���� ����
             elapsed += Time.deltaTime; // ��� �ð� ������Ʈ
-            yield return null; // ���� �����ӱ��� ���
+            yield return new WaitForFixedUpdate(); // ���� �����ӱ��� ���
         }
-
+        */
+        yield return new WaitForSeconds(0.5f);
+        rigidbody.velocity = Vector3.zero;
         isDashing = false; // �뽬�� �������� ǥ��
         StartCoroutine(UpdateCooldownSlider(coolTime_Dash, dashCooldown)); // ��ٿ� �����̴� ������Ʈ ����
     }
@@ -103,8 +109,10 @@ public class Player : Controller
             lastMoveDirection = translation; // ������ �̵� ���� ������Ʈ
         }
 
-        translation *= speed * Time.deltaTime;
-        transform.Translate(translation, Space.World);
+        translation *= speed * Time.fixedDeltaTime;
+        //translation *= speed * Time.deltaTime;
+        //transform.Translate(translation, Space.World);
+        rigidbody.MovePosition(rigidbody.position + translation);
 
         if (Input.GetKey(KeyCode.Space) && canDash && !isDashing)
         {
@@ -171,12 +179,18 @@ public class Player : Controller
                 StartCoroutine(ClickButton(collision.gameObject.GetComponent<Vehicle>()));
         }
     }
+
+    private void FixedUpdate()
+    {
+        Move();
+    }
+
     private void Update()
     {
         switch (vehicle)
         {
             case null:
-                Move();
+                //Move();
                 break;
             default:
                 vehicle.Move();

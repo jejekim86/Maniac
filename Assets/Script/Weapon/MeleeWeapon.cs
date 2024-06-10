@@ -7,10 +7,10 @@ using UnityEngine.UI;
 public class MeleeWeapon : Weapon
 {
     [SerializeField] protected Collider attackRange;
-    [SerializeField] protected AnimationClip animationClip; // ±Ù°Å¸® °ø°Ý ¸ð¼Ç
+    [SerializeField] protected AnimationClip animationClip; // ï¿½Ù°Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     [SerializeField] protected GameObject stick;
-    [SerializeField] private float attackDuration = 0.5f; // °ø°Ý Áö¼Ó ½Ã°£
-    [SerializeField] private float damage = 15f; // °ø°Ý ´ë¹ÌÁö
+    [SerializeField] private float attackDuration = 0.5f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
+    [SerializeField] private float damage = 15f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 
     void Start()
     {
@@ -45,7 +45,7 @@ public class MeleeWeapon : Weapon
         attackRange.enabled = true;
         stick.SetActive(true);
 
-        yield return new WaitForSeconds(attackDuration); // °ø°Ý Áö¼Ó ½Ã°£
+        yield return new WaitForSeconds(attackDuration); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
         attackRange.enabled = false;
         stick.SetActive(false);
     }
