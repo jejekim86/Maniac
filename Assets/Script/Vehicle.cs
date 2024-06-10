@@ -6,12 +6,21 @@ using UnityEngine;
 public class Vehicle : Controller
 {
     [SerializeField] WheelCollider[] wheelColliders;
-
+    ;
     public override void AddHp(float heal) => base.AddHp(heal);
     public override void GetDamage(float damage) => base.GetDamage(damage);
     private void Start()
     {
         maxHp = 100;
+        isride = false;
+    }
+
+    public void CheckRide(bool check) => isride = check;
+
+    private void Update()
+    {
+        if (isride)
+            Move();
     }
     public override void Move()
     {
@@ -19,7 +28,4 @@ public class Vehicle : Controller
         for(int i = 0; i <  wheelColliders.Length; i++)
             wheelColliders[i].motorTorque = -1 * Input.GetAxis("Vertical") * (2000f * 0.25f);
     }
-
-
-
 }

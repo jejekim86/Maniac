@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public abstract class Controller : MonoBehaviour
 {
+    protected bool isride;
     protected float walkSpeed;
     protected float maxHp; 
     [SerializeField] protected Image HP_image;

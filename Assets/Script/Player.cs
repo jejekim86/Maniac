@@ -30,7 +30,7 @@ public class Player : Controller
     private float dashPower = 5000f;
     private float dashCooldown = 2f;
     private float dashDuration = 0.5f; // �뽬 ���� �ð�
-    private bool isride;
+    //private bool isride;
     private bool canDash;
     private bool isDashing;
 
