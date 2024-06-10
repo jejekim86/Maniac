@@ -32,7 +32,7 @@ public class Bullet : MonoBehaviour
         transform.rotation = tr.rotation;
         startpos = tr.position;
         endpos = tr.position + tr.forward * 10;
-        Debug.LogError("좌표 설정");    
+        //Debug.LogError("좌표 설정");
     }
 
     public void Terminate()
