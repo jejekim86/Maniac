@@ -30,13 +30,14 @@ public class Bullet : MonoBehaviour
     {
         transform.position = tr.position;
         transform.rotation = tr.rotation;
-        Terminate();
+        startpos = tr.position;
+        endpos = tr.position + tr.forward * 10;
+        Debug.LogError("좌표 설정");    
     }
 
     public void Terminate()
     {
-        startpos = transform.position;
-        endpos = transform.position + transform.forward * 10;
+        timeCount = 0;
     }
 
     void Update()
@@ -46,7 +47,6 @@ public class Bullet : MonoBehaviour
 
         if(timeCount >= 0.5)  
         {
-            timeCount = 0;
             Terminate();
             PoolManager.instance.bulletPool.PutInPool(this);
         }
@@ -64,11 +64,13 @@ public class Bullet : MonoBehaviour
         {
             Debug.Log("총알 히트");
             other.gameObject.GetComponent<Enemy>().GetDamage(5f);
+            Terminate();
             PoolManager.instance.bulletPool.PutInPool(this); // 총알을 풀에 다시 넣음
         }
         else if (other.gameObject.CompareTag("Player"))
         {
             other.gameObject.GetComponent<Player>().GetDamage(0.1f);
+            Terminate();
             PoolManager.instance.bulletPool.PutInPool(this); // 총알을 풀에 다시 넣음
         }
     }
