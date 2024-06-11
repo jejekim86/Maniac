@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Test : Controller
@@ -26,7 +27,6 @@ public class Test : Controller
         translation *= speed * Time.deltaTime;
         transform.Translate(translation, Space.World);
     }
-
     IEnumerator ClickButton(Vehicle item)
     {
         switch (isride)
@@ -50,12 +50,15 @@ public class Test : Controller
         }
         yield break;
     }
+
+
+    protected override IEnumerator PushRideButton(Controller item) => base.PushRideButton(item);
     private void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag("Vehicle"))
         {
             if (Input.GetKeyDown(KeyCode.E))
-                StartCoroutine(ClickButton(collision.gameObject.GetComponent<Vehicle>())); 
+                StartCoroutine(ClickButton(collision.gameObject.GetComponent<Vehicle>()));
         }
     }
     private void Update()
@@ -66,5 +69,10 @@ public class Test : Controller
     {
         collier.enabled = check;
         meshRenderer.enabled = check;
+    }
+
+    public void IsRiderRide(bool check)
+    {
+        throw new System.NotImplementedException();
     }
 }
