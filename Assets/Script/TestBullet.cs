@@ -106,36 +106,36 @@
 
 //        public void Execute(int index)
 //        {
-//            T item = null;
+//            T npc = null;
 
 //            lock (objectPool)
 //            {
 //                if (objectPool.Count > 0)
 //                {
-//                    item = objectPool.Dequeue();
+//                    npc = objectPool.Dequeue();
 //                }
 //            }
 
-//            if (item != null)
+//            if (npc != null)
 //            {
-//                item.gameObject.SetActive(true);
-//                items[index] = item;
+//                npc.gameObject.SetActive(true);
+//                items[index] = npc;
 //            }
 //        }
 //    }
 
-//    public bool PutInPool(T item)
+//    public bool PutInPool(T npc)
 //    {
-//        if (!(item && containerObject))
+//        if (!(npc && containerObject))
 //        {
 //            return false;
 //        }
 
-//        item.gameObject.SetActive(false);
+//        npc.gameObject.SetActive(false);
 
 //        lock (objectPool)
 //        {
-//            objectPool.Enqueue(item);
+//            objectPool.Enqueue(npc);
 //        }
 
 //        return true;
@@ -163,9 +163,9 @@
 //            {
 //                if (child.gameObject.activeSelf)
 //                {
-//                    if (child.TryGetComponent(out T item))
+//                    if (child.TryGetComponent(out T npc))
 //                    {
-//                        PutInPool(item);
+//                        PutInPool(npc);
 //                    }
 //                }
 //            }
