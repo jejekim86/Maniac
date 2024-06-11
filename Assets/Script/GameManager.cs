@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public sealed class GameManager : MonoBehaviour
@@ -9,6 +10,7 @@ public sealed class GameManager : MonoBehaviour
     //[SerializeField] UIManager Uimanager;
     //[SerializeField] Datamanager Datamanager;
 
+    [SerializeField] private Button startButton;
     [SerializeField] private Text timerText;
     public Image[] images;
 
@@ -48,7 +50,15 @@ public sealed class GameManager : MonoBehaviour
     private void Start()
     {
         maxTime = 300f;
-        StartCoroutine(StartTimer());
+
+        if (timerText)
+        {
+            StartCoroutine(StartTimer());
+        }
+        if (startButton)
+        {
+            startButton.onClick.AddListener(ButtonOnClick);
+        }
     }
 
     IEnumerator StartTimer()
@@ -79,8 +89,8 @@ public sealed class GameManager : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void ButtonOnClick()
     {
-        
+        SceneManager.LoadScene("SkillUpgrade", LoadSceneMode.Single);
     }
 }
