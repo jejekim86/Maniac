@@ -53,7 +53,7 @@ namespace Polyperfect.Common
 
             foreach (var item in Stats)
             {
-                //Debug.Log(item.name);
+                //Debug.Log(NPC.name);
 
                 selectionValue.Add(item, -1);
                 stats.Add(item);
