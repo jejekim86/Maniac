@@ -111,7 +111,7 @@ public class ObjectPool<T> where T : MonoBehaviour
         return true;
     }
 
-    /// <summary> item 하나를 Pool에서 꺼내 활성화 시킨다. </summary>
+    /// <summary> npc 하나를 Pool에서 꺼내 활성화 시킨다. </summary>
     public bool GetObject(out T item)
     {
         item = null;
