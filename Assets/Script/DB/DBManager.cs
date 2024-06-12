@@ -5,18 +5,10 @@ using UnityEngine;
 using System.Data.SqlClient;
 using System.Collections.Generic;
 
-public class DBManager : MonoBehaviour
+public class DBManager
 {
-    //static readonly string ipAddress = "localhost";
-    //static readonly string db_id = "root";
-    //static readonly string db_pw = "";
-    //static readonly string db_name = "mydb";
-
     private string strConn;
-    public static DBManager Instance { get; private set; }
-
     private MySqlConnection SqlConn;
-
     private MySqlCommand cmd = new MySqlCommand();
 
     public DBManager(string ipAddress = "localhost", string User = "root", string pw = "", string dbName = "mydb")
@@ -42,39 +34,6 @@ public class DBManager : MonoBehaviour
             Debug.LogError("데이터베이스 연결 문자열 초기화 실패: " + e.ToString());
         }
     }
-
-    /*
-    private void Awake()
-    {
-        if (Instance == null)
-            Instance = this;
-        try
-        {
-            SqlConn = new MySqlConnection(strConn);
-            Debug.Log("데이터베이스 연결 문자열이 초기화되었습니다.");
-        }
-        catch (Exception e)
-        {
-            Debug.LogError("데이터베이스 연결 문자열 초기화 실패: " + e.ToString());
-        }
-    }
-
-    void Start()
-    {
-        //DataSet ds = GetSkillData();
-        //string sjon = JsonConvert.SerializeXmlNode(ds.GetXml());
-        //Debug.Log(ds.GetXml());
-        //Debug.Log(InsertTestData());
-        //UpdateGold(1000);
-        //Debug.Log(UpdateSkillLevelData("자석", 1));
-        //Debug.Log(SetMoney(1000));
-        //Debug.Log(GetMoney());
-        //SetRecord(123, 2000, "6000");
-        //DataSet ds = GetRecord();
-        //Debug.Log(ds.GetXml());
-        List<SkillDataStruct> list = GetSkillData();
-    }
-    */
 
     public bool SetRecordHighScore(HighScore score)
     {
