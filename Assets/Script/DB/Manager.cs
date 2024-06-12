@@ -4,7 +4,16 @@ using UnityEngine;
 
 public class Manager : MonoBehaviour
 {
-    DBManager DBManager = new DBManager();
+
+    static DBConnectionInfo dBConnectionInf = new DBConnectionInfo
+    {
+        ipAddress = "localhost",
+        user = "root",
+        password = "",
+        dbName = "mydb"
+    };
+    
+    DBManager DBManager = new DBManager(dBConnectionInf);
     // Start is called before the first frame update
     void Start()
     {
