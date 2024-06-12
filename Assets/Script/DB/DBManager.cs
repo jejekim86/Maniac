@@ -3,29 +3,51 @@ using System.Data;
 using System;
 using UnityEngine;
 using System.Data.SqlClient;
+using System.Collections.Generic;
 
-public class DBTest : MonoBehaviour
+public class DBManager : MonoBehaviour
 {
-    static string ipAddress = "localhost";
-    static string db_id = "root";
-    static string db_pw = "";
-    static string db_name = "mydb";
-    static string strConn = new MySqlConnectionStringBuilder
+    //static readonly string ipAddress = "localhost";
+    //static readonly string db_id = "root";
+    //static readonly string db_pw = "";
+    //static readonly string db_name = "mydb";
+
+    private string strConn;
+    public static DBManager Instance { get; private set; }
+
+    private MySqlConnection SqlConn;
+
+    private MySqlCommand cmd = new MySqlCommand();
+
+    public DBManager(string ipAddress = "localhost", string User = "root", string pw = "", string dbName = "mydb")
     {
-        Server = ipAddress,
-        UserID = db_id,
-        Password = db_pw,
-        Database = db_name,
-        CharacterSet = "utf8",
-        SslMode = MySqlSslMode.None
-    }.ToString();
+        strConn = new MySqlConnectionStringBuilder
+        {
+            Server = ipAddress,
+            UserID = User,
+            Password = pw,
+            Database = dbName,
+            CharacterSet = "utf8",
+            SslMode = MySqlSslMode.None
+        }.ToString();
 
-    static string selectAllSkillData = "Select * from skill";
+        try
+        {
+            SqlConn = new MySqlConnection(strConn);
+            cmd.Connection = SqlConn;
+            Debug.Log("데이터베이스 연결 문자열이 초기화되었습니다.");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("데이터베이스 연결 문자열 초기화 실패: " + e.ToString());
+        }
+    }
 
-    public static MySqlConnection SqlConn;
-
+    /*
     private void Awake()
     {
+        if (Instance == null)
+            Instance = this;
         try
         {
             SqlConn = new MySqlConnection(strConn);
@@ -47,12 +69,14 @@ public class DBTest : MonoBehaviour
         //Debug.Log(UpdateSkillLevelData("자석", 1));
         //Debug.Log(SetMoney(1000));
         //Debug.Log(GetMoney());
-        SetRecord(123, 2000, "6000");
-        DataSet ds = GetRecord();
-        Debug.Log(ds.GetXml());
+        //SetRecord(123, 2000, "6000");
+        //DataSet ds = GetRecord();
+        //Debug.Log(ds.GetXml());
+        List<SkillDataStruct> list = GetSkillData();
     }
+    */
 
-    public bool SetRecord(int stars, int money, string time)
+    public bool SetRecordHighScore(HighScore score)
     {
         if (SqlConn == null)
         {
@@ -62,15 +86,28 @@ public class DBTest : MonoBehaviour
 
         try
         {
+            if (GetRecordHighScore(out HighScore dbScore, score.userID) == false)
+                return false;
+
+            if (score.money < dbScore.money)
+                score.money = dbScore.money;
+            if (score.stars < dbScore.stars)
+                score.stars = dbScore.stars;
+            if (score.lifeTime < dbScore.lifeTime)
+                score.lifeTime = dbScore.lifeTime;
+
             SqlConn.Open();   //DB 연결
 
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = SqlConn;
-            cmd.CommandText = $"Update User_Record Set Money = {money}, Stars = {stars}, Life_Time = '{time}' Where User_Id = 1";
+            cmd.CommandText = $"Update User_Record Set Money = {score.money}, Stars = {score.stars}, Life_Time = '{score.lifeTime}' Where User_Id = {score.userID}";
 
-            MySqlDataAdapter sd = new MySqlDataAdapter(cmd);
-            DataSet ds = new DataSet();
-            sd.Fill(ds, "Skill");
+            int result = cmd.ExecuteNonQuery();
+
+            if (result < 0)
+            {
+                Debug.Log("데이터베이스 작업 실패: ");
+                SqlConn.Close();  //DB 연결 해제
+                return false;
+            }
 
             SqlConn.Close();  //DB 연결 해제
 
@@ -83,35 +120,43 @@ public class DBTest : MonoBehaviour
         }
     }
 
-    public DataSet GetRecord()
+    public bool GetRecordHighScore(out HighScore highScore, int userID = 1)
     {
+        highScore = new HighScore();
+
         if (SqlConn == null)
         {
             Debug.LogError("GetRecord 메서드에서 SqlConn이 null입니다.");
-            return null;
+            return false;
         }
 
         try
         {
             SqlConn.Open();   //DB 연결
 
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = SqlConn;
-            cmd.CommandText = "Select * From User_Record Where User_Id = 1";
+            cmd.CommandText = $"Select * From User_Record Where User_Id = {userID}";
+            MySqlDataReader reader = cmd.ExecuteReader();
 
-            MySqlDataAdapter sd = new MySqlDataAdapter(cmd);
-            DataSet ds = new DataSet();
-            sd.Fill(ds, "User_Record");
+            if (reader.Read())
+            {
+                highScore.userID = reader.GetInt32(0);
+                highScore.stars = reader.GetInt32(1);
+                highScore.money = reader.GetInt32(2);
+                highScore.lifeTime = reader.GetInt32(3);
 
-
-            SqlConn.Close();  //DB 연결 해제
-
-            return ds;
+                SqlConn.Close();  //DB 연결 해제
+                return true;
+            }
+            else
+            {
+                SqlConn.Close();  //DB 연결 해제
+                return false;
+            }
         }
         catch (Exception e)
         {
             Debug.LogError("데이터베이스 작업 실패: " + e.ToString());
-            return null;
+            return false;
         }
     }
 
@@ -119,7 +164,7 @@ public class DBTest : MonoBehaviour
     /// 데이터 베이스에서 돈을 가져옴
     /// </summary>
     /// <returns></returns>
-    public int GetMoney()
+    public int GetMoney(int userID = 1)
     {
         if (SqlConn == null)
         {
@@ -128,13 +173,9 @@ public class DBTest : MonoBehaviour
         }
         try
         {
-            if (SqlConn.State == System.Data.ConnectionState.Closed)
-            {
-                SqlConn.Open();   // DB 연결
-            }
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = SqlConn;
-            cmd.CommandText = "Select Money From User Where User_Id = 1;";
+            SqlConn.Open();   // DB 연결
+
+            cmd.CommandText = $"Select Money From User Where User_Id = {userID};";
             MySqlDataReader reader = cmd.ExecuteReader();
 
             int money = -1;
@@ -143,24 +184,20 @@ public class DBTest : MonoBehaviour
             {
                 money = reader.GetInt32(0);
             }
+
+            SqlConn.Close();
             return money;
         }
         catch (Exception e)
-        {   
-            Debug.LogError("예외 발생: " + e.ToString());
-            return -1;
-        }
-        finally
         {
-            if (SqlConn.State == System.Data.ConnectionState.Open)
-            {
-                SqlConn.Close();  // DB 연결 해제
-            }
+            Debug.LogError("예외 발생: " + e.ToString());
+            SqlConn.Close();
+            return -1;
         }
     }
 
 
-    public bool SetMoney(int money)
+    public bool AddMoney(int money, int userID = 1)
     {
         if (SqlConn == null)
         {
@@ -169,11 +206,11 @@ public class DBTest : MonoBehaviour
         }
         try
         {
-            int getMoney = GetMoney();
-            if( getMoney < 0 )
+            int getMoney = GetMoney(userID);
+            if (getMoney < 0)
                 return false;
             money += getMoney;
-            if(money < 0)
+            if (money < 0)
                 return false;
 
             if (SqlConn.State == System.Data.ConnectionState.Closed)
@@ -181,75 +218,64 @@ public class DBTest : MonoBehaviour
                 SqlConn.Open();   // DB 연결
             }
 
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = SqlConn;
-            cmd.CommandText = $"Update User set money = {money} Where User_Id = 1;";
-            int rowsAffected = cmd.ExecuteNonQuery();
+            cmd.CommandText = $"Update User set money = {money} Where User_Id = {userID};";
+            int result = cmd.ExecuteNonQuery();
 
-            if (rowsAffected > 0)
-            {
-                Debug.Log("데이터가 성공적으로 업데이트했습니다.");
-            }
-            else
+            if (result < 0)
             {
                 Debug.Log("데이터 업데이트에 실패했습니다.");
-            }
-            if (SqlConn.State == System.Data.ConnectionState.Open)
-            {
                 SqlConn.Close();  // DB 연결 해제
+                return false;
             }
+
+            SqlConn.Close();  // DB 연결 해제
             return true;
         }
         catch (Exception e)
         {
             Debug.LogError("예외 발생: " + e.ToString());
-            if (SqlConn.State == System.Data.ConnectionState.Open)
-            {
-                SqlConn.Close();  // DB 연결 해제
-            }
+            SqlConn.Close();  // DB 연결 해제
             return false;
-        }
-        finally
-        {
-            if (SqlConn.State == System.Data.ConnectionState.Open)
-            {
-                SqlConn.Close();  // DB 연결 해제
-            }
         }
     }
 
-    public DataSet GetSkillData()
+    public List<SkillDataStruct> GetSkillData()
     {
         if (SqlConn == null)
         {
             Debug.LogError("GetSkillData 메서드에서 SqlConn이 null입니다.");
             return null;
         }
-
         try
         {
             SqlConn.Open();   //DB 연결
 
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = SqlConn;
-            cmd.CommandText = selectAllSkillData;
+            cmd.CommandText = "Select * from skill";
+            MySqlDataReader reader = cmd.ExecuteReader();
 
-            MySqlDataAdapter sd = new MySqlDataAdapter(cmd);
-            DataSet ds = new DataSet();
-            sd.Fill(ds, "Skill");
+            List<SkillDataStruct> skillDataList = new List<SkillDataStruct>();
+            SkillDataStruct skillData;
+            while (reader.Read())
+            {
+                skillData.skillName = reader.GetString(0);
+                skillData.skillInfo = reader.GetString(1);
+                skillData.increase = reader.GetInt32(2);
+                skillDataList.Add(skillData);
+            }
 
             SqlConn.Close();  //DB 연결 해제
 
-            return ds;
+            return skillDataList;
         }
         catch (Exception e)
         {
             Debug.LogError("데이터베이스 작업 실패: " + e.ToString());
+            SqlConn.Close();
             return null;
         }
     }
 
-    public int? GetSkillLevel(string skillName)
+    public int? GetSkillLevel(string skillName, int userID = 1)
     {
         if (SqlConn == null)
         {
@@ -261,9 +287,7 @@ public class DBTest : MonoBehaviour
         {
             SqlConn.Open();   //DB 연결
 
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = SqlConn;
-            cmd.CommandText = $"Select Level From Upgrade_Skill Where User_Id = 1 AND Skill_Name = '{skillName}'";
+            cmd.CommandText = $"Select Level From Upgrade_Skill Where User_Id = {userID} AND Skill_Name = '{skillName}'";
             MySqlDataReader reader = cmd.ExecuteReader();
 
             if (reader.Read())
@@ -284,11 +308,12 @@ public class DBTest : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogError("데이터베이스 작업 실패: " + e.ToString());
+            SqlConn.Close();
             return null;
         }
     }
 
-    public bool UpdateSkillLevelData(string skillName, int changeAmount)
+    public bool UpdateSkillLevelData(string skillName, int changeAmount, int userID = 1)
     {
         if (SqlConn == null)
         {
@@ -305,9 +330,7 @@ public class DBTest : MonoBehaviour
 
             SqlConn.Open();   //DB 연결
 
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = SqlConn;
-            cmd.CommandText = $"Update Upgrade_Skill Set Level = {nowLevel + changeAmount} Where User_Id = 1 AND Skill_Name = '{skillName}'";
+            cmd.CommandText = $"Update Upgrade_Skill Set Level = {nowLevel + changeAmount} Where User_Id = {userID} AND Skill_Name = '{skillName}'";
             int rowsAffected = cmd.ExecuteNonQuery();
 
             if (rowsAffected > 0)
@@ -326,9 +349,8 @@ public class DBTest : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogError("데이터베이스 작업 실패: " + e.ToString());
+            SqlConn.Close();  //DB 연결 해제
             return false;
         }
     }
-
-    
 }
