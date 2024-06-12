@@ -64246,6 +64246,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebca1767970b1fa44be32e612428ab37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startButton: {fileID: 0}
+  backButton: {fileID: 0}
+  checkButton: {fileID: 0}
   timerText: {fileID: 49346912}
   images:
   - {fileID: 1638203341}
