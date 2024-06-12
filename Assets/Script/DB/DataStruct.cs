@@ -14,3 +14,11 @@ public struct HighScore
     public int money;
     public int lifeTime;
 }
+
+public struct DBConnectionInfo
+{
+    public string ipAddress;
+    public string user;
+    public string password;
+    public string dbName;
+}
