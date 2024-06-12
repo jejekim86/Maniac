@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public sealed class GameManager : MonoBehaviour
@@ -9,8 +10,11 @@ public sealed class GameManager : MonoBehaviour
     //[SerializeField] UIManager Uimanager;
     //[SerializeField] Datamanager Datamanager;
 
+    [SerializeField] private Button startButton;
+    [SerializeField] private Button backButton;
+    [SerializeField] private Button checkButton;
     [SerializeField] private Text timerText;
-    public Image[] images;
+    [SerializeField] private Image[] images;
 
     int Level = 0;
     float curTime;
@@ -47,8 +51,24 @@ public sealed class GameManager : MonoBehaviour
 
     private void Start()
     {
-        maxTime = 300f;
-        StartCoroutine(StartTimer());
+        //maxTime = 300f;
+        //
+        //if (timerText)
+        //{
+        //    StartCoroutine(StartTimer());
+        //}
+        //if (backButton)
+        //{
+        //    backButton.onClick.AddListener(StartButtonOnClick);
+        //}
+        //if (backButton)
+        //{
+        //    backButton.onClick.AddListener(BackButtonOnClick);
+        //}
+        //if (checkButton)
+        //{
+        //    checkButton.onClick.AddListener(CheckButtonOnClick);
+        //}
     }
 
     IEnumerator StartTimer()
@@ -79,8 +99,18 @@ public sealed class GameManager : MonoBehaviour
         }
     }
 
-    private void Update()
+    public void StartButtonOnClick()
     {
-        
+        SceneManager.LoadScene("SkillUpgrade", LoadSceneMode.Single);
+    }
+
+    public void BackButtonOnClick()
+    {
+        SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
+    }
+
+    public void CheckButtonOnClick()
+    {
+        SceneManager.LoadScene("Game", LoadSceneMode.Single);
     }
 }
