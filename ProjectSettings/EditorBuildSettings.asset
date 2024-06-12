@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SkillUpgrade.unity
     guid: 4244c177aa953ec44b7a170ca9b71877
+  - enabled: 1
+    path: Assets/Scenes/InGame.unity
+    guid: cf6230c998aa7d74ab77e25b561e806e
   m_configObjects: {}
