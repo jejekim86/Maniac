@@ -11,14 +11,14 @@ public class DBManager
     private MySqlConnection SqlConn;
     private MySqlCommand cmd = new MySqlCommand();
 
-    public DBManager(string ipAddress = "localhost", string User = "root", string pw = "", string dbName = "mydb")
+    public DBManager(DBConnectionInfo connectionInfo)
     {
         strConn = new MySqlConnectionStringBuilder
         {
-            Server = ipAddress,
-            UserID = User,
-            Password = pw,
-            Database = dbName,
+            Server = connectionInfo.ipAddress,
+            UserID = connectionInfo.user,
+            Password = connectionInfo.password,
+            Database = connectionInfo.dbName,
             CharacterSet = "utf8",
             SslMode = MySqlSslMode.None
         }.ToString();
