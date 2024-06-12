@@ -8,7 +8,6 @@ using UnityEngine.UI;
 [RequireComponent(typeof(MeshRenderer))]
 public class Player : Controller
 {
-    Vehicle vehicle;
     Vector3 translation;
     Vector3 lastMoveDirection = Vector3.forward; // ������ �̵� ������ ������ ����
 

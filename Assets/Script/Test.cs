@@ -1,58 +1,68 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Unity.VisualScripting;
+using UnityEditor.Rendering;
 using UnityEngine;
 
 public class Test : Controller
 {
     Vector3 translation;
-    CapsuleCollider collier;
+    CapsuleCollider collider;
 
     private void Start()
     {
-        collier = GetComponent<CapsuleCollider>();
+        collider = GetComponent<CapsuleCollider>();
+        meshRenderer = GetComponent<MeshRenderer>();
+        rigidbody = GetComponent<Rigidbody>();
+        //rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
         isride = false;
         HP_image = null;
+        vehicle = null;
     }
+
     public override void Move()
     {
         float horizontalMove = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
-        float speed = 10;
+        float speed = 5;
 
         translation = new Vector3(horizontalMove, 0, vertical);
+        translation *= speed * Time.fixedDeltaTime;
+        //translation *= speed * Time.deltaTime;
+        rigidbody.MovePosition(rigidbody.position + translation);
 
-        translation *= speed * Time.deltaTime;
-        transform.Translate(translation, Space.World);
     }
-    IEnumerator ClickButton(Vehicle item)
+
+
+    IEnumerator ClickButton(Vehicle item = null)
     {
         switch (isride)
         {
             case true: // 차에서 내릴때
                 yield return null;
-                item.CheckRide(false);
                 transform.SetParent(null);
-                transform.position = item.transform.position + (Vector3.right * 3);
+                transform.position = vehicle.transform.position + (Vector3.right * 3);
                 isride = false;
+                vehicle = null;
+                SetColliderEnabled(true);
                 break;
             case false:
                 if (!item) yield break; // 차에서 탑승할때
                 Debug.Log("ClickButton");
                 yield return new WaitForSeconds(3f);
                 isride = true;
-                item.CheckRide(true);
-                gameObject.SetActive(false);
-                //transform.SetParent(item.gameObject.transform);
+                vehicle = item;
+                transform.SetParent(vehicle.gameObject.transform);
+                SetColliderEnabled(false);
                 break;
         }
         yield break;
     }
 
 
-    protected override IEnumerator PushRideButton(Controller item) => base.PushRideButton(item);
     private void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag("Vehicle"))
@@ -61,18 +71,27 @@ public class Test : Controller
                 StartCoroutine(ClickButton(collision.gameObject.GetComponent<Vehicle>()));
         }
     }
-    private void Update()
+
+    private void FixedUpdate()
     {
-        Move();
-    }
-    public void SetColliderEnabled(bool check)
-    {
-        collier.enabled = check;
-        meshRenderer.enabled = check;
+        switch (vehicle == null)
+        {
+            case false:
+                vehicle.Move();
+                transform.localPosition = Vector3.zero;
+                transform.localRotation = Quaternion.Euler(Vector3.zero);
+                if (Input.GetKeyDown(KeyCode.E))
+                    StartCoroutine(ClickButton());
+                break;
+            case true:
+                Move();
+                break;
+        }
     }
 
-    public void IsRiderRide(bool check)
+    public void SetColliderEnabled(bool check)
     {
-        throw new System.NotImplementedException();
+        collider.isTrigger = !check;
+        meshRenderer.enabled = check;
     }
 }

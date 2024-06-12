@@ -16,21 +16,22 @@ public class Vehicle : Controller
         isride = false;
     }
 
-    public void CheckRide(bool check) => isride = check;
+    //public void CheckRide(bool check) => isride = check;
 
-    private void Update()
-    {
-        if (isride)
-            Move();
-    }
+    //private void Update()
+    //{
+    //    if (isride)
+    //        Move();
+    //}
 
     public override void Move()
     {
         wheelColliders[0].steerAngle = wheelColliders[1].steerAngle = Input.GetAxis("Horizontal") * 20f;
-        for(int i = 0; i <  wheelColliders.Length; i++)
-            wheelColliders[i].motorTorque = -1 * Input.GetAxis("Vertical") * (2000f * 0.25f);
-    }
+        for (int i = 0; i < wheelColliders.Length; i++)
+        {
+            wheelColliders[i].motorTorque = -1 * (Input.GetAxis("Vertical") * 10000f);
+            Debug.Log("motorTorque : " + wheelColliders[i].motorTorque);
+        }
 
-    
-    
+    }
 }
