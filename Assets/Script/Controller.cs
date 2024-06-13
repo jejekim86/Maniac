@@ -12,7 +12,6 @@ public abstract class Controller : MonoBehaviour
     protected float maxHp; 
     [SerializeField] protected Image HP_image;
     public abstract void Move();
-    protected MeshRenderer meshRenderer;
 
     protected new Rigidbody rigidbody;
 

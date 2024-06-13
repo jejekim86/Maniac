@@ -29,18 +29,18 @@ public class Test : Controller
 
     }
 
-   
-
     IEnumerator ClickButton(Vehicle item = null)
     {
         switch (vehicle != null)
         {
             case true: // 차에서 내릴때
                 yield return null;
+                rigidbody.constraints = RigidbodyConstraints.None;
+                Debug.Log("rigidbody.constraints");
                 transform.SetParent(null);
                 transform.position = vehicle.transform.position + (Vector3.right * 3);
                 vehicle = null;
-                SetColliderEnabled(true);
+                TestSetColliderEnabled(true);
                 break;
             case false:
                 if (!item) yield break; // 차에서 탑승할때
@@ -48,7 +48,8 @@ public class Test : Controller
                 yield return new WaitForSeconds(3f);
                 vehicle = item;
                 transform.SetParent(vehicle.gameObject.transform);
-                SetColliderEnabled(false);
+                TestSetColliderEnabled(false);
+                rigidbody.constraints = RigidbodyConstraints.FreezeAll;
                 break;
         }
         yield break;
@@ -81,7 +82,7 @@ public class Test : Controller
         }
     }
 
-    public void SetColliderEnabled(bool check)
+    public void TestSetColliderEnabled(bool check)
     {
         collider.isTrigger = !check;
         meshRenderer.enabled = check;
