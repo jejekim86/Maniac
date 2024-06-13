@@ -5,18 +5,41 @@ using UnityEngine.UI;
 
 public class SkillManager : MonoBehaviour
 {
-    [SerializeField] private DBManager dbManager = new DBManager();
+    static DBConnectionInfo dBConnectionInfo = new DBConnectionInfo
+    {
+        ipAddress = "127.0.0.1",
+        user = "root",
+        password = "",
+        dbName = "mydb"
+    };
+
+    [SerializeField] private DBManager dbManager = new DBManager(dBConnectionInfo);
     [SerializeField] private GameObject skillTextPrefab;
     [SerializeField] private GameObject skillButtonPrefab;
     [SerializeField] private Transform skillTextContainer;
     [SerializeField] private Transform skillButtonContainer;
+    [SerializeField] private Text playerMoney;
 
+    private int playerId = 1; // 실제 사용자 ID에 따라 동적으로 설정
+    private int currentMoney;
     private List<SkillDataStruct> skills;
     private Dictionary<string, GameObject> skillInfoPanels = new Dictionary<string, GameObject>();
 
     void Start()
     {
+        LoadPlayerMoney();
         LoadSkills();
+    }
+
+    void LoadPlayerMoney()
+    {
+        currentMoney = dbManager.GetMoney(playerId);
+        UpdatePlayerMoneyUI();
+    }
+
+    void UpdatePlayerMoneyUI()
+    {
+        playerMoney.text = currentMoney.ToString();
     }
 
     void LoadSkills()
@@ -42,7 +65,7 @@ public class SkillManager : MonoBehaviour
 
             // 버튼 요소 접근 및 스킬 이름 전달
             Button upgradeButton = skillButton.transform.GetChild(0).GetComponent<Button>();
-            string skillName = skill.skillName; // 반드시 로컬 변수 사용 -> 왜...?
+            string skillName = skill.skillName; // 반드시 로컬 변수 사용 -> 왜...? (참조 캡처 문제 방지)
             upgradeButton.onClick.AddListener(() => UpgradeSkill(skillName));
 
             // 이미지 설정
@@ -102,16 +125,25 @@ public class SkillManager : MonoBehaviour
 
     void UpgradeSkill(string skillName)
     {
-        int userId = 1; // 실제 사용자 ID에 따라 동적으로 설정되어야 합니다
-        bool success = dbManager.UpdateSkillLevelData(skillName, 1, userId);
+        int upgradeCost = 100; // 스킬 업그레이드 비용 (예시로 설정)
 
-        if (success)
+        if (currentMoney >= upgradeCost)
         {
-            Debug.Log("스킬 업그레이드에 성공했습니다.");
+            bool success = dbManager.UpdateSkillLevelData(skillName, 1, playerId);
+            if (success)
+            {
+                currentMoney -= upgradeCost;
+                UpdatePlayerMoneyUI();
+                Debug.Log($"스킬 {skillName} 업그레이드에 성공했습니다.");
+            }
+            else
+            {
+                Debug.LogError($"스킬 {skillName} 업그레이드에 실패했습니다.");
+            }
         }
         else
         {
-            Debug.LogError("스킬 업그레이드에 실패했습니다.");
+            Debug.LogError("돈이 부족합니다.");
         }
     }
 }
