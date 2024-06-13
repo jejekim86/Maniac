@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Unity.Burst.CompilerServices;
 using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
@@ -126,15 +127,8 @@ public class Player : Controller
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
-        {
             transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
-        }
 
-        
-    }
-
-    public void Attack()
-    {
         if (Input.GetMouseButton(1))
         {
             if (meleeWeapon.Attack())
@@ -145,12 +139,13 @@ public class Player : Controller
             }
         }
 
+    }
+
+    public void LongShootAttack()
+    {
         if (Input.GetMouseButton(0))
         {
-            if (longRangeWeapon == null)
-            {
-                return;
-            }
+            if (longRangeWeapon == null) return;
             if (longRangeWeapon.Attack())
             {
                 StartCoroutine(UpdateCooldownSlider(coolTime_Gun, longRangeWeapon.GetReloadTime()));
@@ -173,6 +168,7 @@ public class Player : Controller
         slider.gameObject.SetActive(false);
         canDash = true; // �뽬 ��ٿ� ������ �뽬 ����
     }
+    
 
     private void OnCollisionStay(Collision collision)
     {
@@ -199,7 +195,7 @@ public class Player : Controller
                     StartCoroutine(ClickButton());
                 break;
         }
-        Attack();
+        LongShootAttack();
     }
 
     private void Update()
