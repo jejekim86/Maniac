@@ -15,21 +15,6 @@ public class Test : Controller
         collider = GetComponent<CapsuleCollider>();
     }
 
-    private void FixedUpdate()
-    {
-        switch (vehicle)
-        {
-            case null:
-                Move();
-                break;
-            default:
-                vehicle.Move();
-                break;
-        }
-    }
-
-    
-
     public override void Move()
     {
         float horizontalMove = Input.GetAxisRaw("Horizontal");
@@ -48,13 +33,12 @@ public class Test : Controller
 
     IEnumerator ClickButton(Vehicle item = null)
     {
-        switch (isride)
+        switch (vehicle != null)
         {
             case true: // 차에서 내릴때
                 yield return null;
                 transform.SetParent(null);
                 transform.position = vehicle.transform.position + (Vector3.right * 3);
-                isride = false;
                 vehicle = null;
                 SetColliderEnabled(true);
                 break;
@@ -62,7 +46,6 @@ public class Test : Controller
                 if (!item) yield break; // 차에서 탑승할때
                 Debug.Log("ClickButton");
                 yield return new WaitForSeconds(3f);
-                isride = true;
                 vehicle = item;
                 transform.SetParent(vehicle.gameObject.transform);
                 SetColliderEnabled(false);
