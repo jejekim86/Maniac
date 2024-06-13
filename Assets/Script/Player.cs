@@ -8,7 +8,6 @@ using UnityEngine.UI;
 [RequireComponent(typeof(MeshRenderer))]
 public class Player : Controller
 {
-    Vehicle vehicle;
     Vector3 translation;
     Vector3 lastMoveDirection = Vector3.forward; // ������ �̵� ������ ������ ����
 
@@ -30,7 +29,7 @@ public class Player : Controller
     private float dashPower = 5000f;
     private float dashCooldown = 2f;
     private float dashDuration = 0.5f; // �뽬 ���� �ð�
-    private bool isride;
+    //private bool isride;
     private bool canDash;
     private bool isDashing;
 
@@ -198,7 +197,6 @@ public class Player : Controller
                 break;
         }
 
-        // ������ �������
         AttractItems();
     }
 
