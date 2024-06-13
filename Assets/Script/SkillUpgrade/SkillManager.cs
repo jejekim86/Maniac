@@ -5,7 +5,15 @@ using UnityEngine.UI;
 
 public class SkillManager : MonoBehaviour
 {
-    [SerializeField] private DBManager dbManager = new DBManager();
+    static DBConnectionInfo dBConnectionInfo = new DBConnectionInfo
+    {
+        ipAddress = "127.0.0.1",
+        user = "root",
+        password = "",
+        dbName = "mydb"
+    };
+
+    [SerializeField] private DBManager dbManager = new DBManager(dBConnectionInfo);
     [SerializeField] private GameObject skillTextPrefab;
     [SerializeField] private GameObject skillButtonPrefab;
     [SerializeField] private Transform skillTextContainer;
