@@ -7,7 +7,7 @@ public class CameraMove : MonoBehaviour
     private Transform playerTransform;
     private void Start()
     {
-        playerTransform = GameObject.FindWithTag("Vehicle").GetComponent<Transform>();
+        playerTransform = GameObject.FindWithTag("Player").GetComponent<Transform>();
     }
     void Update()
     {

@@ -1,24 +1,24 @@
 using System.Collections;
-using UnityEditor.Rendering.Universal;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 [RequireComponent(typeof(Rigidbody))]
+
 public abstract class Controller : MonoBehaviour
 {
-
-    protected bool isride;
     protected float walkSpeed;
-    protected float maxHp;
+    protected float maxHp; 
     [SerializeField] protected Image HP_image;
+    public abstract void Move();
     protected MeshRenderer meshRenderer;
+
     protected new Rigidbody rigidbody;
-    protected Vehicle vehicle;
 
     protected float curHp; // 현재 체력
-    protected float RideTime = 3f;
-    public abstract void Move();
+
+
     public virtual void AddHp(float heal)
     {
         curHp += heal;
@@ -27,7 +27,6 @@ public abstract class Controller : MonoBehaviour
 
         HP_image.fillAmount = curHp / maxHp;
     }
-
 
     public virtual void GetDamage(float damage)
     {
