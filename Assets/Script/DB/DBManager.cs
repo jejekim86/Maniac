@@ -156,7 +156,7 @@ public class DBManager
     }
 
 
-    public bool AddMoney(int money, int userID = 1)
+    public bool SetMoney(int money, int userID = 1)
     {
         if (SqlConn == null)
         {
@@ -165,13 +165,6 @@ public class DBManager
         }
         try
         {
-            int getMoney = GetMoney(userID);
-            if (getMoney < 0)
-                return false;
-            money += getMoney;
-            if (money < 0)
-                return false;
-
             if (SqlConn.State == System.Data.ConnectionState.Closed)
             {
                 SqlConn.Open();   // DB ¿¬°á
