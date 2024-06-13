@@ -197,7 +197,6 @@ public class Player : Controller
                 break;
         }
 
-        // ������ �������
         AttractItems();
     }
 

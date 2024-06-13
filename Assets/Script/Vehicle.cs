@@ -29,8 +29,14 @@ public class Vehicle : Controller
         wheelColliders[0].steerAngle = wheelColliders[1].steerAngle = Input.GetAxis("Horizontal") * 20f;
         for (int i = 0; i < wheelColliders.Length; i++)
         {
-            wheelColliders[i].motorTorque = -1 * (Input.GetAxis("Vertical") * 10000f);
-            Debug.Log("motorTorque : " + wheelColliders[i].motorTorque);
+            float torque = -1 * (Input.GetAxis("Vertical") * 20000f);
+            if (torque != 0)
+            {
+                wheelColliders[i].motorTorque = torque;
+                Debug.Log("motorTorque : " + wheelColliders[i].motorTorque);
+            }
+            else
+                wheelColliders[i].brakeTorque = torque;
         }
 
     }

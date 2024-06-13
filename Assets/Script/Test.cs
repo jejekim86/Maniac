@@ -5,12 +5,14 @@ using System.ComponentModel;
 using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Test : Controller
 {
     Vector3 translation;
     CapsuleCollider collider;
-
+    [SerializeField] float movespeed;
+    [SerializeField] Weapon longRangeWeapon;
     private void Start()
     {
         collider = GetComponent<CapsuleCollider>();
@@ -27,7 +29,7 @@ public class Test : Controller
         float horizontalMove = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
-        float speed = 5;
+        float speed = movespeed;
 
         translation = new Vector3(horizontalMove, 0, vertical);
         translation *= speed * Time.fixedDeltaTime;
@@ -68,9 +70,13 @@ public class Test : Controller
         if (collision.gameObject.CompareTag("Vehicle"))
         {
             if (Input.GetKeyDown(KeyCode.E))
+            {
                 StartCoroutine(ClickButton(collision.gameObject.GetComponent<Vehicle>()));
+            }
         }
     }
+
+
 
     private void FixedUpdate()
     {
@@ -87,6 +93,24 @@ public class Test : Controller
                 Move();
                 break;
         }
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            if (longRangeWeapon) return;
+            if (longRangeWeapon.Attack())
+                Debug.Log("Attack");
+
+
+            Debug.Log("Input.GetMouseButton(0)");
+        }
+    }
+
+    public void TestSetLongRangeWeapon(Weapon weapon)
+    {
+        longRangeWeapon = weapon;
     }
 
     public void SetColliderEnabled(bool check)
