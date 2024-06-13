@@ -2,19 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/*public class Test : TestController
+public class Test : Controller
 {
     MeshRenderer meshRenderer;
     CapsuleCollider collider;
-
+    Vehicle vehicle;
+    Vector3 translation;
     private void Start()
     {
-        isride = false;
+        rigidbody = GetComponent<Rigidbody>();
         meshRenderer = GetComponent<MeshRenderer>();
         collider = GetComponent<CapsuleCollider>();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         switch (vehicle)
         {
@@ -23,7 +24,6 @@ using UnityEngine;
                 break;
             default:
                 vehicle.Move();
-                Interact();
                 break;
         }
     }

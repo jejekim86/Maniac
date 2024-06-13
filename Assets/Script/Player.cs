@@ -182,11 +182,6 @@ public class Player : Controller
 
     private void FixedUpdate()
     {
-        Move();
-    }
-
-    private void Update()
-    {
         switch (vehicle)
         {
             case null:
@@ -197,8 +192,10 @@ public class Player : Controller
                 Interact();
                 break;
         }
+    }
 
-        // ������ �������
+    private void Update()
+    {
         AttractItems();
     }
 
@@ -266,7 +263,6 @@ public class Player : Controller
 
     public void SetColliderEnabled(bool check)
     {
-        GetComponent<Collider>().enabled = check;
         meshRenderer.enabled = check;
     }
 }
