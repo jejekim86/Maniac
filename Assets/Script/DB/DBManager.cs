@@ -212,6 +212,7 @@ public class DBManager
                 skillData.skillName = reader.GetString(0);
                 skillData.skillInfo = reader.GetString(1);
                 skillData.increase = reader.GetInt32(2);
+                skillData.price = reader.GetInt32(3);
                 skillDataList.Add(skillData);
             }
 
