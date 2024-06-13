@@ -51,24 +51,24 @@ public sealed class GameManager : MonoBehaviour
 
     private void Start()
     {
-        //maxTime = 300f;
-        //
-        //if (timerText)
-        //{
-        //    StartCoroutine(StartTimer());
-        //}
-        //if (backButton)
-        //{
-        //    backButton.onClick.AddListener(StartButtonOnClick);
-        //}
-        //if (backButton)
-        //{
-        //    backButton.onClick.AddListener(BackButtonOnClick);
-        //}
-        //if (checkButton)
-        //{
-        //    checkButton.onClick.AddListener(CheckButtonOnClick);
-        //}
+        maxTime = 300f;
+        
+        if (timerText)
+        {
+            StartCoroutine(StartTimer());
+        }
+        if (backButton)
+        {
+            backButton.onClick.AddListener(StartButtonOnClick);
+        }
+        if (backButton)
+        {
+            backButton.onClick.AddListener(BackButtonOnClick);
+        }
+        if (checkButton)
+        {
+            checkButton.onClick.AddListener(CheckButtonOnClick);
+        }
     }
 
     IEnumerator StartTimer()
