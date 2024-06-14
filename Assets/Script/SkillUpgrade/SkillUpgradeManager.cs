@@ -27,6 +27,7 @@ public class SkillUpgradeManager : MonoBehaviour
     private int currentMoney;
     private List<SkillDataStruct> skills;
     private Dictionary<string, GameObject> skillInfoPanels = new Dictionary<string, GameObject>();
+    private Dictionary<string, Text> skillPriceTexts = new Dictionary<string, Text>();
     private Color PriceColor = new Color32(104, 204, 128, 255); // #68CC80
 
     void Start()
@@ -67,7 +68,6 @@ public class SkillUpgradeManager : MonoBehaviour
         {
             var skill = skills[i];
 
-
             GameObject skillText = Instantiate(skillTextPrefab, skillTextContainer);
             skillText.SetActive(false); // 초기에는 비활성화
 
@@ -98,7 +98,7 @@ public class SkillUpgradeManager : MonoBehaviour
             }
 
             // 버튼 요소 접근 및 스킬 이름 전달
-            Button upgradeButton = skillButton.transform.GetChild(0).GetComponent<Button>();            
+            Button upgradeButton = skillButton.transform.GetChild(0).GetComponent<Button>();
             Text skillPriceText = skillButton.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>();
             skillPriceText.text = skill.price.ToString();
             string skillName = skill.skillName; // 반드시 로컬 변수 사용 -> 왜...? (참조 캡처 문제 방지)
@@ -109,6 +109,7 @@ public class SkillUpgradeManager : MonoBehaviour
             skillRefund.gameObject.SetActive(skillLevel > 0);
 
             // 초기 가격 색상 설정
+            skillPriceTexts[skill.skillName] = skillPriceText;
             if (currentMoney < skill.price)
             {
                 skillPriceText.color = Color.red;
@@ -211,6 +212,8 @@ public class SkillUpgradeManager : MonoBehaviour
                 Image skillRefund = skillWindow.transform.GetChild(0).GetChild(6).GetComponent<Image>();
                 skillRefund.gameObject.SetActive(true);
 
+                // 모든 스킬 가격 업데이트
+                UpdateSkillPrices();
 
                 Debug.Log($"스킬 {skillName} 업그레이드에 성공했습니다.");
             }
@@ -261,6 +264,9 @@ public class SkillUpgradeManager : MonoBehaviour
                     skillRefund.gameObject.SetActive(false);
                 }
 
+                // 모든 스킬 가격 업데이트
+                UpdateSkillPrices();
+
                 Debug.Log($"스킬 {skillName} 환불에 성공했습니다.");
             }
             else
@@ -271,6 +277,24 @@ public class SkillUpgradeManager : MonoBehaviour
         else
         {
             Debug.Log($"스킬 {skillName}은(는) 더 이상 환불할 수 없습니다.");
+        }
+    }
+
+    void UpdateSkillPrices()
+    {
+        foreach (var skill in skills)
+        {
+            if (skillPriceTexts.TryGetValue(skill.skillName, out Text skillPriceText))
+            {
+                if (currentMoney < skill.price)
+                {
+                    skillPriceText.color = Color.red;
+                }
+                else
+                {
+                    skillPriceText.color = PriceColor;
+                }
+            }
         }
     }
 }

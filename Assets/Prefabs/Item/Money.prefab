@@ -120,3 +120,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 7820543042698823372}
   itemType: Money
+  rotationSpeed: 100

@@ -1300,6 +1300,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 56506646}
   itemType: HP
+  rotationSpeed: 100
 --- !u!65 &56506649
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2125,6 +2126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 80738498}
   itemType: HP
+  rotationSpeed: 100
 --- !u!65 &80738501
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4961,6 +4963,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 166008867}
   itemType: HP
+  rotationSpeed: 100
 --- !u!65 &166008870
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7317,6 +7320,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 236745243}
   itemType: Money
+  rotationSpeed: 100
 --- !u!65 &236745246
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13132,6 +13136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 424170208}
   itemType: HP
+  rotationSpeed: 100
 --- !u!65 &424170211
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13614,6 +13619,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 435077331}
   itemType: Money
+  rotationSpeed: 100
 --- !u!65 &435077334
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -14140,6 +14146,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 455876432}
   itemType: Money
+  rotationSpeed: 100
 --- !u!65 &455876435
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -14617,6 +14624,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 462813116}
   itemType: Money
+  rotationSpeed: 100
 --- !u!65 &462813119
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15638,6 +15646,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 486558242}
   itemType: HP
+  rotationSpeed: 100
 --- !u!65 &486558245
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -19840,6 +19849,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 594682367}
   itemType: Money
+  rotationSpeed: 100
 --- !u!65 &594682370
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -20827,6 +20837,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 616181652}
   itemType: HP
+  rotationSpeed: 100
 --- !u!65 &616181655
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -21712,6 +21723,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 647329702}
   itemType: Money
+  rotationSpeed: 100
 --- !u!65 &647329705
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -23183,7 +23195,7 @@ Transform:
   m_GameObject: {fileID: 700614860}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -25113,6 +25125,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 771231611}
   itemType: Money
+  rotationSpeed: 100
 --- !u!65 &771231614
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -33866,6 +33879,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 1015377313}
   itemType: HP
+  rotationSpeed: 100
 --- !u!65 &1015377316
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -34257,6 +34271,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 1023150990}
   itemType: HP
+  rotationSpeed: 100
 --- !u!65 &1023150993
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -34638,6 +34653,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 1032926843}
   itemType: Money
+  rotationSpeed: 100
 --- !u!65 &1032926846
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -36945,6 +36961,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 1098350850}
   itemType: Money
+  rotationSpeed: 100
 --- !u!65 &1098350853
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -41643,6 +41660,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 1231902370}
   itemType: HP
+  rotationSpeed: 100
 --- !u!65 &1231902373
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -42353,6 +42371,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 1247537388}
   itemType: Money
+  rotationSpeed: 100
 --- !u!65 &1247537391
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -45058,6 +45077,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 1338202535}
   itemType: HP
+  rotationSpeed: 100
 --- !u!65 &1338202538
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -45620,6 +45640,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 1349519224}
   itemType: Money
+  rotationSpeed: 100
 --- !u!65 &1349519227
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -49484,6 +49505,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 1482338223}
   itemType: HP
+  rotationSpeed: 100
 --- !u!65 &1482338226
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -57044,6 +57066,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 1693197021}
   itemType: Money
+  rotationSpeed: 100
 --- !u!65 &1693197024
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -57369,6 +57392,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 1702267403}
   itemType: Money
+  rotationSpeed: 100
 --- !u!65 &1702267406
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -58591,6 +58615,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 1727182806}
   itemType: HP
+  rotationSpeed: 100
 --- !u!65 &1727182809
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -64769,7 +64794,7 @@ MonoBehaviour:
   distanceText: {fileID: 1530248328}
   arrowImage: {fileID: 1406653082}
   lerpSpeed: 5
-  screenEdgeBuffer: 200
+  screenEdgeBuffer: 500
 --- !u!1001 &1871275892
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -69417,6 +69442,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 1974543714}
   itemType: Money
+  rotationSpeed: 100
 --- !u!65 &1974543717
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -69808,6 +69834,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 1986883686}
   itemType: HP
+  rotationSpeed: 100
 --- !u!65 &1986883689
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -70655,6 +70682,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 2014594433}
   itemType: Money
+  rotationSpeed: 100
 --- !u!65 &2014594436
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -73213,6 +73241,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 2065776175}
   itemType: HP
+  rotationSpeed: 100
 --- !u!65 &2065776178
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -73792,6 +73821,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 2072057472}
   itemType: HP
+  rotationSpeed: 100
 --- !u!65 &2072057475
 BoxCollider:
   m_ObjectHideFlags: 0
