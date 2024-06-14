@@ -940,7 +940,7 @@ MonoBehaviour:
     type: 3}
   skillTextContainer: {fileID: 1320070297}
   skillButtonContainer: {fileID: 1877632551163086063}
-  dashPrefab: {fileID: 1048914290625732531, guid: e5868711e58b5ca448f171df9fde38ac,
+  dashPrefab: {fileID: 4794285500832068037, guid: dbde2dae9aa76254ebb3ff875a4e8638,
     type: 3}
   dashContainer: {fileID: 1742672029}
   playerMoney: {fileID: 796009706}
