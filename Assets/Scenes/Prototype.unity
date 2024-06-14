@@ -64769,7 +64769,7 @@ MonoBehaviour:
   distanceText: {fileID: 1530248328}
   arrowImage: {fileID: 1406653082}
   lerpSpeed: 5
-  screenEdgeBuffer: 200
+  screenEdgeBuffer: 500
 --- !u!1001 &1871275892
 PrefabInstance:
   m_ObjectHideFlags: 0

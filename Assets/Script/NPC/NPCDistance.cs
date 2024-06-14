@@ -29,16 +29,6 @@ public class NPCDistance : MonoBehaviour
             // NPC의 화면 위치 계산
             Vector3 npcScreenPos = mainCamera.WorldToScreenPoint(npc.transform.position);
 
-            // NPC가 화면 밖에 있는지 확인
-            bool isOffScreen = npcScreenPos.z < 0 || npcScreenPos.x < 0 || npcScreenPos.x > Screen.width || npcScreenPos.y < 0 || npcScreenPos.y > Screen.height;
-
-            // NPC가 화면 밖에 있으면 화면 경계로 위치 고정
-            if (isOffScreen)
-            {
-                npcScreenPos.x = Mathf.Clamp(npcScreenPos.x, screenEdgeBuffer, Screen.width - screenEdgeBuffer);
-                npcScreenPos.y = Mathf.Clamp(npcScreenPos.y, screenEdgeBuffer, Screen.height - screenEdgeBuffer);
-            }
-
             // 스크린 중심에서 NPC로의 방향 계산
             Vector3 screenCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
             Vector3 direction = (npcScreenPos - screenCenter).normalized;
