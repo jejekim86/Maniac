@@ -134,7 +134,7 @@ public class DBManager
         {
             SqlConn.Open();   // DB 연결
 
-            cmd.CommandText = $"Select Money From Users_Charactor Where User_Id = {userID} and Charactor_Name = {charactor}";
+            cmd.CommandText = $"Select Money From Users_Charactor Where User_Id = {userID} and Charactor_Name = '{charactor}'";
             MySqlDataReader reader = cmd.ExecuteReader();
 
             int money = -1;
@@ -170,7 +170,7 @@ public class DBManager
                 SqlConn.Open();   // DB 연결
             }
 
-            cmd.CommandText = $"Update Users_Charactor set money = {money} Where User_Id = {userID} AND Charactor_Name = {charactor}";
+            cmd.CommandText = $"Update Users_Charactor set money = {money} Where User_Id = {userID} AND Charactor_Name = '{charactor}'";
             int result = cmd.ExecuteNonQuery();
 
             if (result < 0)
@@ -398,7 +398,7 @@ public class DBManager
         {
             SqlConn.Open();   //DB 연결
 
-            cmd.CommandText = "Select Weapon_Name, Weapon_Info, Price from Weapon";
+            cmd.CommandText = $"Select Weapon_Name, Weapon_Info, Price from Weapon Where Charactor_Name = '{charactor}'";
             MySqlDataReader reader = cmd.ExecuteReader();
 
             List<WeaponDataStruct> weaponDataList = new List<WeaponDataStruct>();
@@ -455,6 +455,33 @@ public class DBManager
         }
     }
 
+    public bool BuyWeapon(string weaponName, string charactor, int userID = 1)
+    {
+        if (SqlConn == null)
+        {
+            Debug.LogError("BuyWeapon 메서드에서 SqlConn이 null입니다.");
+            return false;
+        }
+
+        try
+        {
+            SqlConn.Open();   // DB 연결
+
+            cmd.CommandText = $"Update PurchasedWeapon Set WeaponPurchase = 1 Where Weapon_Name = '{weaponName}' AND User_Id = {userID} AND Charactor_Name = '{charactor}'";
+            int result = cmd.ExecuteNonQuery();
+
+            SqlConn.Close();
+
+            return result > 0;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("무기 구매 중 예외 발생: " + e.ToString());
+            SqlConn.Close();
+            return false;
+        }
+    }
+
     public int WeaponIsBuy(string weaponName, string charactor, int userID = 1)
     {
         if (SqlConn == null)
@@ -466,7 +493,7 @@ public class DBManager
         {
             SqlConn.Open();   // DB 연결
 
-            cmd.CommandText = $"Select WeaponPurchase From PurchasedWeapon Where WeaponName = {weaponName} AND User_Id = {userID} AND Charactor_Name = {charactor}";
+            cmd.CommandText = $"Select WeaponPurchase From PurchasedWeapon Where Weapon_Name = '{weaponName}' AND User_Id = {userID} AND Charactor_Name = '{charactor}'";
             MySqlDataReader reader = cmd.ExecuteReader();
 
             int isBuy = -1;

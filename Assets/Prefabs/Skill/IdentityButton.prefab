@@ -180,7 +180,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3468218404363415886}
   m_Layer: 5
-  m_Name: DashButton
+  m_Name: IdentityButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
