@@ -49,9 +49,11 @@ public class Player : Controller
         collider = GetComponent<CapsuleCollider>();
         walkSpeed = 10;
         money = 1000;
-        maxHp = 10;
+        maxHp = 10 + 10 * GameManager.Instance.upgradeData.health + 10;
         curHp = maxHp;
         playerimage.fillAmount = maxHp;
+
+        itemRange = itemRange + itemRange * GameManager.Instance.upgradeData.magnetDistance;
     }
 
     public void SetLongRangeWeapon(Weapon weapon)
@@ -99,7 +101,7 @@ public class Player : Controller
         float horizontalMove = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
-        float speed = walkSpeed;
+        float speed = walkSpeed + walkSpeed * GameManager.Instance.upgradeData.moveSpeed + walkSpeed * GameManager.Instance.ingameUpgradeData.moveSpeed; // 업그레이드 적용
         float animSpeed = walkAnimationSpeed;
 
         translation = new Vector3(horizontalMove, 0, vertical);
@@ -168,7 +170,7 @@ public class Player : Controller
         slider.gameObject.SetActive(false);
         canDash = true; // �뽬 ��ٿ� ������ �뽬 ����
     }
-    
+
 
     private void OnCollisionStay(Collision collision)
     {

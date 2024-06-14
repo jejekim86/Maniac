@@ -24,6 +24,9 @@ public class IngameUpgradeButton : MonoBehaviour, IPointerEnterHandler
 
     public void OnClickExit()
     {
+        // 게임 실행
+        Time.timeScale = 1f;
+        // 패널 닫기
         upgaradePanel.SetActive(false);
     }
 
@@ -31,6 +34,10 @@ public class IngameUpgradeButton : MonoBehaviour, IPointerEnterHandler
     {
         // 업그레이드 로직
 
+
+
+        // 게임 실행
+        Time.timeScale = 1f;
         // 패널 닫기
         upgaradePanel.SetActive(false);
     }
