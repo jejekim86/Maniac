@@ -123,7 +123,7 @@ public class DBManager
     /// 데이터 베이스에서 돈을 가져옴
     /// </summary>
     /// <returns></returns>
-    public int GetMoney(int userID = 1)
+    public int GetMoney(string charactor, int userID = 1)
     {
         if (SqlConn == null)
         {
@@ -134,7 +134,7 @@ public class DBManager
         {
             SqlConn.Open();   // DB 연결
 
-            cmd.CommandText = $"Select Money From User Where User_Id = {userID};";
+            cmd.CommandText = $"Select Money From Users_Charactor Where User_Id = {userID} and Charactor_Name = {charactor}";
             MySqlDataReader reader = cmd.ExecuteReader();
 
             int money = -1;
@@ -156,11 +156,11 @@ public class DBManager
     }
 
 
-    public bool SetMoney(int money, int userID = 1)
+    public bool SetMoney(int money, string charactor, int userID = 1)
     {
         if (SqlConn == null)
         {
-            Debug.LogError("UpdateGold 메서드에서 SqlConn이 null입니다.");
+            Debug.LogError("SetMoney 메서드에서 SqlConn이 null입니다.");
             return false;
         }
         try
@@ -170,7 +170,7 @@ public class DBManager
                 SqlConn.Open();   // DB 연결
             }
 
-            cmd.CommandText = $"Update User set money = {money} Where User_Id = {userID};";
+            cmd.CommandText = $"Update Users_Charactor set money = {money} Where User_Id = {userID} AND Charactor_Name = {charactor}";
             int result = cmd.ExecuteNonQuery();
 
             if (result < 0)
@@ -228,7 +228,7 @@ public class DBManager
         }
     }
 
-    public int? GetSkillLevel(string skillName, int userID = 1)
+    public int? GetSkillLevel(string skillName, string charactor,  int userID = 1)
     {
         if (SqlConn == null)
         {
@@ -240,7 +240,7 @@ public class DBManager
         {
             SqlConn.Open();   //DB 연결
 
-            cmd.CommandText = $"Select Level From Upgrade_Skill Where User_Id = {userID} AND Skill_Name = '{skillName}'";
+            cmd.CommandText = $"Select Level From Upgrade_Skill Where User_Id = {userID} AND Skill_Name = '{skillName}' AND Charactor_Name = '{charactor}'";
             MySqlDataReader reader = cmd.ExecuteReader();
 
             if (reader.Read())
@@ -265,8 +265,8 @@ public class DBManager
             return null;
         }
     }
-
-    public bool UpdateSkillLevelData(string skillName, int changeAmount, int userID = 1)
+        
+    public bool UpdateSkillLevelData(string skillName, string charactor, int changeAmount, int userID = 1)
     {
         if (SqlConn == null)
         {
@@ -276,14 +276,14 @@ public class DBManager
 
         try
         {
-            int? nowLevel = GetSkillLevel(skillName);
+            int? nowLevel = GetSkillLevel(skillName, charactor);
 
             if (nowLevel == null || nowLevel < 0)
                 return false;
 
             SqlConn.Open();   //DB 연결
 
-            cmd.CommandText = $"Update Upgrade_Skill Set Level = {nowLevel + changeAmount} Where User_Id = {userID} AND Skill_Name = '{skillName}'";
+            cmd.CommandText = $"Update Upgrade_Skill Set Level = {nowLevel + changeAmount} Where User_Id = {userID} AND Skill_Name = '{skillName}' AND Charactor_Name = '{charactor}'";
             int rowsAffected = cmd.ExecuteNonQuery();
 
             if (rowsAffected > 0)
@@ -304,6 +304,186 @@ public class DBManager
             Debug.LogError("데이터베이스 작업 실패: " + e.ToString());
             SqlConn.Close();  //DB 연결 해제
             return false;
+        }
+    }
+
+    /// <summary>
+    /// 캐릭터 정보 가져오기
+    /// </summary>
+    /// <returns></returns>
+    public List<CharactorData> GetCharactorData()
+    {
+        if (SqlConn == null)
+        {
+            Debug.LogError("GetCharactorData 메서드에서 SqlConn이 null입니다.");
+            return null;
+        }
+        try
+        {
+            SqlConn.Open();   //DB 연결
+
+            cmd.CommandText = "Select Charactor_Name, Move_Speed, Health from Charactor";
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            List<CharactorData> charactorDataList = new List<CharactorData>();
+            CharactorData charactorData;
+            while (reader.Read())
+            {
+                charactorData.name = reader.GetString(0);
+                charactorData.moveSpeed = reader.GetFloat(1);
+                charactorData.health = reader.GetFloat(2);
+                charactorDataList.Add(charactorData);
+            }
+
+            SqlConn.Close();  //DB 연결 해제
+
+            return charactorDataList;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("데이터베이스 작업 실패: " + e.ToString());
+            SqlConn.Close();
+            return null;
+        }
+    }
+
+    public bool GetIdentitySkillData(out SkillDataStruct identity, string charactor)
+    {
+        identity = new SkillDataStruct();
+
+        if (SqlConn == null)
+        {
+            Debug.LogError("GetRecord 메서드에서 SqlConn이 null입니다.");
+            return false;
+        }
+
+        try
+        {
+            SqlConn.Open();   //DB 연결
+
+            cmd.CommandText = $"Select Identityskill_Name, Identityskil_Info, Identityskil_Increase, Identityskil_Price From Charactor Where Charactor_Name = '{charactor}'";
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            if (reader.Read())
+            {
+                identity.skillName = reader.GetString(0);
+                identity.skillInfo = reader.GetString(1);
+                identity.increase = reader.GetInt32(2);
+                identity.price = reader.GetInt32(3);
+
+                SqlConn.Close();  //DB 연결 해제
+                return true;
+            }
+            else
+            {
+                SqlConn.Close();  //DB 연결 해제
+                return false;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("데이터베이스 작업 실패: " + e.ToString());
+            return false;
+        }
+    }
+
+    public List<WeaponData> GetWeaponData(string charactor)
+    {
+        if (SqlConn == null)
+        {
+            Debug.LogError("GetWeaponData 메서드에서 SqlConn이 null입니다.");
+            return null;
+        }
+        try
+        {
+            SqlConn.Open();   //DB 연결
+
+            cmd.CommandText = "Select Weapon_Name, Weapon_Info, Price from Weapon";
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            List<WeaponData> weaponDataList = new List<WeaponData>();
+            WeaponData weapondata;
+            while (reader.Read())
+            {
+                weapondata.name = reader.GetString(0);
+                weapondata.info = reader.GetString(1);
+                weapondata.price = reader.GetInt32(2);
+                weaponDataList.Add(weapondata);
+            }
+
+            SqlConn.Close();  //DB 연결 해제
+
+            return weaponDataList;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("데이터베이스 작업 실패: " + e.ToString());
+            SqlConn.Close();
+            return null;
+        }
+    }
+
+    public int CharatorIsLock(string charactor, int userID = 1)
+    {
+        if (SqlConn == null)
+        {
+            Debug.LogError("CharatorIsLock 메서드에서 SqlConn이 null입니다.");
+            return -1;
+        }
+        try
+        {
+            SqlConn.Open();   // DB 연결
+
+            cmd.CommandText = $"Select Lock From Users_Charactor Where User_Id = {userID} and Charactor_Name = {charactor}";
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            int islock = -1;
+
+            if (reader.Read())
+            {
+                islock = reader.GetInt32(0);
+            }
+
+            SqlConn.Close();
+            return islock;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("예외 발생: " + e.ToString());
+            SqlConn.Close();
+            return -1;
+        }
+    }
+
+    public int WeaponIsBuy(string weaponName, string charactor, int userID = 1)
+    {
+        if (SqlConn == null)
+        {
+            Debug.LogError("WeaponIsBuy 메서드에서 SqlConn이 null입니다.");
+            return -1;
+        }
+        try
+        {
+            SqlConn.Open();   // DB 연결
+
+            cmd.CommandText = $"Select WeaponPurchase From PurchasedWeapon Where WeaponName = {weaponName} AND User_Id = {userID} AND Charactor_Name = {charactor}";
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            int isBuy = -1;
+
+            if (reader.Read())
+            {
+                isBuy = reader.GetInt32(0);
+            }
+
+            SqlConn.Close();
+            return isBuy;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("예외 발생: " + e.ToString());
+            SqlConn.Close();
+            return -1;
         }
     }
 }

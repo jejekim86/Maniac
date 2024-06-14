@@ -10,6 +10,7 @@ public struct SkillDataStruct
 
 public struct HighScore
 {
+    public string charactorName;
     public int userID;
     public int stars;
     public int money;
@@ -22,4 +23,18 @@ public struct DBConnectionInfo
     public string user;
     public string password;
     public string dbName;
+}
+
+public struct CharactorData
+{
+    public string name;
+    public float moveSpeed;
+    public float health;
+}
+
+public struct WeaponData
+{
+    public string name;
+    public string info;
+    public int price;
 }
