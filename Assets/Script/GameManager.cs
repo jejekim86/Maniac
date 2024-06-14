@@ -11,6 +11,28 @@ public sealed class GameManager : MonoBehaviour
     //[SerializeField] UIManager Uimanager;
     //[SerializeField] Datamanager Datamanager;
 
+    public struct UpgradeData
+    {
+        public float gameTime {get; private set;}
+        public float moveSpeed { get; private set; }
+        public int money { get; private set; }
+        public float magnetDistance { get; private set; }
+        public float health { get; private set; }
+        public float vehicleMaxSpeed { get; private set; }
+        public float vehicleRobSpeed { get; private set; }
+        public float damage { get; private set; }
+    }
+
+    public struct IngameUpgradeData
+    {
+        public float moveSpeed { get; private set; }
+        public int money { get; private set; }
+        public float magnetDistance { get; private set; }
+        public float vehicleMaxSpeed { get; private set; }
+        public float vehicleRobSpeed { get; private set; }
+        public float damage { get; private set; }
+    }
+
     [SerializeField] private Button startButton;
     [SerializeField] private Button backButton;
     [SerializeField] private Button checkButton;
@@ -26,7 +48,8 @@ public sealed class GameManager : MonoBehaviour
 
     private static GameManager instance = null;
 
-    public bool inGame = false;
+    public UpgradeData upgradeData { get; private set; }
+    public IngameUpgradeData ingameUpgradeData { get; private set; }
 
     void Awake()
     {
@@ -53,9 +76,7 @@ public sealed class GameManager : MonoBehaviour
 
     private void Start()
     {
-        inGame = true;
-
-        maxTime = 300f;
+        maxTime = 300f - 300f * upgradeData.gameTime;
 
         if (timerText)
         {
@@ -81,31 +102,27 @@ public sealed class GameManager : MonoBehaviour
 
         while (curTime > 0)
         {
-            if (inGame == false)
-                yield return new WaitForSeconds(1);
-            else
+
+            curTime -= 1;
+            minute = (int)curTime / 60;
+            second = (int)curTime % 60;
+            timerText.text = minute.ToString("00") + ":" + second.ToString("00");
+            yield return new WaitForSeconds(1);
+
+            // 10초 마다 이미지를 변경
+            if ((int)curTime % 10 == 0 && Level < images.Length)
             {
-
-                curTime -= 1;
-                minute = (int)curTime / 60;
-                second = (int)curTime % 60;
-                timerText.text = minute.ToString("00") + ":" + second.ToString("00");
-                yield return new WaitForSeconds(1);
-
-                // 10초 마다 이미지를 변경
-                if ((int)curTime % 10 == 0 && Level < images.Length)
-                {
-                    images[Level].gameObject.SetActive(true);
-                    Level++; // 다음 레벨로 진행
-                }
-
-                if (curTime <= 0)
-                {
-                    Debug.Log("생존 성공"); // 결과 창 출력 코드로 변경
-                    curTime = 0;
-                    yield break;
-                }
+                images[Level].gameObject.SetActive(true);
+                Level++; // 다음 레벨로 진행
             }
+
+            if (curTime <= 0)
+            {
+                Debug.Log("생존 성공"); // 결과 창 출력 코드로 변경
+                curTime = 0;
+                yield break;
+            }
+
         }
     }
 
@@ -122,5 +139,10 @@ public sealed class GameManager : MonoBehaviour
     public void CheckButtonOnClick()
     {
         SceneManager.LoadScene("Game", LoadSceneMode.Single);
+    }
+
+    public void SetUpgradeData(UpgradeData data)
+    {
+        upgradeData = data;
     }
 }

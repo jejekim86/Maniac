@@ -12,7 +12,12 @@ public class UpgradePanelManager : MonoBehaviour
 
     [SerializeField] private Image[] buttons = new Image[4];
 
-    List<SkillDataStruct> skillDatas;
+    List<SkillDataStruct> skillDatas = new List<SkillDataStruct>();
+
+    private void Start()
+    {
+        SetData();
+    }
 
     private void OnEnable()
     {
@@ -28,6 +33,20 @@ public class UpgradePanelManager : MonoBehaviour
         myRectTransform.localScale = Vector3.zero;
     }
 
+    void SetData()
+    {
+        SkillDataStruct skillData = new SkillDataStruct
+        {
+            skillName = "회복 상자",
+            skillInfo = "생명력을 일정량 회복한다.",
+            increase = 30,
+            price = 0
+        };
+        skillDatas.Add(skillData);
+        skillDatas.Add(skillData);
+        skillDatas.Add(skillData);
+    }
+
     IEnumerator ShowPanel()
     {
         float timeCount = 0;
@@ -36,7 +55,7 @@ public class UpgradePanelManager : MonoBehaviour
         while (timeCount < 1f)
         {
             myRectTransform.localScale = Vector3.Lerp(myRectTransform.localScale, endScale, timeCount);
-            timeCount += Time.deltaTime;
+            timeCount += Time.unscaledDeltaTime;
             yield return null;
         }
 
@@ -47,18 +66,23 @@ public class UpgradePanelManager : MonoBehaviour
     
     IEnumerator ShowButton()
     {
-        List<SkillDataStruct> skillDatasClone = skillDatas;
         int i = 0;
         buttons[i].enabled = true;
-        
+
+        HashSet<int> uniqueNumbers = new HashSet<int>();
+        List<int> randomNums; 
+        while (uniqueNumbers.Count < 3)
+        {
+            int num = Random.Range(0, skillDatas.Count);
+            uniqueNumbers.Add(num); // 중복된 숫자는 자동으로 걸러짐
+        }
+        randomNums = new List<int>(uniqueNumbers);
         for (i = 1; i < 4; i++)
         {
-            int num = Random.Range(0, skillDatasClone.Count);
             buttons[i].enabled = true;
             button = buttons[i].GetComponent<IngameUpgradeButton>();
-            button.SetSkillData(skillDatasClone[num]);
-            skillDatasClone.RemoveAt(num);
-            yield return new WaitForSeconds(0.25f);
+            button.SetSkillData(skillDatas[randomNums[i - 1]]);
+            yield return new WaitForSecondsRealtime(0.25f);
         }
     }
 
