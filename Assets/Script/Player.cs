@@ -11,14 +11,14 @@ public class Player : Controller
 {
     Vehicle vehicle;
     Vector3 translation;
-    Vector3 lastMoveDirection = Vector3.forward; // ������ �̵� ������ ������ ����
+    Vector3 lastMoveDirection = Vector3.forward;
 
     [SerializeField] Weapon longRangeWeapon;
     [SerializeField] Weapon meleeWeapon;
     [SerializeField] Text moneyText;
     [SerializeField] Image playerimage;
-    [SerializeField] private float itemMoveSpeed = 1.0f; // ������ �̵� �ӵ�
-    [SerializeField] private float itemRange = 5f; // ������ ������� ����
+    [SerializeField] private float itemMoveSpeed = 1.0f;
+    [SerializeField] private float itemRange = 5f; 
     [SerializeField] private GameObject RenderObject;
     [SerializeField] private Slider coolTime_Bag;
     [SerializeField] private Slider coolTime_Dash;
@@ -29,7 +29,7 @@ public class Player : Controller
     private float walkAnimationSpeed;
     private float dashPower = 50f;
     private float dashCooldown = 2f;
-    private float dashDuration = 0.5f; // �뽬 ���� �ð�
+    private float dashDuration = 0.5f;
     private bool isride;
     private bool canDash;
     private bool isDashing;
@@ -72,26 +72,25 @@ public class Player : Controller
 
     IEnumerator Dash(Vector3 dashDirection)
     {
-        // �뽬�� ���۵Ǿ����� ǥ��
         canDash = false;
         isDashing = true;
-        dashTarget = transform.position + dashDirection.normalized * dashPower; // �뽬 ��ǥ ��ġ ���
-        float elapsed = 0f; // ��� �ð� �ʱ�ȭ
+        dashTarget = transform.position + dashDirection.normalized * dashPower; 
+        float elapsed = 0f; 
         Vector3 startPos = transform.position;
         rigidbody.AddForce(dashDirection.normalized * dashPower, ForceMode.Impulse);
         /*
-        while (elapsed < dashDuration) // �뽬 ���� �ð� ���� �ݺ�
+        while (elapsed < dashDuration) 
         {
             rigidbody.MovePosition(Vector3.Lerp(startPos, dashTarget, elapsed / dashDuration)); // ���� ��ġ�� ��ǥ ��ġ�� ���� ����
             //transform.position = Vector3.Lerp(startPos, dashTarget, elapsed / dashDuration); // ���� ��ġ�� ��ǥ ��ġ�� ���� ����
-            elapsed += Time.deltaTime; // ��� �ð� ������Ʈ
-            yield return new WaitForFixedUpdate(); // ���� �����ӱ��� ���
+            elapsed += Time.deltaTime; 
+            yield return new WaitForFixedUpdate(); 
         }
         */
         yield return new WaitForSeconds(0.5f);
         rigidbody.velocity = Vector3.zero;
-        isDashing = false; // �뽬�� �������� ǥ��
-        StartCoroutine(UpdateCooldownSlider(coolTime_Dash, dashCooldown)); // ��ٿ� �����̴� ������Ʈ ����
+        isDashing = false; 
+        StartCoroutine(UpdateCooldownSlider(coolTime_Dash, dashCooldown));
     }
 
     public override void Move()
@@ -105,7 +104,7 @@ public class Player : Controller
         translation = new Vector3(horizontalMove, 0, vertical);
         if (translation.magnitude > 0)
         {
-            lastMoveDirection = translation; // ������ �̵� ���� ������Ʈ
+            lastMoveDirection = translation;
         }
 
         translation *= speed * Time.fixedDeltaTime;
@@ -116,7 +115,7 @@ public class Player : Controller
         if (Input.GetKey(KeyCode.Space) && canDash && !isDashing)
         {
             coolTime_Dash.gameObject.SetActive(true);
-            Vector3 dashDirection = (translation.magnitude > 0) ? translation : lastMoveDirection; // ���� ���̸� ������ �̵� �������� �뽬
+            Vector3 dashDirection = (translation.magnitude > 0) ? translation : lastMoveDirection; 
             StartCoroutine(Dash(dashDirection));
         }
 
@@ -157,7 +156,7 @@ public class Player : Controller
     private IEnumerator UpdateCooldownSlider(Slider slider, float cooldown)
     {
         slider.gameObject.SetActive(true);
-        float elapsed = 0f; // �󸶳� ������
+        float elapsed = 0f;
         while (elapsed < cooldown)
         {
             elapsed += Time.deltaTime;
@@ -166,7 +165,7 @@ public class Player : Controller
         }
         slider.value = slider.maxValue;
         slider.gameObject.SetActive(false);
-        canDash = true; // �뽬 ��ٿ� ������ �뽬 ����
+        canDash = true;
     }
     
 
@@ -178,8 +177,9 @@ public class Player : Controller
                 StartCoroutine(ClickButton(collision.gameObject.GetComponent<Vehicle>()));
         }
         rigidbody.constraints = RigidbodyConstraints.FreezeAll;
-
     }
+
+
 
     private void FixedUpdate()
     {
@@ -205,20 +205,16 @@ public class Player : Controller
 
     private void AttractItems()
     {
-        // "Item" �±׸� ���� ��� ���� ������Ʈ�� ã��
+        
         GameObject[] items = GameObject.FindGameObjectsWithTag("Item");
 
         foreach (GameObject item in items)
         {
-            // �÷��̾�� ������ ������ ������� �Ÿ� ���
             Vector3 relativePos = item.transform.position - transform.position;
 
-            // �÷��̾���� �Ÿ��� ���� ���� ���� ���� ���� �̵�
+            
             if (relativePos.magnitude <= itemRange)
-            {
-                // �������� �÷��̾�� �ε巴�� �̵�
                 item.transform.position = Vector3.Lerp(item.transform.position, transform.position, itemMoveSpeed * Time.deltaTime);
-            }
         }
     }
 

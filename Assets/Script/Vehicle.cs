@@ -1,33 +1,61 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using UnityEngine;
 
 public class Vehicle : Controller
 {
     [SerializeField] WheelCollider[] wheelColliders;
+    [SerializeField] float maxSpeed = 50f;
+    [SerializeField] float maxBrakeTorque = 50000f;
+    [SerializeField] float brakeSpeed = 100;
+    float currentmotorTorque;
+    float currentBrakeTorque;
 
     public override void AddHp(float heal) => base.AddHp(heal);
     public override void GetDamage(float damage) => base.GetDamage(damage);
+    private void Awake()
+    {
+        rigidbody = GetComponent<Rigidbody>();
+    }
     private void Start()
     {
         maxHp = 100;
+
     }
     public override void Move()
     {
-        wheelColliders[0].steerAngle = wheelColliders[1].steerAngle = Input.GetAxis("Horizontal") * 20f;
+        wheelColliders[0].steerAngle = wheelColliders[1].steerAngle = Input.GetAxis("Horizontal") * 10f;
+
+        float currentspeed = rigidbody.velocity.magnitude;
+        currentmotorTorque = (Input.GetAxis("Vertical") * 4000f);
+        // max torque
+        if (currentspeed >= maxSpeed)
+            currentmotorTorque = 0;
+        // Motor torque control
         for (int i = 0; i < wheelColliders.Length; i++)
         {
-            wheelColliders[i].motorTorque = -1 * (Input.GetAxis("Vertical") * 4000f);
+            wheelColliders[i].motorTorque = -1 * currentmotorTorque;
             Debug.Log("motorTorque : " + wheelColliders[0].motorTorque);
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
-            ApplyBrakeTorque(50000);
-
+        //if (Input.GetAxis("Vertical") != 0)
+        //    currentBrakeTorque = Mathf.Lerp(currentBrakeTorque, maxBrakeTorque, brakeSpeed * Time.deltaTime);
+        //
+        //// Brake control
+        //if (Input.GetKey(KeyCode.Space))
+        //    currentBrakeTorque = maxBrakeTorque;
+        //else
+        //    currentBrakeTorque = 0;
+        if (Input.GetAxis("Vertical") != 0)
+            currentBrakeTorque = Mathf.Lerp(currentBrakeTorque, maxBrakeTorque, brakeSpeed * Time.deltaTime);
         else
-            ApplyBrakeTorque(0);
+            currentBrakeTorque = 200;
+        // Apply brake torque if space key is pressed
+        if (Input.GetKey(KeyCode.Space))
+            currentBrakeTorque = maxBrakeTorque;
+        // Apply deceleration torque if no input is given
+        else
+            currentBrakeTorque = 0;
+
+        ApplyBrakeTorque(currentBrakeTorque);
     }
 
     public void ApplyBrakeTorque(float value)

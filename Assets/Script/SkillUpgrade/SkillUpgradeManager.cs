@@ -23,7 +23,7 @@ public class SkillUpgradeManager : MonoBehaviour
     [SerializeField] private Transform dashContainer;
     [SerializeField] private Text playerMoney;
 
-    private int playerId = 1; // 실제 사용자 ID에 따라 동적으로 설정
+    private string playerId = "1"; // 실제 사용자 ID에 따라 동적으로 설정
     private int currentMoney;
     private List<SkillDataStruct> skills;
     private Dictionary<string, GameObject> skillInfoPanels = new Dictionary<string, GameObject>();
@@ -189,7 +189,7 @@ public class SkillUpgradeManager : MonoBehaviour
     {
         if (currentMoney >= skillPrice)
         {
-            bool success = dbManager.UpdateSkillLevelData(skillName, 1, playerId);
+            bool success = dbManager.UpdateSkillLevelData(skillName, "1", int.Parse(playerId));
             if (success)
             {
                 currentMoney -= skillPrice;
@@ -235,7 +235,7 @@ public class SkillUpgradeManager : MonoBehaviour
         int currentLevel = dbManager.GetSkillLevel(skillName, playerId).GetValueOrDefault();
         if (currentLevel > 0)
         {
-            bool success = dbManager.UpdateSkillLevelData(skillName, -1, playerId);
+            bool success = dbManager.UpdateSkillLevelData(skillName, "1", int.Parse(playerId));
             if (success)
             {
                 currentMoney += skillPrice;
