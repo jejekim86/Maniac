@@ -32,7 +32,7 @@ public struct CharactorData
     public float health;
 }
 
-public struct WeaponData
+public struct WeaponDataStruct
 {
     public string name;
     public string info;
