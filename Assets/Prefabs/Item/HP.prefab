@@ -120,3 +120,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 7196213989748313208}
   itemType: HP
+  rotationSpeed: 100
