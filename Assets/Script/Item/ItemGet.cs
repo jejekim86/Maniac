@@ -27,14 +27,10 @@ public class ItemGet : MonoBehaviour
 
         // 플레이어 Controller에 할당
         Player controller = target.GetComponent<Player>();
-        if (controller != null)
+        if (controller != null )
         {
             controller.SetLongRangeWeapon(newItem.GetComponent<Weapon>());
         }
-
-        Test TestControl = target.GetComponent<Test>();
-        if (TestControl != null)
-            TestControl.TestSetLongRangeWeapon(newItem.GetComponent<Weapon>());
     }
 
     public void ItemGet_Money(GameObject target)

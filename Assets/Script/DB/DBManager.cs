@@ -387,7 +387,7 @@ public class DBManager
         }
     }
 
-    public List<WeaponData> GetWeaponData(string charactor)
+    public List<WeaponDataStruct> GetWeaponData(string charactor)
     {
         if (SqlConn == null)
         {
@@ -401,8 +401,8 @@ public class DBManager
             cmd.CommandText = "Select Weapon_Name, Weapon_Info, Price from Weapon";
             MySqlDataReader reader = cmd.ExecuteReader();
 
-            List<WeaponData> weaponDataList = new List<WeaponData>();
-            WeaponData weapondata;
+            List<WeaponDataStruct> weaponDataList = new List<WeaponDataStruct>();
+            WeaponDataStruct weapondata;
             while (reader.Read())
             {
                 weapondata.name = reader.GetString(0);
