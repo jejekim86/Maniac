@@ -16,7 +16,7 @@ public class UpgradePanelManager : MonoBehaviour
 
     private void OnEnable()
     {
-        //StartCoroutine(ShowPanel());
+        StartCoroutine(ShowPanel());
     }
 
     private void OnDisable()

@@ -32,7 +32,7 @@ public class NPC : MonoBehaviour
 
     private void PauseGame()
     {
-        gamePaused = true;
+        GameManager.Instance.inGame = false;
         // 게임 일시 정지
         //Time.timeScale = 0f;
     }

@@ -1,5 +1,6 @@
- using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -25,6 +26,7 @@ public sealed class GameManager : MonoBehaviour
 
     private static GameManager instance = null;
 
+    public bool inGame = false;
 
     void Awake()
     {
@@ -51,8 +53,10 @@ public sealed class GameManager : MonoBehaviour
 
     private void Start()
     {
+        inGame = true;
+
         maxTime = 300f;
-        
+
         if (timerText)
         {
             StartCoroutine(StartTimer());
@@ -74,27 +78,33 @@ public sealed class GameManager : MonoBehaviour
     IEnumerator StartTimer()
     {
         curTime = maxTime;
-    
+
         while (curTime > 0)
         {
-            curTime -= 1;
-            minute = (int)curTime / 60;
-            second = (int)curTime % 60;
-            timerText.text = minute.ToString("00") + ":" + second.ToString("00");
-            yield return new WaitForSeconds(1);
-    
-            // 10초 마다 이미지를 변경
-            if ((int)curTime % 10 == 0 && Level < images.Length)
+            if (inGame == false)
+                yield return new WaitForSeconds(1);
+            else
             {
-                images[Level].gameObject.SetActive(true);
-                Level++; // 다음 레벨로 진행
-            }
-    
-            if (curTime <= 0)
-            {
-                Debug.Log("생존 성공"); // 결과 창 출력 코드로 변경
-                curTime = 0;
-                yield break;
+
+                curTime -= 1;
+                minute = (int)curTime / 60;
+                second = (int)curTime % 60;
+                timerText.text = minute.ToString("00") + ":" + second.ToString("00");
+                yield return new WaitForSeconds(1);
+
+                // 10초 마다 이미지를 변경
+                if ((int)curTime % 10 == 0 && Level < images.Length)
+                {
+                    images[Level].gameObject.SetActive(true);
+                    Level++; // 다음 레벨로 진행
+                }
+
+                if (curTime <= 0)
+                {
+                    Debug.Log("생존 성공"); // 결과 창 출력 코드로 변경
+                    curTime = 0;
+                    yield break;
+                }
             }
         }
     }
