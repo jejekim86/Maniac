@@ -8,7 +8,7 @@ public class SkillUpgradeManager : MonoBehaviour
 {
     static DBConnectionInfo dBConnectionInfo = new DBConnectionInfo
     {
-        ipAddress = "127.0.0.1",
+        ipAddress = "localhost",
         user = "root",
         password = "",
         dbName = "mydb"
@@ -188,6 +188,7 @@ public class SkillUpgradeManager : MonoBehaviour
             if (isBuy)
             {
                 // UI 창 이미지 활성화 시킴
+                // 여기에 넣을 이미지 경로 삽입 해 줘야함
                 weaponButton.transform.GetChild(0).GetChild(0).GetChild(1).gameObject.SetActive(true);
             }
 
@@ -337,6 +338,12 @@ public class SkillUpgradeManager : MonoBehaviour
 
     void BuyWeapon(string weaponName, int weaponPrice, bool isBuy, Text weaponPriceText)
     {
+        if (isBuy)
+        {
+            Debug.Log("이미 구매함");
+            return;
+        }
+
         if (currentMoney >= weaponPrice)
         {
             currentMoney -= weaponPrice;
@@ -347,35 +354,31 @@ public class SkillUpgradeManager : MonoBehaviour
             UpdatePlayerMoneyUI();
 
             // 무기 구매 처리
-        bool success = dbManager.BuyWeapon(weaponName, currentCharactor, playerId);
-        if (success)
-        {
-            isBuy = true;
-            weaponPriceText.transform.parent.parent.GetChild(1).GetComponent<Image>().enabled = true;
+            bool success = dbManager.BuyWeapon(weaponName, currentCharactor, playerId);
+            if (success)
+            {
+                isBuy = true;
+                weaponPriceText.transform.parent.parent.GetChild(1).GetComponent<Image>().enabled = true;
 
-            // 돈이 충분한 경우
-            weaponPriceText.color = PriceColor;
+                // 돈이 충분한 경우
+                weaponPriceText.color = PriceColor;
 
-            // 모든 스킬 가격 업데이트
-            UpdateSkillPrices();
+                // 모든 스킬 가격 업데이트
+                UpdateSkillPrices();
 
-            Debug.Log($"무기 {weaponName} 구매에 성공했습니다.");
+                Debug.Log($"무기 {weaponName} 구매에 성공했습니다.");
+            }
+            else
+            {
+                Debug.LogError("무기 구매에 실패했습니다.");
+            }
         }
         else
         {
-            Debug.LogError("무기 구매에 실패했습니다.");
+            // 돈이 부족한 경우, 텍스트 색상 빨간색으로 변경
+            weaponPriceText.color = Color.red;
+            Debug.Log("돈이 부족합니다.");
         }
-    }
-    else if (isBuy)
-    {
-        Debug.Log("무기는 이미 구매되었습니다.");
-    }
-    else
-    {
-        // 돈이 부족한 경우, 텍스트 색상 빨간색으로 변경
-        weaponPriceText.color = Color.red;
-        Debug.Log("돈이 부족합니다.");
-    }
     }
 
     void RefundSkill(string skillName, int skillPrice, Text skillLevelText, Text skillPriceText)
