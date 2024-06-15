@@ -10,10 +10,26 @@ public sealed class GameManager : MonoBehaviour
 {
     //[SerializeField] UIManager Uimanager;
     //[SerializeField] Datamanager Datamanager;
+    public enum Upgrade
+    {
+        gameTime, moveSpeed, money, maxHealth,
+        vehicleMaxSpeed, vehicleRobSpeed, damage, max
+    }
+    public enum InGameUpgrade
+    {
+        moveSpeed, money, vehicleMaxSpeed,
+        vehicleRobSpeed, damage, healthRecovery, max
+    }
+
+    public float[] upgradeData1 = new float[(int)Upgrade.max];
+    public float[] UpgradeData1 { get{ return upgradeData1; }}
+
+    public float[] inGameUpgradeData1 = new float[(int)Upgrade.max];
+    public float[] InGameUpgradeData1 { get { return inGameUpgradeData1; } }
 
     public struct UpgradeData
     {
-        public float gameTime {get; private set;}
+        public float gameTime { get; private set; }
         public float moveSpeed { get; private set; }
         public int money { get; private set; }
         public float magnetDistance { get; private set; }
