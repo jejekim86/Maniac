@@ -40,7 +40,7 @@ public class SkillUpgradeManager : MonoBehaviour
         LoadPlayerMoney();
         LoadSkills();
         LoadWeapon();
-        //LoadIdentitySkills();
+        LoadIdentitySkills();
     }
 
     void LoadPlayerMoney()
@@ -134,12 +134,14 @@ public class SkillUpgradeManager : MonoBehaviour
             EventTrigger.Entry entryEnter = new EventTrigger.Entry();
             entryEnter.eventID = EventTriggerType.PointerEnter;
             entryEnter.callback.AddListener((eventData) => { ShowSkillInfo(skillName); });
+            entryEnter.callback.AddListener((eventData) => { AnimateButton(skillButton, true); });
             trigger.triggers.Add(entryEnter);
 
             // PointerExit 이벤트 추가
             EventTrigger.Entry entryExit = new EventTrigger.Entry();
             entryExit.eventID = EventTriggerType.PointerExit;
             entryExit.callback.AddListener((eventData) => { HideSkillInfo(skillName); });
+            entryEnter.callback.AddListener((eventData) => { AnimateButton(skillButton, true); });
             trigger.triggers.Add(entryExit);
 
             // 우클릭 이벤트 추가
@@ -189,6 +191,9 @@ public class SkillUpgradeManager : MonoBehaviour
             {
                 // UI 창 이미지 활성화 시킴
                 // 여기에 넣을 이미지 경로 삽입 해 줘야함
+                /*// 이미지 설정
+                Image weaponImage = weaponButton.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>();
+                string imageWeaponPath = $"Weapons/{weapon.name}";*/
                 weaponButton.transform.GetChild(0).GetChild(0).GetChild(1).gameObject.SetActive(true);
             }
 
@@ -235,12 +240,14 @@ public class SkillUpgradeManager : MonoBehaviour
             EventTrigger.Entry entryEnter = new EventTrigger.Entry();
             entryEnter.eventID = EventTriggerType.PointerEnter;
             entryEnter.callback.AddListener((eventData) => { ShowSkillInfo(weaponName); });
+            entryEnter.callback.AddListener((eventData) => { AnimateButton(weaponButton, true); });
             trigger.triggers.Add(entryEnter);
 
             // PointerExit 이벤트 추가
             EventTrigger.Entry entryExit = new EventTrigger.Entry();
             entryExit.eventID = EventTriggerType.PointerExit;
             entryExit.callback.AddListener((eventData) => { HideSkillInfo(weaponName); });
+            entryEnter.callback.AddListener((eventData) => { AnimateButton(weaponButton, true); });
             trigger.triggers.Add(entryExit);
 
             // 우클릭 이벤트 추가
@@ -257,15 +264,100 @@ public class SkillUpgradeManager : MonoBehaviour
         }
     }
 
-    /*void LoadIdentitySkills()
+    void LoadIdentitySkills()
     {
         dbManager.GetIdentitySkillData(out identity, currentCharactor);
 
-        GameObject identityButton = Instantiate(identityPrefab, identityContainer);
+        GameObject identityText = Instantiate(skillTextPrefab, skillTextContainer);
 
         // 텍스트 요소 접근
-        identityButton.transform.GetChild()
-    }*/
+        identityText.transform.GetChild(0).GetChild(1).GetComponent<Text>().text = identity.skillInfo;
+        identityText.transform.GetChild(0).GetChild(2).GetComponent<Text>().text = identity.increase.ToString();
+        identityText.transform.GetChild(0).GetChild(5).GetChild(0).GetComponent<Text>().text = identity.price.ToString();
+        identityText.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = identity.skillName;
+
+        GameObject identityButton = Instantiate(identityPrefab, identityContainer);
+
+        // 전문화 레벨 가져오기
+        int identityLevel = dbManager.GetSkillLevel(identity.skillName, currentCharactor, playerId).GetValueOrDefault();
+
+        // 전문화 레벨 UI 설정
+        Text identityLevelText = identityText.transform.GetChild(0).GetChild(3).GetComponent<Text>();
+        if (identityLevel > 0)
+        {
+            identityLevelText.text = $"level {identityLevel}";
+            identityLevelText.gameObject.SetActive(true);
+        }
+        else
+        {
+            identityLevelText.gameObject.SetActive(false);
+        }
+
+        // 버튼 요소 접근 및 전문화 이름 전달
+        Button upgradeButton = identityButton.transform.GetChild(0).GetChild(0).GetComponent<Button>();
+        Text identityPriceText = identityButton.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>();
+        identityPriceText.text = identity.price.ToString();
+        string identityName = identity.skillName; // 반드시 로컬 변수 사용 -> 왜...? (참조 캡처 문제 방지)
+        upgradeButton.onClick.AddListener(() => UpgradeSkill(identityName, identity.price, identityLevelText, identityPriceText));
+
+        // 환불 안내창 설정
+        Image identityRefund = identityText.transform.GetChild(0).GetChild(6).GetComponent<Image>();
+        identityRefund.gameObject.SetActive(identityLevel > 0);
+
+        // 초기 가격 색상 설정
+        skillPriceTexts[identity.skillName] = identityPriceText;
+        if (currentMoney < identity.price)
+        {
+            identityPriceText.color = Color.red;
+        }
+        else
+        {
+            identityPriceText.color = PriceColor;
+        }
+
+        // 이미지 설정
+        Image identityImage = identityButton.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>();
+        string imageIdentityPath = $"Identites/Dash"; // 추후 다른 캐릭터가 추가된다면 identites/{charactor}/identity -> 이런 식으로 경로 수정하면 될듯
+
+        Sprite skillSprite = Resources.Load<Sprite>(imageIdentityPath);
+        if (skillSprite != null)
+        {
+            identityImage.sprite = skillSprite;
+        }
+        else
+        {
+            Debug.LogError($"이미지를 로드할 수 없습니다: {imageIdentityPath}");
+        }
+
+        // EventTrigger 추가
+        EventTrigger trigger = identityButton.AddComponent<EventTrigger>();
+
+        // PointerEnter 이벤트 추가
+        EventTrigger.Entry entryEnter = new EventTrigger.Entry();
+        entryEnter.eventID = EventTriggerType.PointerEnter;
+        entryEnter.callback.AddListener((eventData) => { ShowSkillInfo(identityName); });
+        entryEnter.callback.AddListener((eventData) => { AnimateButton(identityButton, true); });
+        trigger.triggers.Add(entryEnter);
+
+        // PointerExit 이벤트 추가
+        EventTrigger.Entry entryExit = new EventTrigger.Entry();
+        entryExit.eventID = EventTriggerType.PointerExit;
+        entryExit.callback.AddListener((eventData) => { HideSkillInfo(identityName); });
+        entryEnter.callback.AddListener((eventData) => { AnimateButton(identityButton, true); });
+        trigger.triggers.Add(entryExit);
+
+        // 우클릭 이벤트 추가
+        EventTrigger.Entry entryRightClick = new EventTrigger.Entry();
+        entryRightClick.eventID = EventTriggerType.PointerClick;
+        entryRightClick.callback.AddListener((eventData) =>
+        {
+            if (((PointerEventData)eventData).button == PointerEventData.InputButton.Right)
+            {
+                RefundSkill(identityName, identity.price, identityLevelText, identityPriceText);
+            }
+        });
+        trigger.triggers.Add(entryRightClick);
+    }
 
     void ShowSkillInfo(string skillName)
     {
@@ -446,6 +538,19 @@ public class SkillUpgradeManager : MonoBehaviour
                     skillPriceText.color = PriceColor;
                 }
             }
+        }
+    }
+
+    void AnimateButton(GameObject button, bool enlarge)
+    {
+        RectTransform rt = button.GetComponent<RectTransform>();
+        if (enlarge)
+        {
+            rt.localScale = Vector3.Lerp(rt.localScale, new Vector3(1.2f, 1.2f, 1.2f), Time.deltaTime * 10f);
+        }
+        else
+        {
+            rt.localScale = Vector3.Lerp(rt.localScale, Vector3.one, Time.deltaTime * 10f);
         }
     }
 }
