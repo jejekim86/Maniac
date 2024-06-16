@@ -54,6 +54,8 @@ public sealed class GameManager : MonoBehaviour
     [SerializeField] private Button checkButton;
     [SerializeField] private Text timerText;
     [SerializeField] private Image[] images;
+    [SerializeField] private Player player;
+    public Player Player { get { return player; } }
 
     int Level = 0;
     float curTime;
