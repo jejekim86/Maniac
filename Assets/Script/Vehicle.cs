@@ -20,16 +20,20 @@ public class Vehicle : Controller
     {
         maxHp = 10;
         curHp = maxHp;
-        HP_image.fillAmount = maxHp;
+       // HP_image.fillAmount = maxHp;
         currentBrakeTorque = 0;
     }
-
+    private void Update()
+    {
+        Move();
+    }
 
     public void SetHp_imageActive(bool check) => HP_image.gameObject.SetActive(check);
 
     public override void Move()
     {
-        wheelColliders[0].steerAngle = wheelColliders[1].steerAngle = Input.GetAxis("Horizontal") * 10f;
+        wheelColliders[0].steerAngle = wheelColliders[1].steerAngle = Input.GetAxis("Horizontal") * 30f;
+        Debug.Log("wheelColliders[0] : " + wheelColliders[0].steerAngle + "wheelColliders[1] : " + wheelColliders[1].steerAngle);
 
         float currentspeed = rigidbody.velocity.magnitude;
         currentmotorTorque = (Input.GetAxisRaw("Vertical") * 4000f);
@@ -40,10 +44,10 @@ public class Vehicle : Controller
         for (int i = 0; i < wheelColliders.Length; i++)
         {
             wheelColliders[i].motorTorque = -1 * currentmotorTorque;
-            Debug.Log("motorTorque : " + wheelColliders[0].motorTorque);
+            //Debug.Log("motorTorque : " + wheelColliders[0].motorTorque);
         }
 
-        if (Input.GetAxisRaw("Vertical") != 0)
+        if (currentBrakeTorque != 0)
             currentBrakeTorque = Mathf.Lerp(currentBrakeTorque, maxBrakeTorque, brakeSpeed * Time.deltaTime);
         else
             currentBrakeTorque = 200;
@@ -66,10 +70,7 @@ public class Vehicle : Controller
     public void ApplyBrakeTorque(float value)
     {
         for (int i = 0; i < wheelColliders.Length; i++)
-        {
             wheelColliders[i].brakeTorque = value;
-            Debug.Log("BrakeTorque");
-        }
     }
 
     private void DecelerateVehicle()
