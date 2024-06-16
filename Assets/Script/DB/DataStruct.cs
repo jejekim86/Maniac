@@ -6,6 +6,7 @@ public struct SkillDataStruct
     public string skillInfo;
     public int increase;
     public int price;
+    public int level;
 }
 
 public struct HighScore

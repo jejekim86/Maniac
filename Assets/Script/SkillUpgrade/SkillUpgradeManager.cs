@@ -167,6 +167,7 @@ public class SkillUpgradeManager : MonoBehaviour
             var weapon = weapons[i];
 
             GameObject weaponText = Instantiate(skillTextPrefab, skillTextContainer);
+            weaponText.SetActive(false); // 초기에는 비활성화
 
             // 텍스트 요소 접근
             weaponText.transform.GetChild(0).GetChild(1).GetComponent<Text>().text = weapon.info;
@@ -269,6 +270,7 @@ public class SkillUpgradeManager : MonoBehaviour
         dbManager.GetIdentitySkillData(out identity, currentCharactor);
 
         GameObject identityText = Instantiate(skillTextPrefab, skillTextContainer);
+        identityText.SetActive(false); // 초기에는 비활성화
 
         // 텍스트 요소 접근
         identityText.transform.GetChild(0).GetChild(1).GetComponent<Text>().text = identity.skillInfo;
@@ -278,7 +280,9 @@ public class SkillUpgradeManager : MonoBehaviour
 
         GameObject identityButton = Instantiate(identityPrefab, identityContainer);
 
-        // 전문화 레벨 가져오기
+        // 전문화 정보 패널을 딕셔너리에 저장
+        skillInfoPanels[identity.skillName] = identityText;
+
         int identityLevel = dbManager.GetSkillLevel(identity.skillName, currentCharactor, playerId).GetValueOrDefault();
 
         // 전문화 레벨 UI 설정
@@ -298,7 +302,7 @@ public class SkillUpgradeManager : MonoBehaviour
         Text identityPriceText = identityButton.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>();
         identityPriceText.text = identity.price.ToString();
         string identityName = identity.skillName; // 반드시 로컬 변수 사용 -> 왜...? (참조 캡처 문제 방지)
-        upgradeButton.onClick.AddListener(() => UpgradeSkill(identityName, identity.price, identityLevelText, identityPriceText));
+        upgradeButton.onClick.AddListener(() => UpgradeSkill(identityName, identity.price, identityLevelText, identityPriceText, true));
 
         // 환불 안내창 설정
         Image identityRefund = identityText.transform.GetChild(0).GetChild(6).GetComponent<Image>();
@@ -383,11 +387,20 @@ public class SkillUpgradeManager : MonoBehaviour
         }
     }
 
-    void UpgradeSkill(string skillName, int skillPrice, Text skillLevelText, Text skillPriceText)
+    void UpgradeSkill(string skillName, int skillPrice, Text skillLevelText, Text skillPriceText, bool isIdentity = false)
     {
         if (currentMoney >= skillPrice)
         {
-            bool success = dbManager.UpdateSkillLevelData(skillName, currentCharactor, 1, playerId);
+            bool success = false;
+            if (isIdentity)
+            {
+                success = dbManager.UpdateIdentitySkillLevelData(currentCharactor, 1, playerId);
+            }
+            else
+            {
+                success = dbManager.UpdateSkillLevelData(skillName, currentCharactor, 1, playerId);
+            }
+
             if (success)
             {
                 currentMoney -= skillPrice;
@@ -398,7 +411,10 @@ public class SkillUpgradeManager : MonoBehaviour
                 UpdatePlayerMoneyUI();
 
                 // 스킬 레벨 업데이트
-                int newLevel = dbManager.GetSkillLevel(skillName, currentCharactor, playerId).GetValueOrDefault();
+                int newLevel = isIdentity
+                    ? dbManager.GetIdentitySkillLevel(currentCharactor, playerId).GetValueOrDefault()
+                    : dbManager.GetSkillLevel(skillName, currentCharactor, playerId).GetValueOrDefault();
+
                 skillLevelText.text = $"level {newLevel}";
                 skillLevelText.gameObject.SetActive(newLevel > 0);
 
