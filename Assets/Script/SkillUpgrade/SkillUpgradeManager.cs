@@ -413,8 +413,8 @@ public class SkillUpgradeManager : MonoBehaviour
 
                 // 스킬 레벨 업데이트
                 int newLevel = isIdentity
-                    ? dbManager.GetIdentitySkillLevel(currentCharactor, playerId).GetValueOrDefault()
-                    : dbManager.GetSkillLevel(skillName, currentCharactor, playerId).GetValueOrDefault();
+                    ? dbManager.GetIdentitySkillLevel(currentCharactor, playerId).GetValueOrDefault() // 전문화 인가?
+                    : dbManager.GetSkillLevel(skillName, currentCharactor, playerId).GetValueOrDefault(); // 일반 스킬인가?
 
                 skillLevelText.text = $"level {newLevel}";
                 skillLevelText.gameObject.SetActive(newLevel > 0);
@@ -430,6 +430,14 @@ public class SkillUpgradeManager : MonoBehaviour
                 // 모든 스킬 가격 업데이트
                 UpdateSkillPrices();
 
+                // 스킬 정보 창 흔들기 추가
+                if (skillInfoPanels.TryGetValue(skillName, out GameObject skillInfoPanel))
+                {
+                    StartButtonShake(skillInfoPanel);
+                    // 짧은 시간 후 흔들림 멈추기
+                    StartCoroutine(StopButtonShakeAfterDelay(skillInfoPanel, 1f));
+                }
+
                 Debug.Log($"스킬 {skillName} 업그레이드에 성공했습니다.");
             }
             else
@@ -443,6 +451,13 @@ public class SkillUpgradeManager : MonoBehaviour
             skillPriceText.color = Color.red;
             Debug.Log("돈이 부족합니다.");
         }
+    }
+
+    // 일정 시간 후 버튼 흔들림 멈추기
+    IEnumerator StopButtonShakeAfterDelay(GameObject button, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        StopButtonShake(button);
     }
 
     void BuyWeapon(string weaponName, int weaponPrice, bool isBuy, Text weaponPriceText)
