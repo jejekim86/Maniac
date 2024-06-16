@@ -16,13 +16,13 @@ public class Player : Controller
     [SerializeField] Weapon longRangeWeapon;
     [SerializeField] Weapon meleeWeapon;
     [SerializeField] Text moneyText;
-    [SerializeField] Image playerimage;
     [SerializeField] private float itemMoveSpeed = 1.0f;
-    [SerializeField] private float itemRange = 5f; 
+    [SerializeField] private float itemRange = 5f;
     [SerializeField] private GameObject RenderObject;
     [SerializeField] private Slider coolTime_Bag;
     [SerializeField] private Slider coolTime_Dash;
     [SerializeField] private Slider coolTime_Gun;
+    [SerializeField] private Slider coolTime_Ride;
     CapsuleCollider collider;
     private Animator animator;
     private int money;
@@ -36,6 +36,8 @@ public class Player : Controller
 
     private Vector3 dashTarget;
 
+    public override void AddHp(float heal) => base.AddHp(heal);
+    public override void GetDamage(float damage) => base.GetDamage(damage);
     private void Start()
     {
         coolTime_Bag.gameObject.SetActive(false);
@@ -51,18 +53,12 @@ public class Player : Controller
         money = 1000;
         maxHp = 10;
         curHp = maxHp;
-        playerimage.fillAmount = maxHp;
+        HP_image.fillAmount = maxHp;
     }
 
-    public void SetLongRangeWeapon(Weapon weapon)
-    {
-        longRangeWeapon = weapon;
-    }
+    public void SetLongRangeWeapon(Weapon weapon) => longRangeWeapon = weapon;
 
-    public void SetMeleeWeapon(Weapon weapon)
-    {
-        meleeWeapon = weapon;
-    }
+    public void SetMeleeWeapon(Weapon weapon) => meleeWeapon = weapon;
 
     public void AddMoney(int amount)
     {
@@ -74,8 +70,8 @@ public class Player : Controller
     {
         canDash = false;
         isDashing = true;
-        dashTarget = transform.position + dashDirection.normalized * dashPower; 
-        float elapsed = 0f; 
+        dashTarget = transform.position + dashDirection.normalized * dashPower;
+        float elapsed = 0f;
         Vector3 startPos = transform.position;
         rigidbody.AddForce(dashDirection.normalized * dashPower, ForceMode.Impulse);
         /*
@@ -89,7 +85,7 @@ public class Player : Controller
         */
         yield return new WaitForSeconds(0.5f);
         rigidbody.velocity = Vector3.zero;
-        isDashing = false; 
+        isDashing = false;
         StartCoroutine(UpdateCooldownSlider(coolTime_Dash, dashCooldown));
     }
 
@@ -115,7 +111,7 @@ public class Player : Controller
         if (Input.GetKey(KeyCode.Space) && canDash && !isDashing)
         {
             coolTime_Dash.gameObject.SetActive(true);
-            Vector3 dashDirection = (translation.magnitude > 0) ? translation : lastMoveDirection; 
+            Vector3 dashDirection = (translation.magnitude > 0) ? translation : lastMoveDirection;
             StartCoroutine(Dash(dashDirection));
         }
 
@@ -123,10 +119,50 @@ public class Player : Controller
         animator.SetFloat("Horizontal", horizontalMove, 0.1f, Time.deltaTime);
         animator.SetFloat("WalkSpeed", animSpeed);
 
+        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //RaycastHit hit;
+        //if (Physics.Raycast(ray, out hit))
+        //    transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
+        //
+        //if (Input.GetMouseButton(0))
+        //{
+        //    if (longRangeWeapon == null) return;
+        //    if (longRangeWeapon.Attack())
+        //    {
+        //        StartCoroutine(UpdateCooldownSlider(coolTime_Gun, longRangeWeapon.GetReloadTime()));
+        //        coolTime_Gun.value = 1;
+        //    }
+        //}
+        //if (Input.GetMouseButton(1))
+        //{
+        //    if (meleeWeapon.Attack())
+        //    {
+        //        animator.SetTrigger("MeleeAttack");
+        //        StartCoroutine(UpdateCooldownSlider(coolTime_Bag, meleeWeapon.GetReloadTime()));
+        //        coolTime_Bag.value = 1;
+        //    }
+        //}
+
+    }
+
+    public void Attack()
+    {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
             transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
+
+        if (Input.GetMouseButton(0))
+        {
+            if (longRangeWeapon == null) return;
+
+            if (longRangeWeapon.Attack())
+            {
+                StartCoroutine(UpdateCooldownSlider(coolTime_Gun, longRangeWeapon.GetReloadTime()));
+                coolTime_Gun.value = 1;
+            }
+        }
+        if (vehicle) return;
 
         if (Input.GetMouseButton(1))
         {
@@ -135,20 +171,6 @@ public class Player : Controller
                 animator.SetTrigger("MeleeAttack");
                 StartCoroutine(UpdateCooldownSlider(coolTime_Bag, meleeWeapon.GetReloadTime()));
                 coolTime_Bag.value = 1;
-            }
-        }
-
-    }
-
-    public void LongShootAttack()
-    {
-        if (Input.GetMouseButton(0))
-        {
-            if (longRangeWeapon == null) return;
-            if (longRangeWeapon.Attack())
-            {
-                StartCoroutine(UpdateCooldownSlider(coolTime_Gun, longRangeWeapon.GetReloadTime()));
-                coolTime_Gun.value = 1;
             }
         }
     }
@@ -167,7 +189,7 @@ public class Player : Controller
         slider.gameObject.SetActive(false);
         canDash = true;
     }
-    
+
 
     private void OnCollisionStay(Collision collision)
     {
@@ -195,24 +217,24 @@ public class Player : Controller
                     StartCoroutine(ClickButton());
                 break;
         }
-        LongShootAttack();
     }
 
     private void Update()
     {
         AttractItems();
+        Attack();
     }
 
     private void AttractItems()
     {
-        
+
         GameObject[] items = GameObject.FindGameObjectsWithTag("Item");
 
         foreach (GameObject item in items)
         {
             Vector3 relativePos = item.transform.position - transform.position;
 
-            
+
             if (relativePos.magnitude <= itemRange)
                 item.transform.position = Vector3.Lerp(item.transform.position, transform.position, itemMoveSpeed * Time.deltaTime);
         }
@@ -235,6 +257,7 @@ public class Player : Controller
                 Debug.Log("ClickButton");
                 yield return new WaitForSeconds(3f);
                 vehicle = item;
+                vehicle.SetHp_imageActive(true);
                 transform.SetParent(vehicle.gameObject.transform);
                 transform.localPosition = Vector3.zero;
                 transform.localRotation = Quaternion.Euler(Vector3.zero);
@@ -246,6 +269,7 @@ public class Player : Controller
                 transform.SetParent(null);
                 transform.position = vehicle.transform.position + (Vector3.right * 3);
                 rigidbody.constraints = RigidbodyConstraints.None;
+                vehicle.SetHp_imageActive(false);
                 vehicle = null;
                 SetColliderEnabled(true);
                 break;
@@ -253,16 +277,9 @@ public class Player : Controller
         yield break;
     }
 
-
-
-    public override void AddHp(float heal)
+    private void SetRideCoolTime()
     {
-        base.AddHp(heal);
-    }
 
-    public override void GetDamage(float damage)
-    {
-        base.GetDamage(damage);
     }
 
     public void SetColliderEnabled(bool check)

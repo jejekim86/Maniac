@@ -24,8 +24,6 @@ public sealed class GameManager : MonoBehaviour
     int second;
 
     private static GameManager instance = null;
-
-
     void Awake()
     {
         if (null == instance)

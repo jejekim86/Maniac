@@ -9,6 +9,7 @@ public class Vehicle : Controller
     float currentmotorTorque;
     float currentBrakeTorque;
 
+
     public override void AddHp(float heal) => base.AddHp(heal);
     public override void GetDamage(float damage) => base.GetDamage(damage);
     private void Awake()
@@ -17,15 +18,21 @@ public class Vehicle : Controller
     }
     private void Start()
     {
-        maxHp = 100;
-
+        maxHp = 10;
+        curHp = maxHp;
+        HP_image.fillAmount = maxHp;
+        currentBrakeTorque = 0;
     }
+
+
+    public void SetHp_imageActive(bool check) => HP_image.gameObject.SetActive(check);
+
     public override void Move()
     {
         wheelColliders[0].steerAngle = wheelColliders[1].steerAngle = Input.GetAxis("Horizontal") * 10f;
 
         float currentspeed = rigidbody.velocity.magnitude;
-        currentmotorTorque = (Input.GetAxis("Vertical") * 4000f);
+        currentmotorTorque = (Input.GetAxisRaw("Vertical") * 4000f);
         // max torque
         if (currentspeed >= maxSpeed)
             currentmotorTorque = 0;
@@ -36,15 +43,7 @@ public class Vehicle : Controller
             Debug.Log("motorTorque : " + wheelColliders[0].motorTorque);
         }
 
-        //if (Input.GetAxis("Vertical") != 0)
-        //    currentBrakeTorque = Mathf.Lerp(currentBrakeTorque, maxBrakeTorque, brakeSpeed * Time.deltaTime);
-        //
-        //// Brake control
-        //if (Input.GetKey(KeyCode.Space))
-        //    currentBrakeTorque = maxBrakeTorque;
-        //else
-        //    currentBrakeTorque = 0;
-        if (Input.GetAxis("Vertical") != 0)
+        if (Input.GetAxisRaw("Vertical") != 0)
             currentBrakeTorque = Mathf.Lerp(currentBrakeTorque, maxBrakeTorque, brakeSpeed * Time.deltaTime);
         else
             currentBrakeTorque = 200;
