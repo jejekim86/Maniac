@@ -26,15 +26,15 @@ public class SkillUpgradeManager : MonoBehaviour
     [SerializeField] private Transform weaponContainer;
     [SerializeField] private Text playerMoney;
 
-    private string currentCharactor = "Santa"; // 실제 캐릭터 이름으로 설정
-    private int playerId = 1; // 실제 사용자 ID에 따라 동적으로 설정
+    private string currentCharactor = "Santa";
+    private int playerId = 1;
     private int currentMoney;
     private List<SkillDataStruct> skills;
     private SkillDataStruct identity;
     private List<WeaponDataStruct> weapons;
     private Dictionary<string, GameObject> skillInfoPanels = new Dictionary<string, GameObject>();
     private Dictionary<string, Text> skillPriceTexts = new Dictionary<string, Text>();
-    private Color PriceColor = new Color32(104, 204, 128, 255); // #68CC80
+    private Color PriceColor = new Color32(104, 204, 128, 255);
 
     void Start()
     {
@@ -63,20 +63,29 @@ public class SkillUpgradeManager : MonoBehaviour
                     if (result.gameObject.GetComponent<Button>() != null)
                     {
                         Button button = result.gameObject.GetComponent<Button>();
-                        string buttonName = button.transform.parent.name; // 버튼 이름 가져오기
+                        string buttonName = button.transform.parent.name;
+
                         if (buttonName.EndsWith("_Button"))
                         {
-                            string skillName = buttonName.Replace("_Button", ""); // 버튼 이름에서 스킬 이름 추출
+                            string itemName = buttonName.Replace("_Button", "");
 
-                            if (skillInfoPanels.TryGetValue(skillName, out GameObject skillText))
+                            if (skillInfoPanels.TryGetValue(itemName, out GameObject skillText))
                             {
                                 Text skillPriceText = button.transform.GetChild(1).GetChild(0).GetComponent<Text>();
                                 Text skillLevelText = skillText.transform.GetChild(0).GetChild(3).GetComponent<Text>();
-                                RefundSkill(skillName, int.Parse(skillPriceText.text), skillLevelText, skillPriceText, skillName == identity.skillName);
-                            }
-                            else
-                            {
-                                Debug.LogError($"스킬 정보를 찾을 수 없습니다: {skillName}");
+
+                                if (itemName == identity.skillName)
+                                {
+                                    RefundIdentity(itemName, int.Parse(skillPriceText.text), skillLevelText, skillPriceText);
+                                }
+                                else if (dbManager.WeaponIsBuy(itemName, currentCharactor, playerId) > 0)
+                                {
+                                    RefundWeapon(itemName, int.Parse(skillPriceText.text), skillLevelText, skillPriceText);
+                                }
+                                else
+                                {
+                                    RefundSkill(itemName, int.Parse(skillPriceText.text), skillLevelText, skillPriceText);
+                                }
                             }
                         }
                     }
@@ -105,26 +114,21 @@ public class SkillUpgradeManager : MonoBehaviour
             var skill = skills[i];
 
             GameObject skillText = Instantiate(skillTextPrefab, skillTextContainer);
-            skillText.SetActive(false); // 초기에는 비활성화
+            skillText.SetActive(false);
 
-            // 텍스트 요소 접근
             skillText.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = skill.skillName;
             skillText.transform.GetChild(0).GetChild(1).GetComponent<Text>().text = skill.skillInfo;
             skillText.transform.GetChild(0).GetChild(2).GetComponent<Text>().text = skill.increase.ToString();
             skillText.transform.GetChild(0).GetChild(5).GetChild(0).GetComponent<Text>().text = skill.price.ToString();
 
-            // 스킬 정보 패널을 딕셔너리에 저장
             skillInfoPanels[skill.skillName] = skillText;
 
             GameObject skillButton = Instantiate(skillButtonPrefab, skillButtonContainer);
 
-            // 버튼에 고유한 ID 부여
             skillButton.name = skill.skillName + "_Button";
 
-            // 스킬 레벨 가져오기
             int skillLevel = dbManager.GetSkillLevel(skill.skillName, currentCharactor, playerId).GetValueOrDefault();
 
-            // 스킬 레벨 UI 설정
             Text skillLevelText = skillText.transform.GetChild(0).GetChild(3).GetComponent<Text>();
             if (skillLevel > 0)
             {
@@ -136,18 +140,15 @@ public class SkillUpgradeManager : MonoBehaviour
                 skillLevelText.gameObject.SetActive(false);
             }
 
-            // 버튼 요소 접근 및 스킬 이름 전달
             Button upgradeButton = skillButton.transform.GetChild(0).GetComponent<Button>();
             Text skillPriceText = skillButton.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>();
             skillPriceText.text = skill.price.ToString();
-            string skillName = skill.skillName; // 반드시 로컬 변수 사용 -> 왜...? (참조 캡처 문제 방지)
+            string skillName = skill.skillName;
             upgradeButton.onClick.AddListener(() => UpgradeSkill(skillName, skill.price, skillLevelText, skillPriceText));
 
-            // 환불 안내창 설정
             Image skillRefund = skillText.transform.GetChild(0).GetChild(6).GetComponent<Image>();
             skillRefund.gameObject.SetActive(skillLevel > 0);
 
-            // 초기 가격 색상 설정
             skillPriceTexts[skill.skillName] = skillPriceText;
             if (currentMoney < skill.price)
             {
@@ -158,9 +159,8 @@ public class SkillUpgradeManager : MonoBehaviour
                 skillPriceText.color = PriceColor;
             }
 
-            // 이미지 설정
             Image skillImage = skillButton.transform.GetChild(0).GetChild(0).GetComponent<Image>();
-            string imageSkillPath = $"Skills/Skill_{i + 1}"; // 이미지 이름 Skill_1, Skill_2, ... 형태
+            string imageSkillPath = $"Skills/Skill_{i + 1}";
 
             Sprite skillSprite = Resources.Load<Sprite>(imageSkillPath);
             if (skillSprite != null)
@@ -172,17 +172,14 @@ public class SkillUpgradeManager : MonoBehaviour
                 Debug.LogError($"이미지를 로드할 수 없습니다: {imageSkillPath}");
             }
 
-            // EventTrigger 추가
             EventTrigger trigger = skillButton.AddComponent<EventTrigger>();
 
-            // PointerEnter 이벤트 추가
             EventTrigger.Entry entryEnter = new EventTrigger.Entry();
             entryEnter.eventID = EventTriggerType.PointerEnter;
             entryEnter.callback.AddListener((eventData) => { ShowSkillInfo(skillName); });
             entryEnter.callback.AddListener((eventData) => { StartButtonShake(skillButton); });
             trigger.triggers.Add(entryEnter);
 
-            // PointerExit 이벤트 추가
             EventTrigger.Entry entryExit = new EventTrigger.Entry();
             entryExit.eventID = EventTriggerType.PointerExit;
             entryExit.callback.AddListener((eventData) => { HideSkillInfo(skillName); });
@@ -200,16 +197,14 @@ public class SkillUpgradeManager : MonoBehaviour
             var weapon = weapons[i];
 
             GameObject weaponText = Instantiate(skillTextPrefab, skillTextContainer);
-            weaponText.SetActive(false); // 초기에는 비활성화
+            weaponText.SetActive(false);
 
-            // 텍스트 요소 접근
             weaponText.transform.GetChild(0).GetChild(1).GetComponent<Text>().text = weapon.info;
             weaponText.transform.GetChild(0).GetChild(2).GetComponent<Text>().text = "";
             weaponText.transform.GetChild(0).GetChild(5).GetChild(0).GetComponent<Text>().text = weapon.price.ToString();
             weaponText.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = weapon.name;
             weaponText.transform.GetChild(0).GetChild(4).gameObject.SetActive(false);
 
-            // 무기 정보 패널을 딕셔너리에 저장
             skillInfoPanels[weapon.name] = weaponText;
 
             GameObject weaponButton = Instantiate(weaponPrefab, weaponContainer);
@@ -217,34 +212,24 @@ public class SkillUpgradeManager : MonoBehaviour
             Text weaponLevelText = weaponText.transform.GetChild(0).GetChild(3).GetComponent<Text>();
             weaponLevelText.gameObject.SetActive(false);
 
-            // 무기 구매 여부
             bool isBuy = dbManager.WeaponIsBuy(weapon.name, currentCharactor, playerId) > 0;
 
-            // 무기 구매시 UI 활성화
             if (isBuy)
             {
-                // UI 창 이미지 활성화 시킴
-                // 여기에 넣을 이미지 경로 삽입 해 줘야함
-                /*// 이미지 설정
-                Image weaponImage = weaponButton.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>();
-                string imageWeaponPath = $"Weapons/{weapon.name}";*/
                 weaponButton.transform.GetChild(0).GetChild(0).GetChild(1).gameObject.SetActive(true);
                 weaponLevelText.gameObject.SetActive(true);
                 weaponLevelText.text = "구매됨";
             }
 
-            // 버튼 요소 접근 및 스킬 이름 전달
             Button upgradeButton = weaponButton.transform.GetChild(0).GetChild(0).GetComponent<Button>();
             Text weaponPriceText = weaponButton.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>();
             weaponPriceText.text = weapon.price.ToString();
             string weaponName = weapon.name;
             upgradeButton.onClick.AddListener(() => BuyWeapon(weaponName, weapon.price, isBuy, weaponPriceText));
 
-            // 환불 안내창 설정
             Image weaponRefund = weaponText.transform.GetChild(0).GetChild(6).GetComponent<Image>();
             weaponRefund.gameObject.SetActive(isBuy);
 
-            // 초기 가격 색상 설정
             skillPriceTexts[weapon.name] = weaponPriceText;
             if (currentMoney < weapon.price)
             {
@@ -255,7 +240,6 @@ public class SkillUpgradeManager : MonoBehaviour
                 weaponPriceText.color = PriceColor;
             }
 
-            // 이미지 설정
             Image weaponImage = weaponButton.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>();
             string imageWeaponPath = $"Weapons/{weapon.name}";
 
@@ -269,31 +253,27 @@ public class SkillUpgradeManager : MonoBehaviour
                 Debug.LogError($"이미지를 로드할 수 없습니다: {imageWeaponPath}");
             }
 
-            // EventTrigger 추가
             EventTrigger trigger = weaponButton.AddComponent<EventTrigger>();
 
-            // PointerEnter 이벤트 추가
             EventTrigger.Entry entryEnter = new EventTrigger.Entry();
             entryEnter.eventID = EventTriggerType.PointerEnter;
             entryEnter.callback.AddListener((eventData) => { ShowSkillInfo(weaponName); });
             entryEnter.callback.AddListener((eventData) => { StartButtonShake(weaponButton); });
             trigger.triggers.Add(entryEnter);
 
-            // PointerExit 이벤트 추가
             EventTrigger.Entry entryExit = new EventTrigger.Entry();
             entryExit.eventID = EventTriggerType.PointerExit;
             entryExit.callback.AddListener((eventData) => { HideSkillInfo(weaponName); });
             entryExit.callback.AddListener((eventData) => { StopButtonShake(weaponButton); });
             trigger.triggers.Add(entryExit);
 
-            // 우클릭 이벤트 추가
             EventTrigger.Entry entryRightClick = new EventTrigger.Entry();
             entryRightClick.eventID = EventTriggerType.PointerClick;
             entryRightClick.callback.AddListener((eventData) =>
             {
                 if (((PointerEventData)eventData).button == PointerEventData.InputButton.Right)
                 {
-                    RefundSkill(weaponName, int.Parse(weaponPriceText.text), weaponLevelText, weaponPriceText, false, true);
+                    RefundWeapon(weaponName, int.Parse(weaponPriceText.text), weaponLevelText, weaponPriceText);
                 }
             });
             trigger.triggers.Add(entryRightClick);
@@ -305,9 +285,8 @@ public class SkillUpgradeManager : MonoBehaviour
         dbManager.GetIdentitySkillData(out identity, currentCharactor);
 
         GameObject identityText = Instantiate(skillTextPrefab, skillTextContainer);
-        identityText.SetActive(false); // 초기에는 비활성화
+        identityText.SetActive(false);
 
-        // 텍스트 요소 접근
         identityText.transform.GetChild(0).GetChild(1).GetComponent<Text>().text = identity.skillInfo;
         identityText.transform.GetChild(0).GetChild(2).GetComponent<Text>().text = identity.increase.ToString();
         identityText.transform.GetChild(0).GetChild(5).GetChild(0).GetComponent<Text>().text = identity.price.ToString();
@@ -315,12 +294,10 @@ public class SkillUpgradeManager : MonoBehaviour
 
         GameObject identityButton = Instantiate(identityPrefab, identityContainer);
 
-        // 전문화 정보 패널을 딕셔너리에 저장
         skillInfoPanels[identity.skillName] = identityText;
 
         int identityLevel = dbManager.GetIdentitySkillLevel(currentCharactor, playerId).GetValueOrDefault();
 
-        // 전문화 레벨 UI 설정
         Text identityLevelText = identityText.transform.GetChild(0).GetChild(3).GetComponent<Text>();
         if (identityLevel > 0)
         {
@@ -332,18 +309,15 @@ public class SkillUpgradeManager : MonoBehaviour
             identityLevelText.gameObject.SetActive(false);
         }
 
-        // 버튼 요소 접근 및 전문화 이름 전달
         Button upgradeButton = identityButton.transform.GetChild(0).GetChild(0).GetComponent<Button>();
         Text identityPriceText = identityButton.transform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>();
         identityPriceText.text = identity.price.ToString();
-        string identityName = identity.skillName; // 반드시 로컬 변수 사용 -> 왜...? (참조 캡처 문제 방지)
+        string identityName = identity.skillName;
         upgradeButton.onClick.AddListener(() => UpgradeSkill(identityName, identity.price, identityLevelText, identityPriceText, true));
 
-        // 환불 안내창 설정
         Image identityRefund = identityText.transform.GetChild(0).GetChild(6).GetComponent<Image>();
         identityRefund.gameObject.SetActive(identityLevel > 0);
 
-        // 초기 가격 색상 설정
         skillPriceTexts[identity.skillName] = identityPriceText;
         if (currentMoney < identity.price)
         {
@@ -354,9 +328,8 @@ public class SkillUpgradeManager : MonoBehaviour
             identityPriceText.color = PriceColor;
         }
 
-        // 이미지 설정
         Image identityImage = identityButton.transform.GetChild(0).GetChild(0).GetChild(0).GetComponent<Image>();
-        string imageIdentityPath = $"Identites/Dash"; // 추후 다른 캐릭터가 추가된다면 identites/{charactor}/identity -> 이런 식으로 경로 수정하면 될듯
+        string imageIdentityPath = $"Identites/Dash";
 
         Sprite skillSprite = Resources.Load<Sprite>(imageIdentityPath);
         if (skillSprite != null)
@@ -368,31 +341,27 @@ public class SkillUpgradeManager : MonoBehaviour
             Debug.LogError($"이미지를 로드할 수 없습니다: {imageIdentityPath}");
         }
 
-        // EventTrigger 추가
         EventTrigger trigger = identityButton.AddComponent<EventTrigger>();
 
-        // PointerEnter 이벤트 추가
         EventTrigger.Entry entryEnter = new EventTrigger.Entry();
         entryEnter.eventID = EventTriggerType.PointerEnter;
         entryEnter.callback.AddListener((eventData) => { ShowSkillInfo(identityName); });
         entryEnter.callback.AddListener((eventData) => { StartButtonShake(identityButton); });
         trigger.triggers.Add(entryEnter);
 
-        // PointerExit 이벤트 추가
         EventTrigger.Entry entryExit = new EventTrigger.Entry();
         entryExit.eventID = EventTriggerType.PointerExit;
         entryExit.callback.AddListener((eventData) => { HideSkillInfo(identityName); });
         entryExit.callback.AddListener((eventData) => { StopButtonShake(identityButton); });
         trigger.triggers.Add(entryExit);
 
-        // 우클릭 이벤트 추가
         EventTrigger.Entry entryRightClick = new EventTrigger.Entry();
         entryRightClick.eventID = EventTriggerType.PointerClick;
         entryRightClick.callback.AddListener((eventData) =>
         {
             if (((PointerEventData)eventData).button == PointerEventData.InputButton.Right)
             {
-                RefundSkill(identityName, int.Parse(identityPriceText.text), identityLevelText, identityPriceText, true);
+                RefundIdentity(identityName, int.Parse(identityPriceText.text), identityLevelText, identityPriceText);
             }
         });
         trigger.triggers.Add(entryRightClick);
@@ -440,35 +409,28 @@ public class SkillUpgradeManager : MonoBehaviour
             {
                 currentMoney -= skillPrice;
 
-                // 데이터베이스에 남은 돈 업데이트
                 dbManager.SetMoney(currentMoney, currentCharactor, playerId);
 
                 UpdatePlayerMoneyUI();
 
-                // 스킬 레벨 업데이트
                 int newLevel = isIdentity
-                    ? dbManager.GetIdentitySkillLevel(currentCharactor, playerId).GetValueOrDefault() // 전문화 인가?
-                    : dbManager.GetSkillLevel(skillName, currentCharactor, playerId).GetValueOrDefault(); // 일반 스킬인가?
+                    ? dbManager.GetIdentitySkillLevel(currentCharactor, playerId).GetValueOrDefault()
+                    : dbManager.GetSkillLevel(skillName, currentCharactor, playerId).GetValueOrDefault();
 
                 skillLevelText.text = $"level {newLevel}";
                 skillLevelText.gameObject.SetActive(newLevel > 0);
 
-                // 돈이 충분한 경우
                 skillPriceText.color = PriceColor;
 
-                // 환불 창 활성화
                 Transform skillWindow = skillLevelText.transform.parent.parent;
                 Image skillRefund = skillWindow.transform.GetChild(0).GetChild(6).GetComponent<Image>();
                 skillRefund.gameObject.SetActive(true);
 
-                // 모든 스킬 가격 업데이트
                 UpdateSkillPrices();
 
-                // 스킬 정보 창 흔들기 추가
                 if (skillInfoPanels.TryGetValue(skillName, out GameObject skillInfoPanel))
                 {
                     StartButtonShake(skillInfoPanel);
-                    // 짧은 시간 후 흔들림 멈추기
                     StartCoroutine(StopButtonShakeAfterDelay(skillInfoPanel, 1f));
                 }
 
@@ -481,13 +443,11 @@ public class SkillUpgradeManager : MonoBehaviour
         }
         else
         {
-            // 돈이 부족한 경우, 텍스트 색상 빨간색으로 변경
             skillPriceText.color = Color.red;
             Debug.Log("돈이 부족합니다.");
         }
     }
 
-    // 일정 시간 후 버튼 흔들림 멈추기
     IEnumerator StopButtonShakeAfterDelay(GameObject button, float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -506,22 +466,18 @@ public class SkillUpgradeManager : MonoBehaviour
         {
             currentMoney -= weaponPrice;
 
-            // 데이터베이스에 남은 돈 업데이트
             dbManager.SetMoney(currentMoney, currentCharactor, playerId);
 
             UpdatePlayerMoneyUI();
 
-            // 무기 구매 처리
             bool success = dbManager.BuyWeapon(weaponName, currentCharactor, playerId);
             if (success)
             {
                 isBuy = true;
                 weaponPriceText.transform.parent.parent.GetChild(1).GetComponent<Image>().enabled = true;
 
-                // 돈이 충분한 경우
                 weaponPriceText.color = PriceColor;
 
-                // 모든 스킬 가격 업데이트
                 UpdateSkillPrices();
 
                 Debug.Log($"무기 {weaponName} 구매에 성공했습니다.");
@@ -533,78 +489,37 @@ public class SkillUpgradeManager : MonoBehaviour
         }
         else
         {
-            // 돈이 부족한 경우, 텍스트 색상 빨간색으로 변경
             weaponPriceText.color = Color.red;
             Debug.Log("돈이 부족합니다.");
         }
     }
 
-    void RefundSkill(string name, int price, Text levelText, Text priceText, bool isIdentity = false, bool isWeapon = false)
+    void RefundSkill(string skillName, int price, Text levelText, Text priceText, bool isIdentity = false)
     {
-        int currentLevel = 0;
-        if (isIdentity)
-        {
-            currentLevel = dbManager.GetIdentitySkillLevel(currentCharactor, playerId).GetValueOrDefault();
-        }
-        else if (isWeapon)
-        {
-            currentLevel = dbManager.WeaponIsBuy(name, currentCharactor, playerId);
-        }
-        else
-        {
-            currentLevel = dbManager.GetSkillLevel(name, currentCharactor, playerId).GetValueOrDefault();
-        }
+        int currentLevel = dbManager.GetSkillLevel(skillName, currentCharactor, playerId).GetValueOrDefault();
 
         if (currentLevel > 0)
         {
-            bool success = false;
-            if (isIdentity)
-            {
-                success = dbManager.UpdateIdentitySkillLevelData(currentCharactor, -1, playerId);
-            }
-            else if (isWeapon)
-            {
-                success = dbManager.RefundWeapon(name, currentCharactor, playerId);
-            }
-            else
-            {
-                success = dbManager.UpdateSkillLevelData(name, currentCharactor, -1, playerId);
-            }
+            bool success = dbManager.UpdateSkillLevelData(skillName, currentCharactor, -1, playerId);
 
             if (success)
             {
                 currentMoney += price;
 
-                // 데이터베이스에 남은 돈 업데이트
                 dbManager.SetMoney(currentMoney, currentCharactor, playerId);
 
                 UpdatePlayerMoneyUI();
 
-                // 레벨 업데이트
-                int newLevel = 0;
-                if (isIdentity)
-                {
-                    newLevel = dbManager.GetIdentitySkillLevel(currentCharactor, playerId).GetValueOrDefault();
-                }
-                else if (isWeapon)
-                {
-                    newLevel = dbManager.WeaponIsBuy(name, currentCharactor, playerId);
-                }
-                else
-                {
-                    newLevel = dbManager.GetSkillLevel(name, currentCharactor, playerId).GetValueOrDefault();
-                }
+                int newLevel = dbManager.GetSkillLevel(skillName, currentCharactor, playerId).GetValueOrDefault();
 
                 levelText.text = $"level {newLevel}";
                 levelText.gameObject.SetActive(newLevel > 0);
 
-                // 환불 후 돈이 충분하면 가격 텍스트 색상 변경
                 if (currentMoney >= price)
                 {
                     priceText.color = PriceColor;
                 }
 
-                // 레벨이 0이면 환불 창 비활성화
                 if (newLevel == 0)
                 {
                     Transform skillWindow = levelText.transform.parent.parent;
@@ -612,22 +527,119 @@ public class SkillUpgradeManager : MonoBehaviour
                     refundImage.gameObject.SetActive(false);
                 }
 
-                // 모든 스킬 가격 업데이트
                 UpdateSkillPrices();
 
-                Debug.Log($"환불에 성공했습니다: {name}");
+                Debug.Log($"스킬 환불에 성공했습니다: {skillName}");
             }
             else
             {
-                Debug.Log($"환불에 실패했습니다: {name}");
+                Debug.Log($"스킬 환불에 실패했습니다: {skillName}");
             }
         }
         else
         {
-            Debug.Log($"더 이상 환불할 수 없습니다: {name}");
+            Debug.Log($"더 이상 환불할 수 없습니다: {skillName}");
         }
     }
 
+    void RefundWeapon(string weaponName, int price, Text levelText, Text priceText)
+    {
+        int isBought = dbManager.WeaponIsBuy(weaponName, currentCharactor, playerId);
+
+        if (isBought > 0)
+        {
+            bool success = dbManager.RefundWeapon(weaponName, currentCharactor, playerId);
+
+            if (success)
+            {
+                currentMoney += price;
+
+                dbManager.SetMoney(currentMoney, currentCharactor, playerId);
+
+                UpdatePlayerMoneyUI();
+
+                levelText.text = "";
+                levelText.gameObject.SetActive(false);
+
+                if (currentMoney >= price)
+                {
+                    priceText.color = PriceColor;
+                }
+                else
+                {
+                    priceText.color = Color.red;
+                }
+
+                Transform weaponWindow = levelText.transform.parent.parent;
+                Image refundImage = weaponWindow.transform.GetChild(0).GetChild(6).GetComponent<Image>();
+                refundImage.gameObject.SetActive(false);
+
+                UpdateSkillPrices();
+
+                Debug.Log($"무기 환불에 성공했습니다: {weaponName}");
+            }
+            else
+            {
+                Debug.Log($"무기 환불에 실패했습니다: {weaponName}");
+            }
+        }
+        else
+        {
+            Debug.Log($"더 이상 환불할 수 없습니다: {weaponName}");
+        }
+    }
+
+    void RefundIdentity(string identityName, int price, Text levelText, Text priceText)
+    {
+        int currentLevel = dbManager.GetIdentitySkillLevel(currentCharactor, playerId).GetValueOrDefault();
+
+        if (currentLevel > 0)
+        {
+            bool success = dbManager.UpdateIdentitySkillLevelData(currentCharactor, -1, playerId);
+
+            if (success)
+            {
+                currentMoney += price;
+
+                dbManager.SetMoney(currentMoney, currentCharactor, playerId);
+
+                UpdatePlayerMoneyUI();
+
+                int newLevel = dbManager.GetIdentitySkillLevel(currentCharactor, playerId).GetValueOrDefault();
+
+                levelText.text = $"level {newLevel}";
+                levelText.gameObject.SetActive(newLevel > 0);
+
+                if (currentMoney >= price)
+                {
+                    priceText.color = PriceColor;
+                }
+                else
+                {
+                    priceText.color = Color.red;
+                }
+
+                if (newLevel == 0)
+                {
+                    Transform skillWindow = levelText.transform.parent.parent;
+                    Image refundImage = skillWindow.transform.GetChild(0).GetChild(6).GetComponent<Image>();
+                    refundImage.gameObject.SetActive(false);
+                }
+
+                UpdateSkillPrices();
+
+                Debug.Log($"전문화 환불에 성공했습니다: {identityName}");
+            }
+            else
+            {
+                Debug.Log($"전문화 환불에 실패했습니다: {identityName}");
+            }
+        }
+        else
+        {
+            Debug.Log($"더 이상 환불할 수 없습니다: {identityName}");
+        }
+    }
 
     void UpdateSkillPrices()
     {
@@ -648,7 +660,6 @@ public class SkillUpgradeManager : MonoBehaviour
     }
 
     private Coroutine buttonShakeCoroutine;
-
 
     void StartButtonShake(GameObject button)
     {
@@ -680,5 +691,4 @@ public class SkillUpgradeManager : MonoBehaviour
             yield return null;
         }
     }
-
 }
