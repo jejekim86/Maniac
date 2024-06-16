@@ -48,13 +48,19 @@ public class Vehicle : Controller
         else
             currentBrakeTorque = 200;
         // Apply brake torque if space key is pressed
+        // 스페이스 키가 눌러진 경우 브레이크 토크 적용
         if (Input.GetKey(KeyCode.Space))
             currentBrakeTorque = maxBrakeTorque;
-        // Apply deceleration torque if no input is given
         else
             currentBrakeTorque = 0;
 
         ApplyBrakeTorque(currentBrakeTorque);
+
+        // 입력이 없는 경우 자동 감속
+        if (Input.GetAxisRaw("Vertical") == 0)
+            DecelerateVehicle();
+
+
     }
 
     public void ApplyBrakeTorque(float value)
@@ -63,6 +69,23 @@ public class Vehicle : Controller
         {
             wheelColliders[i].brakeTorque = value;
             Debug.Log("BrakeTorque");
+        }
+    }
+
+    private void DecelerateVehicle()
+    {
+        float decelerationFactor = 10f; // 원하는 감속률을 조정
+        float minSpeedThreshold = 0.1f; // 정지하기 전 최소 속도 임계값
+
+        Vector3 velocity = rigidbody.velocity;
+        if (velocity.magnitude > minSpeedThreshold)
+        {
+            velocity -= velocity.normalized * decelerationFactor * Time.deltaTime;
+            rigidbody.velocity = velocity;
+        }
+        else
+        {
+            rigidbody.velocity = Vector3.zero;
         }
     }
 }
