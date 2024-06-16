@@ -591,4 +591,30 @@ public class DBManager
             return -1;
         }
     }
+
+    public bool RefundWeapon(string weaponName, string charactor, int userID)
+    {
+        if (SqlConn == null)
+        {
+            Debug.LogError("RefundWeapon 메서드에서 SqlConn이 null입니다.");
+            return false;
+        }
+        try
+        {
+            SqlConn.Open();   // DB 연결
+
+            cmd.CommandText = $"Update PurchasedWeapon Set WeaponPurchase = 0 Where Weapon_Name = '{weaponName}' AND User_Id = {userID} AND Charactor_Name = '{charactor}'";
+            int result = cmd.ExecuteNonQuery();
+
+            SqlConn.Close();
+
+            return result > 0;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("무기 환불 중 예외 발생: " + e.ToString());
+            SqlConn.Close();
+            return false;
+        }
+    }
 }
