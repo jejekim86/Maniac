@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -134,14 +135,14 @@ public class SkillUpgradeManager : MonoBehaviour
             EventTrigger.Entry entryEnter = new EventTrigger.Entry();
             entryEnter.eventID = EventTriggerType.PointerEnter;
             entryEnter.callback.AddListener((eventData) => { ShowSkillInfo(skillName); });
-            entryEnter.callback.AddListener((eventData) => { AnimateButton(skillButton, true); });
+            entryEnter.callback.AddListener((eventData) => { StartButtonShake(skillButton); });
             trigger.triggers.Add(entryEnter);
 
             // PointerExit 이벤트 추가
             EventTrigger.Entry entryExit = new EventTrigger.Entry();
             entryExit.eventID = EventTriggerType.PointerExit;
             entryExit.callback.AddListener((eventData) => { HideSkillInfo(skillName); });
-            entryEnter.callback.AddListener((eventData) => { AnimateButton(skillButton, true); });
+            entryExit.callback.AddListener((eventData) => { StopButtonShake(skillButton); });
             trigger.triggers.Add(entryExit);
 
             // 우클릭 이벤트 추가
@@ -241,14 +242,14 @@ public class SkillUpgradeManager : MonoBehaviour
             EventTrigger.Entry entryEnter = new EventTrigger.Entry();
             entryEnter.eventID = EventTriggerType.PointerEnter;
             entryEnter.callback.AddListener((eventData) => { ShowSkillInfo(weaponName); });
-            entryEnter.callback.AddListener((eventData) => { AnimateButton(weaponButton, true); });
+            entryEnter.callback.AddListener((eventData) => { StartButtonShake(weaponButton); });
             trigger.triggers.Add(entryEnter);
 
             // PointerExit 이벤트 추가
             EventTrigger.Entry entryExit = new EventTrigger.Entry();
             entryExit.eventID = EventTriggerType.PointerExit;
             entryExit.callback.AddListener((eventData) => { HideSkillInfo(weaponName); });
-            entryEnter.callback.AddListener((eventData) => { AnimateButton(weaponButton, true); });
+            entryExit.callback.AddListener((eventData) => { StopButtonShake(weaponButton); });
             trigger.triggers.Add(entryExit);
 
             // 우클릭 이벤트 추가
@@ -283,7 +284,7 @@ public class SkillUpgradeManager : MonoBehaviour
         // 전문화 정보 패널을 딕셔너리에 저장
         skillInfoPanels[identity.skillName] = identityText;
 
-        int identityLevel = dbManager.GetSkillLevel(identity.skillName, currentCharactor, playerId).GetValueOrDefault();
+        int identityLevel = dbManager.GetIdentitySkillLevel(currentCharactor, playerId).GetValueOrDefault();
 
         // 전문화 레벨 UI 설정
         Text identityLevelText = identityText.transform.GetChild(0).GetChild(3).GetComponent<Text>();
@@ -340,14 +341,14 @@ public class SkillUpgradeManager : MonoBehaviour
         EventTrigger.Entry entryEnter = new EventTrigger.Entry();
         entryEnter.eventID = EventTriggerType.PointerEnter;
         entryEnter.callback.AddListener((eventData) => { ShowSkillInfo(identityName); });
-        entryEnter.callback.AddListener((eventData) => { AnimateButton(identityButton, true); });
+        entryEnter.callback.AddListener((eventData) => { StartButtonShake(identityButton); });
         trigger.triggers.Add(entryEnter);
 
         // PointerExit 이벤트 추가
         EventTrigger.Entry entryExit = new EventTrigger.Entry();
         entryExit.eventID = EventTriggerType.PointerExit;
         entryExit.callback.AddListener((eventData) => { HideSkillInfo(identityName); });
-        entryEnter.callback.AddListener((eventData) => { AnimateButton(identityButton, true); });
+        entryExit.callback.AddListener((eventData) => { StopButtonShake(identityButton); });
         trigger.triggers.Add(entryExit);
 
         // 우클릭 이벤트 추가
@@ -557,16 +558,38 @@ public class SkillUpgradeManager : MonoBehaviour
         }
     }
 
-    void AnimateButton(GameObject button, bool enlarge)
+    private Coroutine buttonShakeCoroutine;
+
+
+    void StartButtonShake(GameObject button)
     {
-        RectTransform rt = button.GetComponent<RectTransform>();
-        if (enlarge)
+        if (buttonShakeCoroutine != null)
         {
-            rt.localScale = Vector3.Lerp(rt.localScale, new Vector3(1.2f, 1.2f, 1.2f), Time.deltaTime * 10f);
+            StopCoroutine(buttonShakeCoroutine);
         }
-        else
+        buttonShakeCoroutine = StartCoroutine(ShakeButton(button));
+    }
+    void StopButtonShake(GameObject button)
+    {
+        if (buttonShakeCoroutine != null)
         {
-            rt.localScale = Vector3.Lerp(rt.localScale, Vector3.one, Time.deltaTime * 10f);
+            StopCoroutine(buttonShakeCoroutine);
+            button.transform.rotation = Quaternion.identity;
         }
     }
+
+    IEnumerator ShakeButton(GameObject button)
+    {
+        RectTransform rt = button.GetComponent<RectTransform>();
+        float timeCount = 0;
+        float angle;
+        while (true)
+        {
+            angle = 5 * Mathf.Cos(timeCount * 10);
+            rt.rotation = Quaternion.Euler(0, 0, angle);
+            timeCount += Time.deltaTime;
+            yield return null;
+        }
+    }
+
 }
