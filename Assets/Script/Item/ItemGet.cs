@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static GameManager;
 
 public class ItemGet : MonoBehaviour
 {
@@ -38,7 +39,7 @@ public class ItemGet : MonoBehaviour
         Player controller = target.GetComponent<Player>();
         if (controller != null)
         {
-            controller.AddMoney(amount);
+            controller.AddMoney(amount + (int)(amount * GameManager.Instance.inGameUpgradeData1[(int)InGameUpgrade.money] * 0.01f));
         }
     }
 

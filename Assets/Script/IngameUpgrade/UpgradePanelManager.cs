@@ -11,6 +11,8 @@ public class UpgradePanelManager : MonoBehaviour
     [SerializeField] private Transform buttonsParent;
 
     [SerializeField] private Image[] buttons = new Image[4];
+    [SerializeField] private GameObject[] upgradButtons;
+    [SerializeField] private Sprite[] upgradButtonSprites;
 
     List<SkillDataStruct> skillDatas = new List<SkillDataStruct>();
 
@@ -35,16 +37,7 @@ public class UpgradePanelManager : MonoBehaviour
 
     void SetData()
     {
-        SkillDataStruct skillData = new SkillDataStruct
-        {
-            skillName = "회복 상자",
-            skillInfo = "생명력을 일정량 회복한다.",
-            increase = 30,
-            price = 0
-        };
-        skillDatas.Add(skillData);
-        skillDatas.Add(skillData);
-        skillDatas.Add(skillData);
+        skillDatas = DBManagerTest.instance.GetIngameSkillData();
     }
 
     IEnumerator ShowPanel()
@@ -81,7 +74,7 @@ public class UpgradePanelManager : MonoBehaviour
         {
             buttons[i].enabled = true;
             button = buttons[i].GetComponent<IngameUpgradeButton>();
-            button.SetSkillData(skillDatas[randomNums[i - 1]]);
+            button.SetSkillData(skillDatas[randomNums[i - 1]], upgradButtonSprites[randomNums[i - 1]], randomNums[i - 1]);
             yield return new WaitForSecondsRealtime(0.25f);
         }
     }

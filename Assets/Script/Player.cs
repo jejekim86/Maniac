@@ -6,6 +6,7 @@ using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
+using static GameManager;
 
 public class Player : Controller
 {
@@ -101,7 +102,9 @@ public class Player : Controller
         float horizontalMove = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
-        float speed = walkSpeed + walkSpeed * GameManager.Instance.upgradeData.moveSpeed + walkSpeed * GameManager.Instance.ingameUpgradeData.moveSpeed; // 업그레이드 적용
+        float speed = walkSpeed + walkSpeed * GameManager.Instance.upgradeData.moveSpeed * 0.01f + walkSpeed *
+            GameManager.Instance.inGameUpgradeData1[(int)InGameUpgrade.moveSpeed] * 0.01f; // 업그레이드 적용
+        Debug.Log("speed = " + speed);
         float animSpeed = walkAnimationSpeed;
 
         translation = new Vector3(horizontalMove, 0, vertical);
