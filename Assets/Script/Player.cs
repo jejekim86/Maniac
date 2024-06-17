@@ -71,7 +71,6 @@ public class Player : Controller
         canDash = false;
         isDashing = true;
         dashTarget = transform.position + dashDirection.normalized * dashPower;
-        float elapsed = 0f;
         Vector3 startPos = transform.position;
         rigidbody.AddForce(dashDirection.normalized * dashPower, ForceMode.Impulse);
         /*
@@ -276,12 +275,6 @@ public class Player : Controller
         }
         yield break;
     }
-
-    private void SetRideCoolTime()
-    {
-
-    }
-
     public void SetColliderEnabled(bool check)
     {
         collider.enabled = check;

@@ -20,12 +20,8 @@ public class Vehicle : Controller
     {
         maxHp = 10;
         curHp = maxHp;
-       // HP_image.fillAmount = maxHp;
+        HP_image.fillAmount = maxHp;
         currentBrakeTorque = 0;
-    }
-    private void Update()
-    {
-        Move();
     }
 
     public void SetHp_imageActive(bool check) => HP_image.gameObject.SetActive(check);
