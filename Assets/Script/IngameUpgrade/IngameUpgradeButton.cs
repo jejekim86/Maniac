@@ -57,10 +57,10 @@ public class IngameUpgradeButton : MonoBehaviour, IPointerEnterHandler, IPointer
     {
         if (skillData.skillName == "체력 회복")
             // 플레이어 체력 회복
-            GameManager.Instance.Player.AddHp(skillData.increase);
+            GameManager.Instance.Getplayer().AddHp(skillData.increase);
         else
             GameManager.Instance.inGameUpgradeData1[num] += skillData.increase;
-
+       
         // 텍스트 초기화
         infoText.text = "";
         nameText.text = "";

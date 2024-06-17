@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using System.Xml.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -55,7 +56,10 @@ public sealed class GameManager : MonoBehaviour
     [SerializeField] private Button checkButton;
     [SerializeField] private Text timerText;
     [SerializeField] private Image[] images;
-    public Player Player { get; private set; }
+    [SerializeField] private Player player;
+
+    public Player Getplayer() => player;
+    
 
     HighScore score = new HighScore();
 
