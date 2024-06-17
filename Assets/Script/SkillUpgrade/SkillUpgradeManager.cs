@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class SkillUpgradeManager : MonoBehaviour
 {
-    [SerializeField] private PlayerUpgradeManager playerUpgradeManager; // PlayerUpgradeManager 스크립트 참조
+    //[SerializeField] private PlayerUpgradeManager playerUpgradeManager; // PlayerUpgradeManager 스크립트 참조
 
     static DBConnectionInfo dBConnectionInfo = new DBConnectionInfo
     {
