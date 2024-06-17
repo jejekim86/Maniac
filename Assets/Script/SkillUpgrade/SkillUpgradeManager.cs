@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -8,7 +9,7 @@ public class SkillUpgradeManager : MonoBehaviour
 {
     static DBConnectionInfo dBConnectionInfo = new DBConnectionInfo
     {
-        ipAddress = "127.0.0.1",
+        ipAddress = "localhost",
         user = "root",
         password = "",
         dbName = "mydb"
@@ -19,26 +20,84 @@ public class SkillUpgradeManager : MonoBehaviour
     [SerializeField] private GameObject skillButtonPrefab;
     [SerializeField] private Transform skillTextContainer;
     [SerializeField] private Transform skillButtonContainer;
-    [SerializeField] private GameObject dashPrefab;
-    [SerializeField] private Transform dashContainer;
+    [SerializeField] private GameObject identityPrefab;
+    [SerializeField] private Transform identityContainer;
+    [SerializeField] private GameObject weaponPrefab;
+    [SerializeField] private Transform weaponContainer;
     [SerializeField] private Text playerMoney;
 
-    private string playerId = "1"; // ½ÇÁ¦ »ç¿ëÀÚ ID¿¡ µû¶ó µ¿ÀûÀ¸·Î ¼³Á¤
+    private string currentCharactor = "Santa";
+    private int playerId = 1;
     private int currentMoney;
     private List<SkillDataStruct> skills;
+    private SkillDataStruct identity;
+    private List<WeaponDataStruct> weapons;
     private Dictionary<string, GameObject> skillInfoPanels = new Dictionary<string, GameObject>();
     private Dictionary<string, Text> skillPriceTexts = new Dictionary<string, Text>();
-    private Color PriceColor = new Color32(104, 204, 128, 255); // #68CC80
+    private Color PriceColor = new Color32(104, 204, 128, 255);
 
     void Start()
     {
         LoadPlayerMoney();
         LoadSkills();
+        LoadWeapon();
+        LoadIdentitySkills();
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                PointerEventData pointerEventData = new PointerEventData(EventSystem.current)
+                {
+                    position = Input.mousePosition
+                };
+
+                List<RaycastResult> raycastResults = new List<RaycastResult>();
+                EventSystem.current.RaycastAll(pointerEventData, raycastResults);
+
+                foreach (RaycastResult result in raycastResults)
+                {
+                    if (result.gameObject.GetComponent<Button>() != null)
+                    {
+                        Button button = result.gameObject.GetComponent<Button>();
+                        string buttonName = button.transform.parent.name;
+
+                        if (buttonName.EndsWith("_Button"))
+                        {
+                            string itemName = buttonName.Replace("_Button", "");
+                            string parentName = button.transform.parent.parent.name;
+
+                            if (skillInfoPanels.TryGetValue(itemName, out GameObject skillText))
+                            {
+                                Text priceText = button.transform.Find("BG/Price").GetComponent<Text>();
+                                Text levelText = skillText.transform.GetChild(0).GetChild(3).GetComponent<Text>();
+
+                                if (parentName == "Skill")
+                                {
+                                    RefundItem(itemName, int.Parse(priceText.text), levelText, priceText, ItemType.Skill);
+                                }
+                                else if (parentName == "Weapon")
+                                {
+                                    RefundItem(itemName, int.Parse(priceText.text), levelText, priceText, ItemType.Weapon);
+                                }
+                                else if (parentName == "Identity")
+                                {
+                                    RefundItem(itemName, int.Parse(priceText.text), levelText, priceText, ItemType.Identity);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     void LoadPlayerMoney()
     {
-        currentMoney = dbManager.GetMoney(playerId);
+        currentMoney = dbManager.GetMoney(currentCharactor, playerId);
         UpdatePlayerMoneyUI();
     }
 
@@ -51,41 +110,26 @@ public class SkillUpgradeManager : MonoBehaviour
     {
         skills = dbManager.GetSkillData();
 
-        GameObject dashText = Instantiate(dashPrefab, dashContainer);
-        Image dash = dashText.transform.GetChild(0).GetComponent<Image>();
-        string imageDashPath = $"Skills/Dash";
-        Sprite dashSprite = Resources.Load<Sprite>(imageDashPath);
-        if (dashSprite != null)
-        {
-            dash.sprite = dashSprite;
-        }
-        else
-        {
-            Debug.LogError($"ÀÌ¹ÌÁö¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù: {imageDashPath}");
-        }
-
         for (int i = 0; i < skills.Count; i++)
         {
             var skill = skills[i];
 
             GameObject skillText = Instantiate(skillTextPrefab, skillTextContainer);
-            skillText.SetActive(false); // ÃÊ±â¿¡´Â ºñÈ°¼ºÈ­
+            skillText.SetActive(false);
 
-            // ÅØ½ºÆ® ¿ä¼Ò Á¢±Ù
             skillText.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = skill.skillName;
             skillText.transform.GetChild(0).GetChild(1).GetComponent<Text>().text = skill.skillInfo;
             skillText.transform.GetChild(0).GetChild(2).GetComponent<Text>().text = skill.increase.ToString();
             skillText.transform.GetChild(0).GetChild(5).GetChild(0).GetComponent<Text>().text = skill.price.ToString();
 
-            // ½ºÅ³ Á¤º¸ ÆÐ³ÎÀ» µñ¼Å³Ê¸®¿¡ ÀúÀå
             skillInfoPanels[skill.skillName] = skillText;
 
             GameObject skillButton = Instantiate(skillButtonPrefab, skillButtonContainer);
 
-            // ½ºÅ³ ·¹º§ °¡Á®¿À±â
-            int skillLevel = dbManager.GetSkillLevel(skill.skillName, playerId).GetValueOrDefault();
+            skillButton.name = skill.skillName + "_Button";
 
-            // ½ºÅ³ ·¹º§ UI ¼³Á¤
+            int skillLevel = dbManager.GetSkillLevel(skill.skillName, currentCharactor, playerId).GetValueOrDefault();
+
             Text skillLevelText = skillText.transform.GetChild(0).GetChild(3).GetComponent<Text>();
             if (skillLevel > 0)
             {
@@ -97,18 +141,15 @@ public class SkillUpgradeManager : MonoBehaviour
                 skillLevelText.gameObject.SetActive(false);
             }
 
-            // ¹öÆ° ¿ä¼Ò Á¢±Ù ¹× ½ºÅ³ ÀÌ¸§ Àü´Þ
             Button upgradeButton = skillButton.transform.GetChild(0).GetComponent<Button>();
             Text skillPriceText = skillButton.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>();
             skillPriceText.text = skill.price.ToString();
-            string skillName = skill.skillName; // ¹Ýµå½Ã ·ÎÄÃ º¯¼ö »ç¿ë -> ¿Ö...? (ÂüÁ¶ Ä¸Ã³ ¹®Á¦ ¹æÁö)
+            string skillName = skill.skillName;
             upgradeButton.onClick.AddListener(() => UpgradeSkill(skillName, skill.price, skillLevelText, skillPriceText));
 
-            // È¯ºÒ ¾È³»Ã¢ ¼³Á¤
             Image skillRefund = skillText.transform.GetChild(0).GetChild(6).GetComponent<Image>();
             skillRefund.gameObject.SetActive(skillLevel > 0);
 
-            // ÃÊ±â °¡°Ý »ö»ó ¼³Á¤
             skillPriceTexts[skill.skillName] = skillPriceText;
             if (currentMoney < skill.price)
             {
@@ -119,9 +160,8 @@ public class SkillUpgradeManager : MonoBehaviour
                 skillPriceText.color = PriceColor;
             }
 
-            // ÀÌ¹ÌÁö ¼³Á¤
             Image skillImage = skillButton.transform.GetChild(0).GetChild(0).GetComponent<Image>();
-            string imageSkillPath = $"Skills/Skill_{i + 1}"; // ÀÌ¹ÌÁö ÀÌ¸§ Skill_1, Skill_2, ... ÇüÅÂ
+            string imageSkillPath = $"Skills/Skill_{i + 1}";
 
             Sprite skillSprite = Resources.Load<Sprite>(imageSkillPath);
             if (skillSprite != null)
@@ -130,36 +170,185 @@ public class SkillUpgradeManager : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"ÀÌ¹ÌÁö¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù: {imageSkillPath}");
+                Debug.LogError($"ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½: {imageSkillPath}");
             }
 
-            // EventTrigger Ãß°¡
             EventTrigger trigger = skillButton.AddComponent<EventTrigger>();
 
-            // PointerEnter ÀÌº¥Æ® Ãß°¡
             EventTrigger.Entry entryEnter = new EventTrigger.Entry();
             entryEnter.eventID = EventTriggerType.PointerEnter;
             entryEnter.callback.AddListener((eventData) => { ShowSkillInfo(skillName); });
+            entryEnter.callback.AddListener((eventData) => { StartButtonShake(skillButton); });
             trigger.triggers.Add(entryEnter);
 
-            // PointerExit ÀÌº¥Æ® Ãß°¡
             EventTrigger.Entry entryExit = new EventTrigger.Entry();
             entryExit.eventID = EventTriggerType.PointerExit;
             entryExit.callback.AddListener((eventData) => { HideSkillInfo(skillName); });
+            entryExit.callback.AddListener((eventData) => { StopButtonShake(skillButton); });
+            trigger.triggers.Add(entryExit);
+        }
+    }
+
+    private void LoadWeapon()
+    {
+        weapons = dbManager.GetWeaponData(currentCharactor);
+
+        for (int i = 0; i < weapons.Count; i++)
+        {
+            var weapon = weapons[i];
+
+            GameObject weaponText = Instantiate(skillTextPrefab, skillTextContainer);
+            weaponText.SetActive(false);
+
+            weaponText.transform.GetChild(0).GetChild(1).GetComponent<Text>().text = weapon.info;
+            weaponText.transform.GetChild(0).GetChild(2).GetComponent<Text>().text = "";
+            weaponText.transform.GetChild(0).GetChild(5).GetChild(0).GetComponent<Text>().text = weapon.price.ToString();
+            weaponText.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = weapon.name;
+            weaponText.transform.GetChild(0).GetChild(4).gameObject.SetActive(false);
+
+            skillInfoPanels[weapon.name] = weaponText;
+
+            GameObject weaponButton = Instantiate(weaponPrefab, weaponContainer);
+            weaponButton.name = weapon.name + "_Button";
+
+            Text weaponLevelText = weaponText.transform.GetChild(0).GetChild(3).GetComponent<Text>();
+            weaponLevelText.gameObject.SetActive(false);
+
+            bool isBuy = dbManager.WeaponIsBuy(weapon.name, currentCharactor, playerId) > 0;
+
+            if (isBuy)
+            {
+                weaponButton.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
+                weaponLevelText.gameObject.SetActive(true);
+                weaponLevelText.text = "ï¿½ï¿½ï¿½Åµï¿½";
+            }
+
+            Button upgradeButton = weaponButton.transform.GetChild(0).GetComponent<Button>();
+            Text weaponPriceText = weaponButton.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>();
+            weaponPriceText.text = weapon.price.ToString();
+            string weaponName = weapon.name;
+            upgradeButton.onClick.AddListener(() => BuyWeapon(weaponName, weapon.price, isBuy, weaponPriceText));
+
+            Image weaponRefund = weaponText.transform.GetChild(0).GetChild(6).GetComponent<Image>();
+            weaponRefund.gameObject.SetActive(isBuy);
+
+            skillPriceTexts[weapon.name] = weaponPriceText;
+            weaponPriceText.color = currentMoney < weapon.price ? Color.red : PriceColor;
+
+            Image weaponImage = weaponButton.transform.GetChild(0).GetChild(0).GetComponent<Image>();
+            string imageWeaponPath = $"Weapons/{weapon.name}";
+
+            Sprite weaponSprite = Resources.Load<Sprite>(imageWeaponPath);
+            if (weaponSprite != null)
+            {
+                weaponImage.sprite = weaponSprite;
+            }
+            else
+            {
+                Debug.LogError($"ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½: {imageWeaponPath}");
+            }
+
+            EventTrigger trigger = weaponButton.AddComponent<EventTrigger>();
+
+            EventTrigger.Entry entryEnter = new EventTrigger.Entry();
+            entryEnter.eventID = EventTriggerType.PointerEnter;
+            entryEnter.callback.AddListener((eventData) => { ShowSkillInfo(weaponName); });
+            entryEnter.callback.AddListener((eventData) => { StartButtonShake(weaponButton); });
+            trigger.triggers.Add(entryEnter);
+
+            EventTrigger.Entry entryExit = new EventTrigger.Entry();
+            entryExit.eventID = EventTriggerType.PointerExit;
+            entryExit.callback.AddListener((eventData) => { HideSkillInfo(weaponName); });
+            entryExit.callback.AddListener((eventData) => { StopButtonShake(weaponButton); });
             trigger.triggers.Add(entryExit);
 
-            // ¿ìÅ¬¸¯ ÀÌº¥Æ® Ãß°¡
             EventTrigger.Entry entryRightClick = new EventTrigger.Entry();
             entryRightClick.eventID = EventTriggerType.PointerClick;
-            entryRightClick.callback.AddListener((eventData) => {
+            entryRightClick.callback.AddListener((eventData) =>
+            {
                 if (((PointerEventData)eventData).button == PointerEventData.InputButton.Right)
                 {
-                    RefundSkill(skillName, skill.price, skillLevelText, skillPriceText);
+                    RefundItem(weaponName, int.Parse(weaponPriceText.text), weaponLevelText, weaponPriceText, ItemType.Weapon);
                 }
             });
             trigger.triggers.Add(entryRightClick);
         }
     }
+
+    private void LoadIdentitySkills()
+    {
+        dbManager.GetIdentitySkillData(out identity, currentCharactor);
+
+        GameObject identityText = Instantiate(skillTextPrefab, skillTextContainer);
+        identityText.SetActive(false);
+
+        identityText.transform.GetChild(0).GetChild(1).GetComponent<Text>().text = identity.skillInfo;
+        identityText.transform.GetChild(0).GetChild(2).GetComponent<Text>().text = identity.increase.ToString();
+        identityText.transform.GetChild(0).GetChild(5).GetChild(0).GetComponent<Text>().text = identity.price.ToString();
+        identityText.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = identity.skillName;
+
+        skillInfoPanels[identity.skillName] = identityText;
+
+        GameObject identityButton = Instantiate(identityPrefab, identityContainer);
+        identityButton.name = identity.skillName + "_Button";
+
+        int identityLevel = dbManager.GetIdentitySkillLevel(currentCharactor, playerId).GetValueOrDefault();
+
+        Text identityLevelText = identityText.transform.GetChild(0).GetChild(3).GetComponent<Text>();
+        identityLevelText.text = identityLevel > 0 ? $"level {identityLevel}" : "";
+        identityLevelText.gameObject.SetActive(identityLevel > 0);
+
+        Button upgradeButton = identityButton.transform.GetChild(0).GetComponent<Button>();
+        Text identityPriceText = identityButton.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>();
+        identityPriceText.text = identity.price.ToString();
+        string identityName = identity.skillName;
+        upgradeButton.onClick.AddListener(() => UpgradeSkill(identityName, identity.price, identityLevelText, identityPriceText, true));
+
+        Image identityRefund = identityText.transform.GetChild(0).GetChild(6).GetComponent<Image>();
+        identityRefund.gameObject.SetActive(identityLevel > 0);
+
+        skillPriceTexts[identity.skillName] = identityPriceText;
+        identityPriceText.color = currentMoney < identity.price ? Color.red : PriceColor;
+
+        Image identityImage = identityButton.transform.GetChild(0).GetChild(0).GetComponent<Image>();
+        string imageIdentityPath = $"Identites/Dash";
+
+        Sprite skillSprite = Resources.Load<Sprite>(imageIdentityPath);
+        if (skillSprite != null)
+        {
+            identityImage.sprite = skillSprite;
+        }
+        else
+        {
+            Debug.LogError($"ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½: {imageIdentityPath}");
+        }
+
+        EventTrigger trigger = identityButton.AddComponent<EventTrigger>();
+
+        EventTrigger.Entry entryEnter = new EventTrigger.Entry();
+        entryEnter.eventID = EventTriggerType.PointerEnter;
+        entryEnter.callback.AddListener((eventData) => { ShowSkillInfo(identityName); });
+        entryEnter.callback.AddListener((eventData) => { StartButtonShake(identityButton); });
+        trigger.triggers.Add(entryEnter);
+
+        EventTrigger.Entry entryExit = new EventTrigger.Entry();
+        entryExit.eventID = EventTriggerType.PointerExit;
+        entryExit.callback.AddListener((eventData) => { HideSkillInfo(identityName); });
+        entryExit.callback.AddListener((eventData) => { StopButtonShake(identityButton); });
+        trigger.triggers.Add(entryExit);
+
+        EventTrigger.Entry entryRightClick = new EventTrigger.Entry();
+        entryRightClick.eventID = EventTriggerType.PointerClick;
+        entryRightClick.callback.AddListener((eventData) =>
+        {
+            if (((PointerEventData)eventData).button == PointerEventData.InputButton.Right)
+            {
+                RefundItem(identityName, int.Parse(identityPriceText.text), identityLevelText, identityPriceText, ItemType.Identity);
+            }
+        });
+        trigger.triggers.Add(entryRightClick);
+    }
+
 
     void ShowSkillInfo(string skillName)
     {
@@ -169,7 +358,7 @@ public class SkillUpgradeManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"½ºÅ³ Á¤º¸¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù: {skillName}");
+            Debug.LogError($"ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½: {skillName}");
         }
     }
 
@@ -181,102 +370,178 @@ public class SkillUpgradeManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"½ºÅ³ Á¤º¸¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù: {skillName}");
+            Debug.LogError($"ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½: {skillName}");
         }
     }
 
-    void UpgradeSkill(string skillName, int skillPrice, Text skillLevelText, Text skillPriceText)
+    void UpgradeSkill(string skillName, int skillPrice, Text skillLevelText, Text skillPriceText, bool isIdentity = false)
     {
         if (currentMoney >= skillPrice)
         {
-            bool success = dbManager.UpdateSkillLevelData(skillName, "1", int.Parse(playerId));
+            bool success = false;
+            if (isIdentity)
+            {
+                success = dbManager.UpdateIdentitySkillLevelData(currentCharactor, 1, playerId);
+            }
+            else
+            {
+                success = dbManager.UpdateSkillLevelData(skillName, currentCharactor, 1, playerId);
+            }
+
             if (success)
             {
                 currentMoney -= skillPrice;
 
-                // µ¥ÀÌÅÍº£ÀÌ½º¿¡ ³²Àº µ· ¾÷µ¥ÀÌÆ®
-                dbManager.SetMoney(currentMoney, playerId);
+                dbManager.SetMoney(currentMoney, currentCharactor, playerId);
 
                 UpdatePlayerMoneyUI();
 
-                // ½ºÅ³ ·¹º§ ¾÷µ¥ÀÌÆ®
-                int newLevel = dbManager.GetSkillLevel(skillName, playerId).GetValueOrDefault();
+                int newLevel = isIdentity
+                    ? dbManager.GetIdentitySkillLevel(currentCharactor, playerId).GetValueOrDefault()
+                    : dbManager.GetSkillLevel(skillName, currentCharactor, playerId).GetValueOrDefault();
+
                 skillLevelText.text = $"level {newLevel}";
                 skillLevelText.gameObject.SetActive(newLevel > 0);
 
-                // µ·ÀÌ ÃæºÐÇÑ °æ¿ì
                 skillPriceText.color = PriceColor;
 
-                // È¯ºÒ Ã¢ È°¼ºÈ­
                 Transform skillWindow = skillLevelText.transform.parent.parent;
                 Image skillRefund = skillWindow.transform.GetChild(0).GetChild(6).GetComponent<Image>();
                 skillRefund.gameObject.SetActive(true);
 
-                // ¸ðµç ½ºÅ³ °¡°Ý ¾÷µ¥ÀÌÆ®
                 UpdateSkillPrices();
 
-                Debug.Log($"½ºÅ³ {skillName} ¾÷±×·¹ÀÌµå¿¡ ¼º°øÇß½À´Ï´Ù.");
+                if (skillInfoPanels.TryGetValue(skillName, out GameObject skillInfoPanel))
+                {
+                    StartButtonShake(skillInfoPanel);
+                    StartCoroutine(StopButtonShakeAfterDelay(skillInfoPanel, 1f));
+                }
+
+                Debug.Log($"ï¿½ï¿½Å³ {skillName} ï¿½ï¿½ï¿½×·ï¿½ï¿½Ìµå¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
             }
             else
             {
-                Debug.Log($"½ºÅ³ {skillName} ¾÷±×·¹ÀÌµå¿¡ ½ÇÆÐÇß½À´Ï´Ù.");
+                Debug.Log($"ï¿½ï¿½Å³ {skillName} ï¿½ï¿½ï¿½×·ï¿½ï¿½Ìµå¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
             }
         }
         else
         {
-            // µ·ÀÌ ºÎÁ·ÇÑ °æ¿ì, ÅØ½ºÆ® »ö»ó »¡°£»öÀ¸·Î º¯°æ
             skillPriceText.color = Color.red;
-            Debug.Log("µ·ÀÌ ºÎÁ·ÇÕ´Ï´Ù.");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
         }
     }
 
-    void RefundSkill(string skillName, int skillPrice, Text skillLevelText, Text skillPriceText)
+    IEnumerator StopButtonShakeAfterDelay(GameObject button, float delay)
     {
-        int currentLevel = dbManager.GetSkillLevel(skillName, playerId).GetValueOrDefault();
-        if (currentLevel > 0)
+        yield return new WaitForSeconds(delay);
+        StopButtonShake(button);
+    }
+
+    void BuyWeapon(string weaponName, int weaponPrice, bool isBuy, Text weaponPriceText)
+    {
+        if (isBuy)
         {
-            bool success = dbManager.UpdateSkillLevelData(skillName, "1", int.Parse(playerId));
+            Debug.Log("ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
+            return;
+        }
+
+        if (currentMoney >= weaponPrice)
+        {
+            currentMoney -= weaponPrice;
+
+            dbManager.SetMoney(currentMoney, currentCharactor, playerId);
+
+            UpdatePlayerMoneyUI();
+
+            bool success = dbManager.BuyWeapon(weaponName, currentCharactor, playerId);
             if (success)
             {
-                currentMoney += skillPrice;
+                isBuy = true;
+                weaponPriceText.transform.parent.parent.GetChild(1).GetComponent<Image>().enabled = true;
 
-                // µ¥ÀÌÅÍº£ÀÌ½º¿¡ ³²Àº µ· ¾÷µ¥ÀÌÆ®
-                dbManager.SetMoney(currentMoney, playerId);
+                weaponPriceText.color = PriceColor;
 
-                UpdatePlayerMoneyUI();
-
-                // ½ºÅ³ ·¹º§ ¾÷µ¥ÀÌÆ®
-                int newLevel = dbManager.GetSkillLevel(skillName, playerId).GetValueOrDefault();
-                skillLevelText.text = $"level {newLevel}";
-                skillLevelText.gameObject.SetActive(newLevel > 0);
-
-                // È¯ºÒ ÈÄ µ·ÀÌ ÃæºÐÇÏ¸é °¡°Ý ÅØ½ºÆ® »ö»ó º¯°æ
-                if (currentMoney >= skillPrice)
-                {
-                    skillPriceText.color = PriceColor;
-                }
-
-                // ½ºÅ³ ·¹º§ÀÌ 0ÀÌ¸é È¯ºÒ Ã¢ ºñÈ°¼ºÈ­
-                if (newLevel == 0)
-                {
-                    Transform skillWindow = skillLevelText.transform.parent.parent;
-                    Image skillRefund = skillWindow.transform.GetChild(0).GetChild(6).GetComponent<Image>();
-                    skillRefund.gameObject.SetActive(false);
-                }
-
-                // ¸ðµç ½ºÅ³ °¡°Ý ¾÷µ¥ÀÌÆ®
                 UpdateSkillPrices();
 
-                Debug.Log($"½ºÅ³ {skillName} È¯ºÒ¿¡ ¼º°øÇß½À´Ï´Ù.");
+                Debug.Log($"ï¿½ï¿½ï¿½ï¿½ {weaponName} ï¿½ï¿½ï¿½Å¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
             }
             else
             {
-                Debug.Log($"½ºÅ³ {skillName} È¯ºÒ¿¡ ½ÇÆÐÇß½À´Ï´Ù.");
+                Debug.LogError("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
             }
         }
         else
         {
-            Debug.Log($"½ºÅ³ {skillName}Àº(´Â) ´õ ÀÌ»ó È¯ºÒÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            weaponPriceText.color = Color.red;
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
+        }
+    }
+
+    enum ItemType { Skill, Weapon, Identity }
+
+    void RefundItem(string itemName, int price, Text levelText, Text priceText, ItemType itemType)
+    {
+        bool success = false;
+        int newLevel = 0;
+
+        switch (itemType)
+        {
+            case ItemType.Skill:
+                int skillLevel = dbManager.GetSkillLevel(itemName, currentCharactor, playerId).GetValueOrDefault();
+                if (skillLevel > 0)
+                {
+                    success = dbManager.UpdateSkillLevelData(itemName, currentCharactor, -1, playerId);
+                    newLevel = dbManager.GetSkillLevel(itemName, currentCharactor, playerId).GetValueOrDefault();
+                }
+                break;
+
+            case ItemType.Weapon:
+                bool isBought = dbManager.WeaponIsBuy(itemName, currentCharactor, playerId) > 0;
+                if (isBought)
+                {
+                    success = dbManager.RefundWeapon(itemName, currentCharactor, playerId);
+                }
+                break;
+
+            case ItemType.Identity:
+                int identityLevel = dbManager.GetIdentitySkillLevel(currentCharactor, playerId).GetValueOrDefault();
+                if (identityLevel > 0)
+                {
+                    success = dbManager.UpdateIdentitySkillLevelData(currentCharactor, -1, playerId);
+                    newLevel = dbManager.GetIdentitySkillLevel(currentCharactor, playerId).GetValueOrDefault();
+                }
+                break;
+        }
+
+        if (success)
+        {
+            currentMoney += price;
+            dbManager.SetMoney(currentMoney, currentCharactor, playerId);
+            UpdatePlayerMoneyUI();
+
+            if (itemType == ItemType.Skill || itemType == ItemType.Identity)
+            {
+                levelText.text = $"level {newLevel}";
+                levelText.gameObject.SetActive(newLevel > 0);
+            }
+            else
+            {
+                levelText.text = "";
+                levelText.gameObject.SetActive(false);
+            }
+
+            priceText.color = currentMoney >= price ? PriceColor : Color.red;
+
+            Transform itemWindow = levelText.transform.parent.parent;
+            Image refundImage = itemWindow.transform.GetChild(0).GetChild(6).GetComponent<Image>();
+            refundImage.gameObject.SetActive(false);
+
+            UpdateSkillPrices();
+            Debug.Log($"{itemType} È¯ï¿½Ò¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½: {itemName}");
+        }
+        else
+        {
+            Debug.Log($"{itemType} È¯ï¿½Ò¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½: {itemName}");
         }
     }
 
@@ -295,6 +560,39 @@ public class SkillUpgradeManager : MonoBehaviour
                     skillPriceText.color = PriceColor;
                 }
             }
+        }
+    }
+
+    private Coroutine buttonShakeCoroutine;
+
+    void StartButtonShake(GameObject button)
+    {
+        if (buttonShakeCoroutine != null)
+        {
+            StopCoroutine(buttonShakeCoroutine);
+        }
+        buttonShakeCoroutine = StartCoroutine(ShakeButton(button));
+    }
+    void StopButtonShake(GameObject button)
+    {
+        if (buttonShakeCoroutine != null)
+        {
+            StopCoroutine(buttonShakeCoroutine);
+            button.transform.rotation = Quaternion.identity;
+        }
+    }
+
+    IEnumerator ShakeButton(GameObject button)
+    {
+        RectTransform rt = button.GetComponent<RectTransform>();
+        float timeCount = 0;
+        float angle;
+        while (true)
+        {
+            angle = 5 * Mathf.Cos(timeCount * 10);
+            rt.rotation = Quaternion.Euler(0, 0, angle);
+            timeCount += Time.deltaTime;
+            yield return null;
         }
     }
 }
