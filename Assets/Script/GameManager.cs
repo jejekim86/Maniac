@@ -4,6 +4,7 @@ using System.Xml.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public sealed class GameManager : MonoBehaviour
@@ -55,6 +56,8 @@ public sealed class GameManager : MonoBehaviour
     [SerializeField] private Text timerText;
     [SerializeField] private Image[] images;
     public Player Player { get; private set; }
+
+    HighScore score = new HighScore();
 
     int Level = 0;
     float curTime;
@@ -135,6 +138,8 @@ public sealed class GameManager : MonoBehaviour
 
             if (curTime <= 0)
             {
+                score.lifeTime = (int)(maxTime - curTime);
+                score.stars = Level;
                 Debug.Log("생존 성공"); // 결과 창 출력 코드로 변경
                 curTime = 0;
                 yield break;
