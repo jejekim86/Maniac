@@ -19,6 +19,8 @@ public class Player : Controller
     [SerializeField] private float itemMoveSpeed = 1.0f;
     [SerializeField] private float itemRange = 5f;
     [SerializeField] private GameObject RenderObject;
+
+    [Header("Slider")]
     [SerializeField] private Slider coolTime_Bag;
     [SerializeField] private Slider coolTime_Dash;
     [SerializeField] private Slider coolTime_Gun;
@@ -54,6 +56,7 @@ public class Player : Controller
         maxHp = 10;
         curHp = maxHp;
         HP_image.fillAmount = maxHp;
+        coolTime_Ride.maxValue = 3;
     }
 
     public void SetLongRangeWeapon(Weapon weapon) => longRangeWeapon = weapon;
@@ -187,6 +190,7 @@ public class Player : Controller
         slider.value = slider.maxValue;
         slider.gameObject.SetActive(false);
         canDash = true;
+
     }
 
 
@@ -194,8 +198,11 @@ public class Player : Controller
     {
         if (collision.gameObject.CompareTag("Vehicle"))
         {
+            vehicle = collision.gameObject.GetComponent<Vehicle>();
             if (Input.GetKeyDown(KeyCode.E))
-                StartCoroutine(ClickButton(collision.gameObject.GetComponent<Vehicle>()));
+            {
+                StartCoroutine(ClickButton(vehicle));
+            }
         }
         rigidbody.constraints = RigidbodyConstraints.FreezeAll;
     }
@@ -241,10 +248,15 @@ public class Player : Controller
 
     public void Interact()
     {
-        if (isride)
+        switch (isride)
         {
-            if (Input.GetKeyDown(KeyCode.E))
-                StartCoroutine(ClickButton(null));
+            case true:
+                if (Input.GetKeyDown(KeyCode.E))
+                    StartCoroutine(ClickButton(null));
+                break;
+            default:
+                break;
+
         }
     }
     IEnumerator ClickButton(Vehicle item = null)
@@ -254,6 +266,7 @@ public class Player : Controller
             case null:
                 if (!item) yield break; // 차에서 탑승할때
                 Debug.Log("ClickButton");
+                coolTime_Ride.value += Time.deltaTime;
                 yield return new WaitForSeconds(3f);
                 vehicle = item;
                 vehicle.SetHp_imageActive(true);
