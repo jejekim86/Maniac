@@ -57,11 +57,14 @@ public sealed class GameManager : MonoBehaviour
     [SerializeField] private Text timerText;
     [SerializeField] private Image[] images;
     [SerializeField] private Player player;
+    [SerializeField] private GameObject resultUI;
 
     public Player Getplayer() => player;
     
 
-    HighScore score = new HighScore();
+    public HighScore score = new HighScore();
+
+    public int money = 0;
 
     int Level = 0;
     float curTime;
@@ -100,6 +103,11 @@ public sealed class GameManager : MonoBehaviour
 
     private void Start()
     {
+        // 게임 시작시 id를 받아오는 것으로 변경 해야함
+        score.userID = 1;
+        // 캐릭터 선택시 이름을 받아오게 해야함
+        score.charactorName = "Santa";
+
         maxTime = 300f - 300f * upgradeData.gameTime;
 
         if (timerText)
@@ -144,12 +152,24 @@ public sealed class GameManager : MonoBehaviour
             {
                 score.lifeTime = (int)(maxTime - curTime);
                 score.stars = Level;
+                score.money = player.GetMoney();
+                GameOverUI gameOverUI = Instantiate(resultUI).GetComponent<GameOverUI>();
+                gameOverUI.SetGameScore(score, true);
                 Debug.Log("생존 성공"); // 결과 창 출력 코드로 변경
                 curTime = 0;
                 yield break;
             }
 
         }
+    }
+
+    public void GameOver()
+    {
+        score.lifeTime = (int)(maxTime - curTime);
+        score.stars = Level;
+        score.money = player.GetMoney();
+        GameOverUI gameOverUI = Instantiate(resultUI).GetComponent<GameOverUI>();
+        gameOverUI.SetGameScore(score, false);
     }
 
     public void StartButtonOnClick()

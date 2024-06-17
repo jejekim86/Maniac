@@ -46,9 +46,10 @@ public class GameOverUI : MonoBehaviour
         StartCoroutine(MoveBG());
     }
 
-    public void SetGameScore(HighScore score)
+    public void SetGameScore(HighScore score, bool isClear)
     {
         thisGameScore = score;
+        this.isClear = isClear;
     }
 
     IEnumerator MoveBG()

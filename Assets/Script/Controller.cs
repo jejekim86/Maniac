@@ -27,12 +27,17 @@ public abstract class Controller : MonoBehaviour
         HP_image.fillAmount = curHp / maxHp;
     }
 
+    public virtual void Dead()
+    {
+        Debug.Log("사망함");
+        transform.position = Vector3.zero;
+    }
+
     public virtual void GetDamage(float damage)
     {
         if (curHp <= 0)
         {
-            Debug.Log("사망함");
-            transform.position = Vector3.zero;
+            Dead();
         }
         curHp -= damage;
         HP_image.fillAmount = curHp / maxHp;
