@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public abstract class Controller : MonoBehaviour
 {
     protected float walkSpeed;
-    protected float maxHp; 
+    protected float maxHp;
     [SerializeField] protected Image HP_image;
     public abstract void Move();
 

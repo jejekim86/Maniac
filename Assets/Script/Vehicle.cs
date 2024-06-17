@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Diagnostics.Eventing.Reader;
 using UnityEngine;
 
 public class Vehicle : Controller
@@ -8,7 +10,6 @@ public class Vehicle : Controller
     [SerializeField] float brakeSpeed = 100;
     float currentmotorTorque;
     float currentBrakeTorque;
-
 
     public override void AddHp(float heal) => base.AddHp(heal);
     public override void GetDamage(float damage) => base.GetDamage(damage);
@@ -22,6 +23,18 @@ public class Vehicle : Controller
         curHp = maxHp;
         HP_image.fillAmount = maxHp;
         currentBrakeTorque = 0;
+    }
+
+    public void SetTag(string tagname)
+    {
+        foreach (string definedTag in UnityEditorInternal.InternalEditorUtility.tags)
+        {
+            if (definedTag == tagname)
+            {
+                gameObject.tag = tagname;
+                return;
+            }
+        }
     }
 
     public void SetHp_imageActive(bool check) => HP_image.gameObject.SetActive(check);
@@ -58,8 +71,6 @@ public class Vehicle : Controller
         // 입력이 없는 경우 자동 감속
         if (Input.GetAxisRaw("Vertical") == 0)
             DecelerateVehicle();
-
-
     }
 
     public void ApplyBrakeTorque(float value)

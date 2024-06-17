@@ -32,8 +32,8 @@ public class Player : Controller
     private float dashPower = 50f;
     private float dashCooldown = 2f;
     private float dashDuration = 0.5f;
-    private bool isride;
     private bool canDash;
+    private bool isride;
     private bool isDashing;
     private bool isclicked;
     private Vector3 dashTarget;
@@ -294,6 +294,7 @@ public class Player : Controller
                 transform.localRotation = Quaternion.Euler(Vector3.zero);
                 rigidbody.constraints = RigidbodyConstraints.FreezeAll;
                 SetColliderEnabled(false);
+                vehicle.SetTag("Vehicle");
                 break;
             default: // 차에서 내릴때
                 transform.SetParent(null);
@@ -302,6 +303,7 @@ public class Player : Controller
                 vehicle.SetHp_imageActive(false);
                 vehicle = null;
                 SetColliderEnabled(true);
+                vehicle.SetTag(null);
                 break;
         }
         yield break;
