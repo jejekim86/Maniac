@@ -5,13 +5,13 @@ using System.Threading;
 
 public enum EffectState
 {
-    max
+    Test, max
 }
 
 public class PoolManager : MonoBehaviour
 {
-    [SerializeField] Effect[] effects = new Effect[(int)EffectState.max];
-    ObjectPool<Effect>[] effectPools = new ObjectPool<Effect>[(int)EffectState.max];
+    [SerializeField] Effect[] effects;
+    ObjectPool<Effect>[] effectPools = new ObjectPool<Effect>[10];
 
     static public PoolManager instance { get; private set; }
     public ObjectPool<Bullet> bulletPool;
@@ -26,6 +26,7 @@ public class PoolManager : MonoBehaviour
         bulletPool.Initialize();
         for(int i = 0; i < effects.Length; i++)
         {
+            effectPools[i] = new ObjectPool<Effect>();
             effectPools[i].Initialize(effects[i]);
         }
     }
