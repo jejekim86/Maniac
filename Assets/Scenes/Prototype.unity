@@ -10552,6 +10552,11 @@ PrefabInstance:
       propertyPath: m_AngularDrag
       value: 0.01
       objectReference: {fileID: 0}
+    - target: {fileID: 1069381353080400524, guid: fa4ced2c700c82f4cbbb95c436752cc9,
+        type: 3}
+      propertyPath: HP_image
+      value: 
+      objectReference: {fileID: 555030983}
     - target: {fileID: 1860021163439224991, guid: fa4ced2c700c82f4cbbb95c436752cc9,
         type: 3}
       propertyPath: m_LocalPosition.x
