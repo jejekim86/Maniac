@@ -151,14 +151,7 @@ public class SkillUpgradeManager : MonoBehaviour
             skillRefund.gameObject.SetActive(skillLevel > 0);
 
             skillPriceTexts[skill.skillName] = skillPriceText;
-            if (currentMoney < skill.price)
-            {
-                skillPriceText.color = Color.red;
-            }
-            else
-            {
-                skillPriceText.color = PriceColor;
-            }
+            skillPriceText.color = currentMoney < skill.price ? Color.red : PriceColor;
 
             Image skillImage = skillButton.transform.GetChild(0).GetChild(0).GetComponent<Image>();
             string imageSkillPath = $"Skills/Skill_{i + 1}";
@@ -219,8 +212,12 @@ public class SkillUpgradeManager : MonoBehaviour
             if (isBuy)
             {
                 weaponButton.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
-                weaponLevelText.gameObject.SetActive(true);
                 weaponLevelText.text = "구매됨";
+                weaponLevelText.gameObject.SetActive(true);
+            }
+            else
+            {
+                weaponLevelText.gameObject.SetActive(false);
             }
 
             Button upgradeButton = weaponButton.transform.GetChild(0).GetComponent<Button>();
@@ -349,7 +346,6 @@ public class SkillUpgradeManager : MonoBehaviour
         trigger.triggers.Add(entryRightClick);
     }
 
-
     void ShowSkillInfo(string skillName)
     {
         if (skillInfoPanels.TryGetValue(skillName, out GameObject skillText))
@@ -457,9 +453,20 @@ public class SkillUpgradeManager : MonoBehaviour
             if (success)
             {
                 isBuy = true;
-                weaponPriceText.transform.parent.parent.GetChild(1).GetComponent<Image>().enabled = true;
-
+                weaponPriceText.transform.parent.parent.GetChild(1).gameObject.SetActive(true);
                 weaponPriceText.color = PriceColor;
+
+                // 구매 상태 업데이트
+                GameObject weaponText;
+                if (skillInfoPanels.TryGetValue(weaponName, out weaponText))
+                {
+                    Text weaponLevelText = weaponText.transform.GetChild(0).GetChild(3).GetComponent<Text>();
+                    weaponLevelText.text = "구매됨";
+                    weaponLevelText.gameObject.SetActive(true);
+
+                    Image weaponRefund = weaponText.transform.GetChild(0).GetChild(6).GetComponent<Image>();
+                    weaponRefund.gameObject.SetActive(true);
+                }
 
                 UpdateSkillPrices();
 
@@ -500,6 +507,7 @@ public class SkillUpgradeManager : MonoBehaviour
                 if (isBought)
                 {
                     success = dbManager.RefundWeapon(itemName, currentCharactor, playerId);
+                    isBought = dbManager.WeaponIsBuy(itemName, currentCharactor, playerId) > 0;
                 }
                 break;
 
@@ -534,7 +542,7 @@ public class SkillUpgradeManager : MonoBehaviour
 
             Transform itemWindow = levelText.transform.parent.parent;
             Image refundImage = itemWindow.transform.GetChild(0).GetChild(6).GetComponent<Image>();
-            refundImage.gameObject.SetActive(false);
+            refundImage.gameObject.SetActive(newLevel > 0 || (itemType == ItemType.Weapon && dbManager.WeaponIsBuy(itemName, currentCharactor, playerId) > 0));
 
             UpdateSkillPrices();
             Debug.Log($"{itemType} 환불에 성공했습니다: {itemName}");
