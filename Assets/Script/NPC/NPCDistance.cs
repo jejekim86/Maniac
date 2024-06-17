@@ -29,6 +29,12 @@ public class NPCDistance : MonoBehaviour
             // NPC의 화면 위치 계산
             Vector3 npcScreenPos = mainCamera.WorldToScreenPoint(npc.transform.position);
 
+            // NPC가 카메라 뒤에 있는지 확인
+            if (npcScreenPos.z < 0)
+            {
+                npcScreenPos = -npcScreenPos;
+            }
+
             // 스크린 중심에서 NPC로의 방향 계산
             Vector3 screenCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
             Vector3 direction = (npcScreenPos - screenCenter).normalized;

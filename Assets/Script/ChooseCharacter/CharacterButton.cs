@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class CharacterButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
@@ -47,10 +46,9 @@ public class CharacterButton : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     public void OnClickChooseCharacter()
     {
-        // 해당 케릭터 데이터 넘겨주기
-        
         // 씬 전환
-        SceneManager.LoadScene("SkillUpgrade", LoadSceneMode.Single);
+
+        // 해당 케릭터 데이터 넘겨주기
     }
     IEnumerator MouseOnEvent1()
     {
