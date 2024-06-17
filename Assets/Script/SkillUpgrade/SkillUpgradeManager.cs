@@ -101,14 +101,12 @@ public class SkillUpgradeManager : MonoBehaviour
         UpdatePlayerMoneyUI();
     }
 
-//    void UpdatePlayerMoneyUI()
-//    {
-//        playerMoney.text = currentMoney.ToString();
-//    }
+    void UpdatePlayerMoneyUI() => playerMoney.text = currentMoney.ToString();
 
-//    void LoadSkills()
-//    {
-//        skills = dbManager.GetSkillData();
+
+    void LoadSkills()
+    {
+        skills = dbManager.GetSkillData();
 
         for (int i = 0; i < skills.Count; i++)
         {
@@ -124,7 +122,7 @@ public class SkillUpgradeManager : MonoBehaviour
 
             skillInfoPanels[skill.skillName] = skillText;
 
-//            GameObject skillButton = Instantiate(skillButtonPrefab, skillButtonContainer);
+            GameObject skillButton = Instantiate(skillButtonPrefab, skillButtonContainer);
 
             skillButton.name = skill.skillName + "_Button";
 
