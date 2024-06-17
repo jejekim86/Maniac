@@ -19,6 +19,8 @@ public class Player : Controller
     [SerializeField] private float itemMoveSpeed = 1.0f;
     [SerializeField] private float itemRange = 5f;
     [SerializeField] private GameObject RenderObject;
+
+    [Header("Slider")]
     [SerializeField] private Slider coolTime_Bag;
     [SerializeField] private Slider coolTime_Dash;
     [SerializeField] private Slider coolTime_Gun;
@@ -33,7 +35,7 @@ public class Player : Controller
     private bool isride;
     private bool canDash;
     private bool isDashing;
-
+    private bool isclicked;
     private Vector3 dashTarget;
 
     public override void AddHp(float heal) => base.AddHp(heal);
@@ -54,6 +56,7 @@ public class Player : Controller
         maxHp = 10;
         curHp = maxHp;
         HP_image.fillAmount = maxHp;
+        isclicked = false;
     }
 
     public void SetLongRangeWeapon(Weapon weapon) => longRangeWeapon = weapon;
@@ -193,11 +196,17 @@ public class Player : Controller
     private void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag("Vehicle"))
-        {
-            if (Input.GetKeyDown(KeyCode.E))
-                StartCoroutine(ClickButton(collision.gameObject.GetComponent<Vehicle>()));
-        }
+            Interact(collision.gameObject.GetComponent<Vehicle>());
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
         rigidbody.constraints = RigidbodyConstraints.FreezeAll;
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        rigidbody.constraints = RigidbodyConstraints.None;
     }
 
 
@@ -239,13 +248,36 @@ public class Player : Controller
         }
     }
 
-    public void Interact()
+    public void Interact(Vehicle item)
     {
-        if (isride)
+        switch (isride)
         {
-            if (Input.GetKeyDown(KeyCode.E))
-                StartCoroutine(ClickButton(null));
+            case true:
+                if (Input.GetKeyDown(KeyCode.E))
+                    StartCoroutine(ClickButton(null));
+                break;
+            default:
+                if (Input.GetKeyDown(KeyCode.E))
+                    StartCoroutine(IncreaseSlider(item));
+                break;
         }
+    }
+    IEnumerator IncreaseSlider(Vehicle item)
+    {
+        float duration = 3.0f; // 슬라이더가 채워지는 시간
+        float startTime = Time.time; // 시작 시간
+        coolTime_Ride.gameObject.SetActive(true);
+        while (Time.time - startTime < duration)
+        {
+            coolTime_Ride.value += (coolTime_Ride.maxValue / duration) * Time.deltaTime;
+            coolTime_Ride.value = Mathf.Clamp(coolTime_Ride.value, 0, coolTime_Ride.maxValue);
+            yield return null; // 다음 프레임까지 대기
+        }
+
+        coolTime_Ride.value = coolTime_Ride.maxValue;
+        StartCoroutine(ClickButton(item));
+        coolTime_Ride.value = 0;
+        coolTime_Ride.gameObject.SetActive(false);
     }
     IEnumerator ClickButton(Vehicle item = null)
     {
@@ -254,7 +286,6 @@ public class Player : Controller
             case null:
                 if (!item) yield break; // 차에서 탑승할때
                 Debug.Log("ClickButton");
-                yield return new WaitForSeconds(3f);
                 vehicle = item;
                 vehicle.SetHp_imageActive(true);
                 transform.SetParent(vehicle.gameObject.transform);
@@ -264,7 +295,6 @@ public class Player : Controller
                 SetColliderEnabled(false);
                 break;
             default: // 차에서 내릴때
-                yield return null;
                 transform.SetParent(null);
                 transform.position = vehicle.transform.position + (Vector3.right * 3);
                 rigidbody.constraints = RigidbodyConstraints.None;

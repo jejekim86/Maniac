@@ -29,7 +29,6 @@ public class Vehicle : Controller
     public override void Move()
     {
         wheelColliders[0].steerAngle = wheelColliders[1].steerAngle = Input.GetAxis("Horizontal") * 30f;
-        Debug.Log("wheelColliders[0] : " + wheelColliders[0].steerAngle + "wheelColliders[1] : " + wheelColliders[1].steerAngle);
 
         float currentspeed = rigidbody.velocity.magnitude;
         currentmotorTorque = (Input.GetAxisRaw("Vertical") * 4000f);
