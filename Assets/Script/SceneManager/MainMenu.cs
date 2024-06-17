@@ -16,6 +16,6 @@ public class MainMenu : MonoBehaviour
 
     private void ButtonOnClick()
     {
-        SceneManager.LoadScene("SkillUpgrade", LoadSceneMode.Single);
+        SceneManager.LoadScene("ChooseCharacter", LoadSceneMode.Single);
     }
 }

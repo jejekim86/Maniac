@@ -99,7 +99,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -155,7 +155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackRange: {fileID: 7893826386937070392}
   animationClip: {fileID: 7400000, guid: 71bca60e19c627c4e8d3403fef00aa90, type: 3}
-  stick: {fileID: 4005341322351622069}
+  stick: {fileID: 4095797355814348707}
   attackDuration: 0.5
   damage: 15
 --- !u!65 &7893826386937070392
@@ -173,7 +173,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3

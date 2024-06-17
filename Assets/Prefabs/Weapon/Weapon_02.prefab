@@ -110,8 +110,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5786097810451525583}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0.199, y: 1.328, z: 0.196}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -124,7 +124,7 @@ Transform:
   - {fileID: 7576839964966942220}
   - {fileID: 6615357593983727238}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5669096529280389305
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,13 +146,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5786097810451525583}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4a3d88b7a3998874a8e3c3b693f9c1fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 5786097810451525583}
   itemType: Gun
+  rotationSpeed: 0
 --- !u!65 &5906139180414097949
 BoxCollider:
   m_ObjectHideFlags: 0

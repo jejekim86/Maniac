@@ -3,6 +3,7 @@ using System.Data;
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Drawing;
 
 public class DBManagerTest : MonoBehaviour
 {
@@ -60,7 +61,7 @@ public class DBManagerTest : MonoBehaviour
 
         try
         {
-            if (GetRecordHighScore(out HighScore dbScore, score.userID) == false)
+            if (GetRecordHighScore(out HighScore dbScore, score.charactorName, score.userID) == false)
                 return false;
 
             if (score.money < dbScore.money)
@@ -72,7 +73,7 @@ public class DBManagerTest : MonoBehaviour
 
             SqlConn.Open();
 
-            cmd.CommandText = $"Update User_Record Set Money = {score.money}, Stars = {score.stars}, Life_Time = '{score.lifeTime}' Where User_Id = {score.userID}";
+            cmd.CommandText = $"Update users_charactor Set Money = {score.money}, Stars = {score.stars}, Life_Time = '{score.lifeTime}' Where User_Id = {score.userID} AND Charactor_Name = '{score.charactorName}'";
 
             int result = cmd.ExecuteNonQuery();
 
@@ -93,7 +94,7 @@ public class DBManagerTest : MonoBehaviour
         }
     }
 
-    public bool GetRecordHighScore(out HighScore highScore, int userID = 1)
+    public bool GetRecordHighScore(out HighScore highScore, string character, int userID = 1)
     {
         highScore = new HighScore();
 
@@ -107,15 +108,16 @@ public class DBManagerTest : MonoBehaviour
         {
             SqlConn.Open();
 
-            cmd.CommandText = $"Select * From User_Record Where User_Id = {userID}";
+            cmd.CommandText = $"Select * From users_charactor Where User_Id = {userID} And Charactor_Name = '{character}'";
             MySqlDataReader reader = cmd.ExecuteReader();
 
             if (reader.Read())
             {
-                highScore.userID = reader.GetInt32(0);
-                highScore.stars = reader.GetInt32(1);
-                highScore.money = reader.GetInt32(2);
-                highScore.lifeTime = reader.GetInt32(3);
+                highScore.charactorName = reader.GetString(0);
+                highScore.userID = reader.GetInt32(1);
+                highScore.stars = reader.GetInt32(3);
+                highScore.money = reader.GetInt32(4);
+                highScore.lifeTime = reader.GetInt32(5);
 
                 SqlConn.Close();
                 return true;
@@ -236,4 +238,6 @@ public class DBManagerTest : MonoBehaviour
             return -1;
         }
     }
+
+
 }
