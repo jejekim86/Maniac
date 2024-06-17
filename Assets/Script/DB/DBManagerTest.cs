@@ -73,7 +73,7 @@ public class DBManagerTest : MonoBehaviour
 
             SqlConn.Open();
 
-            cmd.CommandText = $"Update users_charactor Set Money = {score.money}, Stars = {score.stars}, Life_Time = '{score.lifeTime}' Where User_Id = {score.userID} AND Charactor_Name = '{score.charactorName}'";
+            cmd.CommandText = $"Update users_charactor Set Money = {score.money}, Stars_Record = {score.stars}, Life_Time_Record = '{score.lifeTime}' Where User_Id = {score.userID} AND Charactor_Name = '{score.charactorName}'";
 
             int result = cmd.ExecuteNonQuery();
 

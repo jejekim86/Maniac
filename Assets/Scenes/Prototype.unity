@@ -64371,6 +64371,9 @@ MonoBehaviour:
   - {fileID: 1529858539}
   - {fileID: 1689038455}
   player: {fileID: 2015148499}
+  resultUI: {fileID: 2631371198304364903, guid: 1887422b497c12244a838a10f0cbf303,
+    type: 3}
+  money: 0
 --- !u!4 &1870954372
 Transform:
   m_ObjectHideFlags: 0
