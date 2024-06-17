@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,12 +18,13 @@ public class GameOverUI : MonoBehaviour
     [SerializeField] private Image characterImage;
     [SerializeField] private Image bustedImage;
 
-    [SerializeField] private Sprite[] characterImages;
+    [SerializeField] private Sprite[] characterBustedImages;
+    [SerializeField] private Sprite[] characterClearImages;
 
-    
 
+    private bool isClear = false;
     private HighScore thisGameScore;
-    private HighScore highScore = new HighScore();
+    private HighScore highScore;
 
     void Start()
     {
@@ -32,9 +34,15 @@ public class GameOverUI : MonoBehaviour
         DBManagerTest.instance.GetRecordHighScore(out highScore, "Santa"); // Santa에서 thisGameScore.characterName으로 변경 하기
         for(int i = 0; i < (int)characters.max; i++)
         {
-            //if("Santa" == characters)
+            if(Enum.GetName(typeof(characters), i) == "Santa") // Santa에서 thisGameScore.characterName으로 변경 하기
+            {
+                if (!isClear)
+                    characterImage.sprite = characterBustedImages[i];
+                else
+                    characterImage.sprite = characterClearImages[i];
+                break;
+            }
         }
-
         StartCoroutine(MoveBG());
     }
 
@@ -80,7 +88,8 @@ public class GameOverUI : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         characterImage.gameObject.SetActive(true);
         yield return new WaitForSeconds(0.2f);
-        bustedImage.enabled = true;
+        if(!isClear)
+            bustedImage.enabled = true;
 
         DBManagerTest.instance.SetRecordHighScore(thisGameScore);
     }

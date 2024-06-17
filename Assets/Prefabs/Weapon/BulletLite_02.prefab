@@ -133,6 +133,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletSpeed: 15
   myCollider: {fileID: 7996838169118903140}
+  basicDamage: 5
 --- !u!65 &7996838169118903140
 BoxCollider:
   m_ObjectHideFlags: 0
