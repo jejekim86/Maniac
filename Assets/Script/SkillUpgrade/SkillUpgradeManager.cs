@@ -546,6 +546,22 @@ public class SkillUpgradeManager : MonoBehaviour
                 {
                     success = dbManager.UpdateIdentitySkillLevelData(currentCharactor, -1, playerId);
                     newLevel = dbManager.GetIdentitySkillLevel(currentCharactor, playerId).GetValueOrDefault();
+
+                    // Dash 비활성화
+                    Transform dashTransform = GameObject.Find("Inven/Dash/Dash").transform;
+                    dashTransform.gameObject.SetActive(false);
+
+                    // 환불 창 비활성화
+                    GameObject identityText;
+                    if (skillInfoPanels.TryGetValue(itemName, out identityText))
+                    {
+                        Image identityRefund = identityText.transform.GetChild(0).GetChild(6).GetComponent<Image>();
+                        identityRefund.gameObject.SetActive(false);
+
+                        Text weaponLevelText = identityText.transform.GetChild(0).GetChild(3).GetComponent<Text>();
+                        weaponLevelText.text = "";
+                        weaponLevelText.gameObject.SetActive(false);
+                    }
                 }
                 break;
         }
