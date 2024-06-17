@@ -26,7 +26,7 @@ PrefabInstance:
     - target: {fileID: 5786097810451525583, guid: 088ac7068bbb41a4fbbf45e86373eb4d,
         type: 3}
       propertyPath: m_TagString
-      value: Item
+      value: Gun
       objectReference: {fileID: 0}
     - target: {fileID: 5836183803064680627, guid: 088ac7068bbb41a4fbbf45e86373eb4d,
         type: 3}

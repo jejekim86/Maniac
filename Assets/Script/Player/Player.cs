@@ -38,6 +38,8 @@ public class Player : Controller
     private bool isclicked;
     private Vector3 dashTarget;
 
+    [SerializeField] private DBManager dbManager; // DB 매니저
+
     public override void AddHp(float heal) => base.AddHp(heal);
     public override void GetDamage(float damage) => base.GetDamage(damage);
     private void Start()
