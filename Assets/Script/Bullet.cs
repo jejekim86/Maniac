@@ -17,7 +17,7 @@ public class Bullet : MonoBehaviour
     private Collider myCollider;
     [SerializeField] private float basicDamage = 5f;
 
-    private float damage;
+    private float damage = 0;
 
     Vector3 dir;
     float timeCount;
@@ -28,6 +28,7 @@ public class Bullet : MonoBehaviour
     private void OnEnable()
     {
         damage = basicDamage + basicDamage * GameManager.Instance.inGameUpgradeData1[(int)InGameUpgrade.damage] * 0.01f;
+        Debug.Log(damage);
     }
 
     public void SetData(Vector3 firPos, Vector3 dir)
