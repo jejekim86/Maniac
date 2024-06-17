@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static GameManager;
 
 public class ItemGet : MonoBehaviour
 {
@@ -27,14 +28,10 @@ public class ItemGet : MonoBehaviour
 
         // 플레이어 Controller에 할당
         Player controller = target.GetComponent<Player>();
-        if (controller != null)
+        if (controller != null )
         {
             controller.SetLongRangeWeapon(newItem.GetComponent<Weapon>());
         }
-
-        Test TestControl = target.GetComponent<Test>();
-        if (TestControl != null)
-            TestControl.TestSetLongRangeWeapon(newItem.GetComponent<Weapon>());
     }
 
     public void ItemGet_Money(GameObject target)
@@ -42,7 +39,7 @@ public class ItemGet : MonoBehaviour
         Player controller = target.GetComponent<Player>();
         if (controller != null)
         {
-            controller.AddMoney(amount);
+            controller.AddMoney(amount + (int)(amount * GameManager.Instance.inGameUpgradeData1[(int)InGameUpgrade.money] * 0.01f));
         }
     }
 

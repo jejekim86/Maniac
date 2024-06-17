@@ -170,7 +170,7 @@ public class SkillUpgradeManager : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"ÀÌ¹ÌÁö¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù: {imageSkillPath}");
+                Debug.LogError($"ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½: {imageSkillPath}");
             }
 
             EventTrigger trigger = skillButton.AddComponent<EventTrigger>();
@@ -220,7 +220,7 @@ public class SkillUpgradeManager : MonoBehaviour
             {
                 weaponButton.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
                 weaponLevelText.gameObject.SetActive(true);
-                weaponLevelText.text = "±¸¸ÅµÊ";
+                weaponLevelText.text = "ï¿½ï¿½ï¿½Åµï¿½";
             }
 
             Button upgradeButton = weaponButton.transform.GetChild(0).GetComponent<Button>();
@@ -245,7 +245,7 @@ public class SkillUpgradeManager : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"ÀÌ¹ÌÁö¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù: {imageWeaponPath}");
+                Debug.LogError($"ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½: {imageWeaponPath}");
             }
 
             EventTrigger trigger = weaponButton.AddComponent<EventTrigger>();
@@ -320,7 +320,7 @@ public class SkillUpgradeManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"ÀÌ¹ÌÁö¸¦ ·ÎµåÇÒ ¼ö ¾ø½À´Ï´Ù: {imageIdentityPath}");
+            Debug.LogError($"ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½: {imageIdentityPath}");
         }
 
         EventTrigger trigger = identityButton.AddComponent<EventTrigger>();
@@ -358,7 +358,7 @@ public class SkillUpgradeManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"½ºÅ³ Á¤º¸¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù: {skillName}");
+            Debug.LogError($"ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½: {skillName}");
         }
     }
 
@@ -370,7 +370,7 @@ public class SkillUpgradeManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"½ºÅ³ Á¤º¸¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù: {skillName}");
+            Debug.LogError($"ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½: {skillName}");
         }
     }
 
@@ -417,17 +417,17 @@ public class SkillUpgradeManager : MonoBehaviour
                     StartCoroutine(StopButtonShakeAfterDelay(skillInfoPanel, 1f));
                 }
 
-                Debug.Log($"½ºÅ³ {skillName} ¾÷±×·¹ÀÌµå¿¡ ¼º°øÇß½À´Ï´Ù.");
+                Debug.Log($"ï¿½ï¿½Å³ {skillName} ï¿½ï¿½ï¿½×·ï¿½ï¿½Ìµå¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
             }
             else
             {
-                Debug.Log($"½ºÅ³ {skillName} ¾÷±×·¹ÀÌµå¿¡ ½ÇÆÐÇß½À´Ï´Ù.");
+                Debug.Log($"ï¿½ï¿½Å³ {skillName} ï¿½ï¿½ï¿½×·ï¿½ï¿½Ìµå¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
             }
         }
         else
         {
             skillPriceText.color = Color.red;
-            Debug.Log("µ·ÀÌ ºÎÁ·ÇÕ´Ï´Ù.");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
         }
     }
 
@@ -441,7 +441,7 @@ public class SkillUpgradeManager : MonoBehaviour
     {
         if (isBuy)
         {
-            Debug.Log("ÀÌ¹Ì ±¸¸ÅÇÔ");
+            Debug.Log("ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
             return;
         }
 
@@ -463,17 +463,17 @@ public class SkillUpgradeManager : MonoBehaviour
 
                 UpdateSkillPrices();
 
-                Debug.Log($"¹«±â {weaponName} ±¸¸Å¿¡ ¼º°øÇß½À´Ï´Ù.");
+                Debug.Log($"ï¿½ï¿½ï¿½ï¿½ {weaponName} ï¿½ï¿½ï¿½Å¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
             }
             else
             {
-                Debug.LogError("¹«±â ±¸¸Å¿¡ ½ÇÆÐÇß½À´Ï´Ù.");
+                Debug.LogError("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
             }
         }
         else
         {
             weaponPriceText.color = Color.red;
-            Debug.Log("µ·ÀÌ ºÎÁ·ÇÕ´Ï´Ù.");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
         }
     }
 
@@ -537,11 +537,11 @@ public class SkillUpgradeManager : MonoBehaviour
             refundImage.gameObject.SetActive(false);
 
             UpdateSkillPrices();
-            Debug.Log($"{itemType} È¯ºÒ¿¡ ¼º°øÇß½À´Ï´Ù: {itemName}");
+            Debug.Log($"{itemType} È¯ï¿½Ò¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½: {itemName}");
         }
         else
         {
-            Debug.Log($"{itemType} È¯ºÒ¿¡ ½ÇÆÐÇß½À´Ï´Ù: {itemName}");
+            Debug.Log($"{itemType} È¯ï¿½Ò¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½: {itemName}");
         }
     }
 
