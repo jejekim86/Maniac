@@ -12,8 +12,11 @@ public class ItemDrop : MonoBehaviour
 
     void Update()
     {
-        y += Time.deltaTime * rotationSpeed;
-        itemPrefab.transform.rotation = Quaternion.Euler(0, y, 0);
+        if (CompareTag("Item"))
+        {
+            y += Time.deltaTime * rotationSpeed;
+            itemPrefab.transform.rotation = Quaternion.Euler(0, y, 0);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
