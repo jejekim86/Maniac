@@ -170,7 +170,7 @@ public class SkillUpgradeManager : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"�̹����� �ε��� �� �����ϴ�: {imageSkillPath}");
+                Debug.LogError($"이미지를 로드할 수 없습니다: {imageSkillPath}");
             }
 
             EventTrigger trigger = skillButton.AddComponent<EventTrigger>();
@@ -220,7 +220,7 @@ public class SkillUpgradeManager : MonoBehaviour
             {
                 weaponButton.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
                 weaponLevelText.gameObject.SetActive(true);
-                weaponLevelText.text = "���ŵ�";
+                weaponLevelText.text = "구매됨";
             }
 
             Button upgradeButton = weaponButton.transform.GetChild(0).GetComponent<Button>();
@@ -245,7 +245,7 @@ public class SkillUpgradeManager : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"�̹����� �ε��� �� �����ϴ�: {imageWeaponPath}");
+                Debug.LogError($"이미지를 로드할 수 없습니다: {imageWeaponPath}");
             }
 
             EventTrigger trigger = weaponButton.AddComponent<EventTrigger>();
@@ -320,7 +320,7 @@ public class SkillUpgradeManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"�̹����� �ε��� �� �����ϴ�: {imageIdentityPath}");
+            Debug.LogError($"이미지를 로드할 수 없습니다: {imageIdentityPath}");
         }
 
         EventTrigger trigger = identityButton.AddComponent<EventTrigger>();
@@ -358,7 +358,7 @@ public class SkillUpgradeManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"��ų ������ ã�� �� �����ϴ�: {skillName}");
+            Debug.LogError($"스킬 정보를 찾을 수 없습니다: {skillName}");
         }
     }
 
@@ -370,7 +370,7 @@ public class SkillUpgradeManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"��ų ������ ã�� �� �����ϴ�: {skillName}");
+            Debug.LogError($"스킬 정보를 찾을 수 없습니다: {skillName}");
         }
     }
 
@@ -417,17 +417,17 @@ public class SkillUpgradeManager : MonoBehaviour
                     StartCoroutine(StopButtonShakeAfterDelay(skillInfoPanel, 1f));
                 }
 
-                Debug.Log($"��ų {skillName} ���׷��̵忡 �����߽��ϴ�.");
+                Debug.Log($"스킬 {skillName} 업그레이드에 성공했습니다.");
             }
             else
             {
-                Debug.Log($"��ų {skillName} ���׷��̵忡 �����߽��ϴ�.");
+                Debug.Log($"스킬 {skillName} 업그레이드에 실패했습니다.");
             }
         }
         else
         {
             skillPriceText.color = Color.red;
-            Debug.Log("���� �����մϴ�.");
+            Debug.Log("돈이 부족합니다.");
         }
     }
 
@@ -441,7 +441,7 @@ public class SkillUpgradeManager : MonoBehaviour
     {
         if (isBuy)
         {
-            Debug.Log("�̹� ������");
+            Debug.Log("이미 구매함");
             return;
         }
 
@@ -463,17 +463,17 @@ public class SkillUpgradeManager : MonoBehaviour
 
                 UpdateSkillPrices();
 
-                Debug.Log($"���� {weaponName} ���ſ� �����߽��ϴ�.");
+                Debug.Log($"무기 {weaponName} 구매에 성공했습니다.");
             }
             else
             {
-                Debug.LogError("���� ���ſ� �����߽��ϴ�.");
+                Debug.LogError("무기 구매에 실패했습니다.");
             }
         }
         else
         {
             weaponPriceText.color = Color.red;
-            Debug.Log("���� �����մϴ�.");
+            Debug.Log("돈이 부족합니다.");
         }
     }
 
@@ -537,11 +537,11 @@ public class SkillUpgradeManager : MonoBehaviour
             refundImage.gameObject.SetActive(false);
 
             UpdateSkillPrices();
-            Debug.Log($"{itemType} ȯ�ҿ� �����߽��ϴ�: {itemName}");
+            Debug.Log($"{itemType} 환불에 성공했습니다: {itemName}");
         }
         else
         {
-            Debug.Log($"{itemType} ȯ�ҿ� �����߽��ϴ�: {itemName}");
+            Debug.Log($"{itemType} 환불에 실패했습니다: {itemName}");
         }
     }
 

@@ -1276,7 +1276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9ab58c794354bc45ad8b2b27045728e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillTextPrefab: {fileID: 5746828857648202562, guid: 3588a0d18617a314db6ddd47d2c6a9bf,
+  skillTextPrefab: {fileID: 5746828857648202562, guid: e02de19efd47717428f535c831d899d4,
     type: 3}
   skillButtonPrefab: {fileID: 9193377246291650759, guid: d3eac803bcb438043b08f114ae52114c,
     type: 3}
