@@ -11,8 +11,8 @@ public class UpgradePanelManager : MonoBehaviour
     [SerializeField] private Transform buttonsParent;
 
     [SerializeField] private Image[] buttons = new Image[4];
-    [SerializeField] private GameObject[] upgradButtons;
-    [SerializeField] private Sprite[] upgradButtonSprites;
+    //[SerializeField] private GameObject[] upgradeButtons;
+    [SerializeField] private Sprite[] upgradeButtonSprites;
 
     List<SkillDataStruct> skillDatas = new List<SkillDataStruct>();
 
@@ -74,7 +74,7 @@ public class UpgradePanelManager : MonoBehaviour
         {
             buttons[i].enabled = true;
             button = buttons[i].GetComponent<IngameUpgradeButton>();
-            button.SetSkillData(skillDatas[randomNums[i - 1]], upgradButtonSprites[randomNums[i - 1]], randomNums[i - 1]);
+            button.SetSkillData(skillDatas[randomNums[i - 1]], upgradeButtonSprites[randomNums[i - 1]], randomNums[i - 1]);
             yield return new WaitForSecondsRealtime(0.25f);
         }
     }
