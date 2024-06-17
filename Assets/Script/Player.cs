@@ -220,9 +220,9 @@ public class Player : Controller
                 rigidbody.constraints = RigidbodyConstraints.None;
                 break;
             default:
-                //vehicle.Move();
-                //if (Input.GetKeyDown(KeyCode.E))
-                //    StartCoroutine(ClickButton());
+                vehicle.Move();
+                if (Input.GetKeyDown(KeyCode.E))
+                    StartCoroutine(ClickButton());
                 break;
         }
     }
@@ -266,7 +266,7 @@ public class Player : Controller
     {
         float duration = 3.0f; // 슬라이더가 채워지는 시간
         float startTime = Time.time; // 시작 시간
-
+        coolTime_Ride.gameObject.SetActive(true);
         while (Time.time - startTime < duration)
         {
             coolTime_Ride.value += (coolTime_Ride.maxValue / duration) * Time.deltaTime;
@@ -277,6 +277,7 @@ public class Player : Controller
         coolTime_Ride.value = coolTime_Ride.maxValue;
         StartCoroutine(ClickButton(item));
         coolTime_Ride.value = 0;
+        coolTime_Ride.gameObject.SetActive(false);
     }
     IEnumerator ClickButton(Vehicle item = null)
     {
