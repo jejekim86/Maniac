@@ -28,6 +28,7 @@ public class Player : Controller
     CapsuleCollider collider;
     private Animator animator;
     private int money;
+    private int startMoney;
     private float walkAnimationSpeed;
     private float dashPower = 50f;
     private float dashCooldown = 2f;
@@ -52,7 +53,8 @@ public class Player : Controller
         animator = GetComponent<Animator>();
         collider = GetComponent<CapsuleCollider>();
         walkSpeed = 10;
-        money = 1000;
+        money = 0; // db에서 money 값을 받아와서 넣어 줘야 함
+        startMoney = money;
         maxHp = 10;
         curHp = maxHp;
         HP_image.fillAmount = maxHp;
@@ -67,6 +69,11 @@ public class Player : Controller
     {
         money += amount;
         moneyText.text = money.ToString();
+    }
+
+    public int GetMoney()
+    {
+        return money - startMoney;
     }
 
     IEnumerator Dash(Vector3 dashDirection)
@@ -310,5 +317,11 @@ public class Player : Controller
     {
         collider.enabled = check;
         RenderObject.gameObject.SetActive(check);
+    }
+
+    public override void Dead()
+    {
+        base.Dead();
+        GameManager.Instance.GameOver();
     }
 }
