@@ -269,6 +269,7 @@ public class Player : Controller
         coolTime_Ride.gameObject.SetActive(true);
         while (Time.time - startTime < duration)
         {
+            coolTime_Ride.transform.position = Camera.main.WorldToScreenPoint(item.transform.position);
             coolTime_Ride.value += (coolTime_Ride.maxValue / duration) * Time.deltaTime;
             coolTime_Ride.value = Mathf.Clamp(coolTime_Ride.value, 0, coolTime_Ride.maxValue);
             yield return null; // 다음 프레임까지 대기
