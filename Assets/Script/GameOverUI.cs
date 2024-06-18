@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public enum characters
@@ -9,7 +12,7 @@ public enum characters
     Santa,
     max
 }
-public class GameOverUI : MonoBehaviour
+public class GameOverUI : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private Image[] backGroundImage;
     [SerializeField] private Transform[] endPos;
@@ -62,7 +65,7 @@ public class GameOverUI : MonoBehaviour
         }
         while (timeCount < 0.5f)
         {
-            timeCount += Time.deltaTime;
+            timeCount += Time.unscaledDeltaTime;
             for (int i = 0; i < backGroundImage.Length; i++)
             {
                 backGroundImage[i].transform.position = Vector3.Lerp(startPos[i], endPos[i].position, timeCount * 2);
@@ -76,7 +79,7 @@ public class GameOverUI : MonoBehaviour
     {
         recordFrame.enabled = true;
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSecondsRealtime(0.2f);
 
         records[0].text = $"추구 수준           {thisGameScore.stars}       {highScore.stars}";
         records[1].text = $"생존 시간           {thisGameScore.lifeTime}       {highScore.lifeTime}";
@@ -84,14 +87,20 @@ public class GameOverUI : MonoBehaviour
         for (int i = 0; i < records.Length; i++)
         {
             records[i].enabled = true;
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSecondsRealtime(0.1f);
         }
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSecondsRealtime(0.1f);
         characterImage.gameObject.SetActive(true);
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSecondsRealtime(0.2f);
         if(!isClear)
             bustedImage.enabled = true;
 
         DBManagerTest.instance.SetRecordHighScore(thisGameScore);
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("ChooseCharacter", LoadSceneMode.Single);
     }
 }
