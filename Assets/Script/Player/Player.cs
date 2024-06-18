@@ -50,7 +50,8 @@ public class Player : Controller
         animator = GetComponent<Animator>();
         collider = GetComponent<CapsuleCollider>();
         walkSpeed = 10;
-        money = 0; // db에서 money 값을 받아와서 넣어 줘야 함
+        money = DBManagerTest.instance.GetMoney("Santa"); // db에서 money 값을 받아와서 넣어 줘야 함
+        moneyText.text = money.ToString();
         startMoney = money;
         maxHp = 10;
         curHp = maxHp;
