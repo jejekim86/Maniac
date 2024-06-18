@@ -48,7 +48,7 @@ public class CharacterButton : MonoBehaviour, IPointerEnterHandler, IPointerExit
     public void OnClickChooseCharacter()
     {
         // 해당 케릭터 데이터 넘겨주기
-        
+
         // 씬 전환
         SceneManager.LoadScene("SkillUpgrade", LoadSceneMode.Single);
     }

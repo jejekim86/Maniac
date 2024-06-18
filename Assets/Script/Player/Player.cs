@@ -71,9 +71,14 @@ public class Player : Controller
         moneyText.text = money.ToString();
     }
 
-    public int GetMoney()
+    public int GetThisGameMoney()
     {
         return money - startMoney;
+    }
+
+    public int GetMoney()
+    {
+        return money;
     }
 
     IEnumerator Dash(Vector3 dashDirection)
