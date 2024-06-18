@@ -24,6 +24,7 @@ public class SkillUpgradeManager : MonoBehaviour
     [SerializeField] private GameObject weaponPrefab;
     [SerializeField] private Transform weaponContainer;
     [SerializeField] private Text playerMoney;
+    [SerializeField] private AudioSource audioSource;
 
     private string currentCharactor = "Santa";
     private int playerId = 1;
@@ -431,6 +432,7 @@ public class SkillUpgradeManager : MonoBehaviour
                 }
 
                 Debug.Log($"스킬 {skillName} 업그레이드에 성공했습니다.");
+                SoundManager.Instance.PlaySoundEffect(SoundEffect.Cash, audioSource);
             }
             else
             {
@@ -495,6 +497,8 @@ public class SkillUpgradeManager : MonoBehaviour
                 gunTransform.gameObject.SetActive(true);
 
                 UpdateSkillPrices();
+
+                SoundManager.Instance.PlaySoundEffect(SoundEffect.Cash, audioSource);
 
                 Debug.Log($"무기 {weaponName} 구매에 성공했습니다.");
             }
@@ -636,6 +640,19 @@ public class SkillUpgradeManager : MonoBehaviour
                     skillPriceText.color = PriceColor;
                 }
             }
+        }
+
+        foreach (var weapon in weapons)
+        {
+            if (skillPriceTexts.TryGetValue(weapon.name, out Text weaponPriceText))
+            {
+                weaponPriceText.color = currentMoney < weapon.price ? Color.red : PriceColor;
+            }
+        }
+
+        if (skillPriceTexts.TryGetValue(identity.skillName, out Text identityPriceText))
+        {
+            identityPriceText.color = currentMoney < identity.price ? Color.red : PriceColor;
         }
     }
 
