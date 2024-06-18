@@ -150,6 +150,7 @@ public sealed class GameManager : MonoBehaviour
 
             if (curTime <= 0)
             {
+                Time.timeScale = 0;
                 score.lifeTime = (int)(maxTime - curTime);
                 score.stars = Level;
                 score.money = player.GetMoney();
@@ -165,6 +166,7 @@ public sealed class GameManager : MonoBehaviour
 
     public void GameOver()
     {
+        Time.timeScale = 0;
         score.lifeTime = (int)(maxTime - curTime);
         score.stars = Level;
         score.money = player.GetMoney();
