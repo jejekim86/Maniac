@@ -5,6 +5,7 @@ using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public enum characters
@@ -96,11 +97,12 @@ public class GameOverUI : MonoBehaviour, IPointerClickHandler
             bustedImage.enabled = true;
 
         DBManagerTest.instance.SetRecordHighScore(thisGameScore);
+        DBManagerTest.instance.SetMoney(GameManager.Instance.Getplayer().GetMoney(), thisGameScore.charactorName, thisGameScore.userID);
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("ChooseCharacter", LoadSceneMode.Single);
+        SceneManager.LoadScene("ChooseCharacter");
     }
 }

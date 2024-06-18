@@ -17291,7 +17291,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &536868536
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -53992,6 +53992,11 @@ PrefabInstance:
       propertyPath: itemGun
       value: 
       objectReference: {fileID: 782983899}
+    - target: {fileID: 9000257376541429073, guid: b2e8302ca76cfbf40a6840c45ea39744,
+        type: 3}
+      propertyPath: m_UseGravity
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9132071561014807397, guid: b2e8302ca76cfbf40a6840c45ea39744,
         type: 3}
       propertyPath: HP_image
