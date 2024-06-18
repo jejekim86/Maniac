@@ -33,7 +33,7 @@ public class EnemyChaseState : MonoBehaviour, State
             target = player.transform; // 플레이어 설정
         }
 
-        if (vehicle != null)
+        else if (vehicle != null)
         {
             target = vehicle.transform; // 자동차 설정
         }

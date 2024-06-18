@@ -27,10 +27,7 @@ public class EnemyAttackState : MonoBehaviour, State
             enemy = GetComponent<Enemy>();
         }
 
-        if (ani != null)
-        {
-            ani.SetBool("isAttack", true); // 공격 애니메이션 시작
-        }
+        ani.SetBool("isAttack", true); // 공격 애니메이션 시작
 
         if (enemy != null)
         {
@@ -53,7 +50,7 @@ public class EnemyAttackState : MonoBehaviour, State
             target = player.transform; // 플레이어 설정
         }
 
-        if (vehicle != null)
+        else if (vehicle != null)
         {
             target = vehicle.transform; // 자동차 설정
         }
@@ -74,10 +71,7 @@ public class EnemyAttackState : MonoBehaviour, State
         }
 
         // 공격 시 위치 고정
-        if (enemyAgent != null)
-        {
-            enemyAgent.SetDestination(transform.position);
-        }
+        enemyAgent.SetDestination(transform.position);
     }
 
     private IEnumerator Attack()

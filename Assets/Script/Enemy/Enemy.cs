@@ -67,11 +67,19 @@ public class Enemy : MonoBehaviour
 
     private void HandleStateTransitions()
     {
-        if (playerInAttackRadius || vehicleInAttackRadius)
+        if (playerInAttackRadius)
         {
             enemyAI.Transition(attack);
         }
-        else if (playerInVisionRadius || vehicleInVisionRadius)
+        else if (vehicleInAttackRadius)
+        {
+            enemyAI.Transition(attack);
+        }
+        else if (playerInVisionRadius)
+        {
+            enemyAI.Transition(chase);
+        }
+        else if (vehicleInVisionRadius)
         {
             enemyAI.Transition(chase);
         }
