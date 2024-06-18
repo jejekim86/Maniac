@@ -63,21 +63,21 @@ public class Vehicle : Controller
 
         wheelColliders[0].steerAngle = wheelColliders[1].steerAngle = hInput * currentSteerRange;
 
-        switch (forwardSpeed)
-        {
-            case > 0: // 전진
-                wheelColliders[0].sidewaysFriction = backwheelFriction;
-                wheelColliders[1].sidewaysFriction = backwheelFriction;
-                wheelColliders[2].sidewaysFriction = frontwheelFriction;
-                wheelColliders[3].sidewaysFriction = frontwheelFriction;
-                break;
-            case < 0: // 후진
-                wheelColliders[0].sidewaysFriction = frontwheelFriction;
-                wheelColliders[1].sidewaysFriction = frontwheelFriction;
-                wheelColliders[2].sidewaysFriction = backwheelFriction;
-                wheelColliders[3].sidewaysFriction = backwheelFriction;
-                break;
-        }
+        //switch (forwardSpeed)
+        //{
+        //    case > 0: // 전진
+        //        wheelColliders[0].sidewaysFriction = backwheelFriction;
+        //        wheelColliders[1].sidewaysFriction = backwheelFriction;
+        //        wheelColliders[2].sidewaysFriction = frontwheelFriction;
+        //        wheelColliders[3].sidewaysFriction = frontwheelFriction;
+        //        break;
+        //    //case < 0: // 후진
+        //    //    wheelColliders[0].sidewaysFriction = frontwheelFriction;
+        //    //    wheelColliders[1].sidewaysFriction = frontwheelFriction;
+        //    //    wheelColliders[2].sidewaysFriction = backwheelFriction;
+        //    //    wheelColliders[3].sidewaysFriction = backwheelFriction;
+        //    //    break;
+        //}
         foreach (var wheel in wheelColliders)
         {
             // "Steerable"이 활성화된 Wheel Colliders에 조향 적용

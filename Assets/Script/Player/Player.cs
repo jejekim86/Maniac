@@ -171,16 +171,16 @@ public class Player : Controller
         if (collision.gameObject.CompareTag("Vehicle"))
             Interact(collision.gameObject.GetComponent<Vehicle>());
     }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        rigidbody.constraints = RigidbodyConstraints.FreezeAll;
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-        rigidbody.constraints = RigidbodyConstraints.None;
-    }
+    
+    //private void OnCollisionEnter(Collision collision)
+    //{
+    //    rigidbody.constraints = RigidbodyConstraints.FreezeAll;
+    //}
+    //
+    //private void OnCollisionExit(Collision collision)
+    //{
+    //    rigidbody.constraints = RigidbodyConstraints.None;
+    //}
 
     private void FixedUpdate()
     {
@@ -188,7 +188,7 @@ public class Player : Controller
         {
             case null:
                 Move();
-                rigidbody.constraints = RigidbodyConstraints.None;
+                //rigidbody.constraints = RigidbodyConstraints.None;
                 break;
             default:
                 vehicle.Move();
