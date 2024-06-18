@@ -54,6 +54,8 @@ public class GameOverUI : MonoBehaviour, IPointerClickHandler
     {
         thisGameScore = score;
         this.isClear = isClear;
+        if (isClear)
+            SoundManager.Instance.PlayBGM(BGM.victory);
     }
 
     IEnumerator MoveBG()
@@ -103,6 +105,7 @@ public class GameOverUI : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         Time.timeScale = 1f;
+        SoundManager.Instance.PlayBGM(BGM.menuBGM);
         SceneManager.LoadScene("ChooseCharacter");
     }
 }

@@ -215,7 +215,7 @@ public class Player : Controller
     {
         rigidbody.constraints = RigidbodyConstraints.FreezeAll;
     }
-
+    
     private void OnCollisionExit(Collision collision)
     {
         rigidbody.constraints = RigidbodyConstraints.None;

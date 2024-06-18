@@ -83,7 +83,6 @@ public sealed class GameManager : MonoBehaviour
         if (null == instance)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
             Destroy(gameObject);
@@ -118,8 +117,17 @@ public sealed class GameManager : MonoBehaviour
         }
     }
 
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "game2")
+        {
+            GameStart();
+        }
+    }
+
     public void GameStart()
     {
+        SoundManager.Instance.PlayBGM(BGM.inGameChase);
         // 게임 시작시 id를 받아오는 것으로 변경 해야함
         score.userID = 1;
         // 캐릭터 선택시 이름을 받아오게 해야함
@@ -155,6 +163,7 @@ public sealed class GameManager : MonoBehaviour
 
             if (curTime <= 0)
             {
+                SoundManager.Instance.PlayBGM(BGM.victory);
                 Time.timeScale = 0;
                 score.lifeTime = (int)(maxTime - curTime);
                 score.stars = Level;

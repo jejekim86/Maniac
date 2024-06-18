@@ -12,6 +12,7 @@ public class MainMenu : MonoBehaviour
     private void Start()
     {
         startButton.onClick.AddListener(ButtonOnClick);
+        SoundManager.Instance.PlayBGM(BGM.menuBGM);
     }
 
     private void ButtonOnClick()
