@@ -210,7 +210,7 @@ public class Player : Controller
         if (collision.gameObject.CompareTag("Vehicle"))
             Interact(collision.gameObject.GetComponent<Vehicle>());
     }
-
+    
     //private void OnCollisionEnter(Collision collision)
     //{
     //    rigidbody.constraints = RigidbodyConstraints.FreezeAll;
