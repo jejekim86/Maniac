@@ -1,3 +1,4 @@
+// Path: Assets/Scripts/ItemGet.cs
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -55,10 +56,24 @@ public class ItemGet : MonoBehaviour
 
     public void ItemGet_HP(GameObject target)
     {
-        Player controller = target.GetComponent<Player>();
-        if (controller != null)
+        // Vehicle 컴포넌트를 먼저 시도
+        Vehicle vehicle = target.GetComponent<Vehicle>();
+        if (vehicle != null)
         {
-            controller.AddHp(healAmount);
+            vehicle.AddHp(healAmount);
+        }
+        else
+        {
+            // Player 컴포넌트를 시도
+            Player controller = target.GetComponent<Player>();
+            if (controller != null)
+            {
+                controller.AddHp(healAmount);
+            }
+            else
+            {
+                Debug.LogError("ItemGet_HP: target에 Vehicle 또는 Player 컴포넌트가 없음");
+            }
         }
     }
 }
