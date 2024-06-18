@@ -239,5 +239,39 @@ public class DBManagerTest : MonoBehaviour
         }
     }
 
+    public bool SetMoney(int money, string charactor, int userID = 1)
+    {
+        if (SqlConn == null)
+        {
+            Debug.LogError("SetMoney 메서드에서 SqlConn이 null입니다.");
+            return false;
+        }
+        try
+        {
+            if (SqlConn.State == System.Data.ConnectionState.Closed)
+            {
+                SqlConn.Open();   // DB 연결
+            }
+
+            cmd.CommandText = $"Update Users_Charactor set money = {money} Where User_Id = {userID} AND Charactor_Name = '{charactor}'";
+            int result = cmd.ExecuteNonQuery();
+
+            if (result < 0)
+            {
+                Debug.Log("데이터 업데이트에 실패했습니다.");
+                SqlConn.Close();  // DB 연결 해제
+                return false;
+            }
+
+            SqlConn.Close();  // DB 연결 해제
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("예외 발생: " + e.ToString());
+            SqlConn.Close();  // DB 연결 해제
+            return false;
+        }
+    }
 
 }
