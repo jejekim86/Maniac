@@ -641,6 +641,19 @@ public class SkillUpgradeManager : MonoBehaviour
                 }
             }
         }
+
+        foreach (var weapon in weapons)
+        {
+            if (skillPriceTexts.TryGetValue(weapon.name, out Text weaponPriceText))
+            {
+                weaponPriceText.color = currentMoney < weapon.price ? Color.red : PriceColor;
+            }
+        }
+
+        if (skillPriceTexts.TryGetValue(identity.skillName, out Text identityPriceText))
+        {
+            identityPriceText.color = currentMoney < identity.price ? Color.red : PriceColor;
+        }
     }
 
     private Coroutine buttonShakeCoroutine;
