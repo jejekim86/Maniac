@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LongRangeWeaponAR : LongRangeWeapon
 {
-    
+    [SerializeField] private AudioSource audioSource;
     private void Start()
     {
         reloadT = 1f;
@@ -22,6 +22,7 @@ public class LongRangeWeaponAR : LongRangeWeapon
         newBullet.SetDirection(fireTr);
         //newBullet.transform.position = fireTr.transform.position;
         //newBullet.transform.rotation = fireTr.rotation;
+        SoundManager.Instance.PlaySoundEffect(SoundEffect.fireBullet, audioSource);
         timeCount = 0;
         return true;
     }

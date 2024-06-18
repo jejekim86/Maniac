@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static GameManager;
 using static UnityEngine.UI.GridLayoutGroup;
 
 public class Bullet : MonoBehaviour
@@ -14,12 +15,21 @@ public class Bullet : MonoBehaviour
 
     [SerializeField]
     private Collider myCollider;
+    [SerializeField] private float basicDamage = 5f;
+
+    private float damage = 0;
 
     Vector3 dir;
     float timeCount;
     float distance = 0;
     private Vector3 startpos;
     private Vector3 endpos;
+
+    private void OnEnable()
+    {
+        damage = basicDamage + basicDamage * GameManager.Instance.inGameUpgradeData1[(int)InGameUpgrade.damage] * 0.01f;
+        Debug.Log(damage);
+    }
 
     public void SetData(Vector3 firPos, Vector3 dir)
     {
@@ -63,13 +73,19 @@ public class Bullet : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             Debug.Log("총알 히트");
-            other.gameObject.GetComponent<Enemy>().GetDamage(5f);
+            other.gameObject.GetComponent<Enemy>().GetDamage(damage);
             Terminate();
             PoolManager.instance.bulletPool.PutInPool(this); // 총알을 풀에 다시 넣음
         }
         else if (other.gameObject.CompareTag("Player"))
         {
             other.gameObject.GetComponent<Player>().GetDamage(0.1f);
+            Terminate();
+            PoolManager.instance.bulletPool.PutInPool(this); // 총알을 풀에 다시 넣음
+        }
+        else if (other.gameObject.CompareTag("Vehicle"))
+        {
+            other.gameObject.GetComponent<Vehicle>().GetDamage(0.1f);
             Terminate();
             PoolManager.instance.bulletPool.PutInPool(this); // 총알을 풀에 다시 넣음
         }
