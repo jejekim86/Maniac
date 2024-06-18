@@ -1,46 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Unity.Burst.CompilerServices;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(MeshRenderer))]
 public class Player : Controller
 {
-    Vehicle vehicle;
     Vector3 translation;
-    Vector3 lastMoveDirection = Vector3.forward;
+    Vector3 lastMoveDirection = Vector3.forward; // ������ �̵� ������ ������ ����
 
     [SerializeField] Weapon longRangeWeapon;
     [SerializeField] Weapon meleeWeapon;
     [SerializeField] Text moneyText;
-    [SerializeField] private float itemMoveSpeed = 1.0f;
-    [SerializeField] private float itemRange = 5f;
-    [SerializeField] private GameObject RenderObject;
+    [SerializeField] Image playerimage;
+    [SerializeField] private float itemMoveSpeed = 1.0f; // ������ �̵� �ӵ�
+    [SerializeField] private float itemRange = 5f; // ������ ������� ����
 
-    [Header("Slider")]
     [SerializeField] private Slider coolTime_Bag;
     [SerializeField] private Slider coolTime_Dash;
     [SerializeField] private Slider coolTime_Gun;
-    [SerializeField] private Slider coolTime_Ride;
+
     CapsuleCollider collider;
     private Animator animator;
     private int money;
-    private int startMoney;
     private float walkAnimationSpeed;
-    private float dashPower = 50f;
+    private float dashPower = 5000f;
     private float dashCooldown = 2f;
-    private float dashDuration = 0.5f;
-    private bool isride;
+    private float dashDuration = 0.5f; // �뽬 ���� �ð�
+    //private bool isride;
     private bool canDash;
     private bool isDashing;
-    private bool isclicked;
+
     private Vector3 dashTarget;
 
-    public override void AddHp(float heal) => base.AddHp(heal);
-    public override void GetDamage(float damage) => base.GetDamage(damage);
     private void Start()
     {
         coolTime_Bag.gameObject.SetActive(false);
@@ -52,18 +46,23 @@ public class Player : Controller
         rigidbody = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         collider = GetComponent<CapsuleCollider>();
+        meshRenderer = GetComponent<MeshRenderer>();
         walkSpeed = 10;
-        money = 0; // db에서 money 값을 받아와서 넣어 줘야 함
-        startMoney = money;
+        money = 1000;
         maxHp = 10;
         curHp = maxHp;
-        HP_image.fillAmount = maxHp;
-        isclicked = false;
+        playerimage.fillAmount = maxHp;
     }
 
-    public void SetLongRangeWeapon(Weapon weapon) => longRangeWeapon = weapon;
+    public void SetLongRangeWeapon(Weapon weapon)
+    {
+        longRangeWeapon = weapon;
+    }
 
-    public void SetMeleeWeapon(Weapon weapon) => meleeWeapon = weapon;
+    public void SetMeleeWeapon(Weapon weapon)
+    {
+        meleeWeapon = weapon;
+    }
 
     public void AddMoney(int amount)
     {
@@ -71,36 +70,28 @@ public class Player : Controller
         moneyText.text = money.ToString();
     }
 
-    public int GetThisGameMoney()
-    {
-        return money - startMoney;
-    }
-
-    public int GetMoney()
-    {
-        return money;
-    }
-
     IEnumerator Dash(Vector3 dashDirection)
     {
+        // �뽬�� ���۵Ǿ����� ǥ��
         canDash = false;
         isDashing = true;
-        dashTarget = transform.position + dashDirection.normalized * dashPower;
+        dashTarget = transform.position + dashDirection.normalized * dashPower; // �뽬 ��ǥ ��ġ ���
+        float elapsed = 0f; // ��� �ð� �ʱ�ȭ
         Vector3 startPos = transform.position;
         rigidbody.AddForce(dashDirection.normalized * dashPower, ForceMode.Impulse);
         /*
-        while (elapsed < dashDuration) 
+        while (elapsed < dashDuration) // �뽬 ���� �ð� ���� �ݺ�
         {
             rigidbody.MovePosition(Vector3.Lerp(startPos, dashTarget, elapsed / dashDuration)); // ���� ��ġ�� ��ǥ ��ġ�� ���� ����
             //transform.position = Vector3.Lerp(startPos, dashTarget, elapsed / dashDuration); // ���� ��ġ�� ��ǥ ��ġ�� ���� ����
-            elapsed += Time.deltaTime; 
-            yield return new WaitForFixedUpdate(); 
+            elapsed += Time.deltaTime; // ��� �ð� ������Ʈ
+            yield return new WaitForFixedUpdate(); // ���� �����ӱ��� ���
         }
         */
         yield return new WaitForSeconds(0.5f);
         rigidbody.velocity = Vector3.zero;
-        isDashing = false;
-        StartCoroutine(UpdateCooldownSlider(coolTime_Dash, dashCooldown));
+        isDashing = false; // �뽬�� �������� ǥ��
+        StartCoroutine(UpdateCooldownSlider(coolTime_Dash, dashCooldown)); // ��ٿ� �����̴� ������Ʈ ����
     }
 
     public override void Move()
@@ -114,7 +105,7 @@ public class Player : Controller
         translation = new Vector3(horizontalMove, 0, vertical);
         if (translation.magnitude > 0)
         {
-            lastMoveDirection = translation;
+            lastMoveDirection = translation; // ������ �̵� ���� ������Ʈ
         }
 
         translation *= speed * Time.fixedDeltaTime;
@@ -125,7 +116,7 @@ public class Player : Controller
         if (Input.GetKey(KeyCode.Space) && canDash && !isDashing)
         {
             coolTime_Dash.gameObject.SetActive(true);
-            Vector3 dashDirection = (translation.magnitude > 0) ? translation : lastMoveDirection;
+            Vector3 dashDirection = (translation.magnitude > 0) ? translation : lastMoveDirection; // ���� ���̸� ������ �̵� �������� �뽬
             StartCoroutine(Dash(dashDirection));
         }
 
@@ -133,50 +124,12 @@ public class Player : Controller
         animator.SetFloat("Horizontal", horizontalMove, 0.1f, Time.deltaTime);
         animator.SetFloat("WalkSpeed", animSpeed);
 
-        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //RaycastHit hit;
-        //if (Physics.Raycast(ray, out hit))
-        //    transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
-        //
-        //if (Input.GetMouseButton(0))
-        //{
-        //    if (longRangeWeapon == null) return;
-        //    if (longRangeWeapon.Attack())
-        //    {
-        //        StartCoroutine(UpdateCooldownSlider(coolTime_Gun, longRangeWeapon.GetReloadTime()));
-        //        coolTime_Gun.value = 1;
-        //    }
-        //}
-        //if (Input.GetMouseButton(1))
-        //{
-        //    if (meleeWeapon.Attack())
-        //    {
-        //        animator.SetTrigger("MeleeAttack");
-        //        StartCoroutine(UpdateCooldownSlider(coolTime_Bag, meleeWeapon.GetReloadTime()));
-        //        coolTime_Bag.value = 1;
-        //    }
-        //}
-
-    }
-
-    public void Attack()
-    {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
-            transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
-
-        if (Input.GetMouseButton(0))
         {
-            if (longRangeWeapon == null) return;
-
-            if (longRangeWeapon.Attack())
-            {
-                StartCoroutine(UpdateCooldownSlider(coolTime_Gun, longRangeWeapon.GetReloadTime()));
-                coolTime_Gun.value = 1;
-            }
+            transform.LookAt(new Vector3(hit.point.x, transform.position.y, hit.point.z));
         }
-        if (vehicle) return;
 
         if (Input.GetMouseButton(1))
         {
@@ -187,12 +140,25 @@ public class Player : Controller
                 coolTime_Bag.value = 1;
             }
         }
+
+        if (Input.GetMouseButton(0))
+        {
+            if (longRangeWeapon == null)
+            {
+                return;
+            }
+            if (longRangeWeapon.Attack())
+            {
+                StartCoroutine(UpdateCooldownSlider(coolTime_Gun, longRangeWeapon.GetReloadTime()));
+                coolTime_Gun.value = 1;
+            }
+        }
     }
 
     private IEnumerator UpdateCooldownSlider(Slider slider, float cooldown)
     {
         slider.gameObject.SetActive(true);
-        float elapsed = 0f;
+        float elapsed = 0f; // �󸶳� ������
         while (elapsed < cooldown)
         {
             elapsed += Time.deltaTime;
@@ -201,132 +167,104 @@ public class Player : Controller
         }
         slider.value = slider.maxValue;
         slider.gameObject.SetActive(false);
-        canDash = true;
+        canDash = true; // �뽬 ��ٿ� ������ �뽬 ����
     }
-
 
     private void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag("Vehicle"))
-            Interact(collision.gameObject.GetComponent<Vehicle>());
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+                StartCoroutine(ClickButton(collision.gameObject.GetComponent<Vehicle>()));
+        }
     }
-    
-    //private void OnCollisionEnter(Collision collision)
-    //{
-    //    rigidbody.constraints = RigidbodyConstraints.FreezeAll;
-    //}
-    //
-    //private void OnCollisionExit(Collision collision)
-    //{
-    //    rigidbody.constraints = RigidbodyConstraints.None;
-    //}
-
-
 
     private void FixedUpdate()
     {
-        switch (vehicle)
-        {
-            case null:
-                Move();
-                //rigidbody.constraints = RigidbodyConstraints.None;
-                break;
-            default:
-                vehicle.Move();
-                if (Input.GetKeyDown(KeyCode.E))
-                    StartCoroutine(ClickButton());
-                break;
-        }
+        Move();
     }
 
     private void Update()
     {
+        switch (vehicle)
+        {
+            case null:
+                //Move();
+                break;
+            default:
+                vehicle.Move();
+                Interact();
+                break;
+        }
+
         AttractItems();
-        Attack();
     }
 
     private void AttractItems()
     {
-
+        // "Item" �±׸� ���� ��� ���� ������Ʈ�� ã��
         GameObject[] items = GameObject.FindGameObjectsWithTag("Item");
 
         foreach (GameObject item in items)
         {
+            // �÷��̾�� ������ ������ ������� �Ÿ� ���
             Vector3 relativePos = item.transform.position - transform.position;
 
-
+            // �÷��̾���� �Ÿ��� ���� ���� ���� ���� ���� �̵�
             if (relativePos.magnitude <= itemRange)
+            {
+                // �������� �÷��̾�� �ε巴�� �̵�
                 item.transform.position = Vector3.Lerp(item.transform.position, transform.position, itemMoveSpeed * Time.deltaTime);
+            }
         }
     }
 
-    public void Interact(Vehicle item)
+    public void Interact()
+    {
+        if (isride)
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+                StartCoroutine(ClickButton(null));
+        }
+    }
+    IEnumerator ClickButton(Vehicle item)
     {
         switch (isride)
         {
             case true:
-                if (Input.GetKeyDown(KeyCode.E))
-                    StartCoroutine(ClickButton(null));
-                break;
-            default:
-                if (Input.GetKeyDown(KeyCode.E))
-                    StartCoroutine(IncreaseSlider(item));
-                break;
-        }
-    }
-    IEnumerator IncreaseSlider(Vehicle item)
-    {
-        float duration = 3.0f; // 슬라이더가 채워지는 시간
-        float startTime = Time.time; // 시작 시간
-        coolTime_Ride.gameObject.SetActive(true);
-        while (Time.time - startTime < duration)
-        {
-            coolTime_Ride.transform.position = Camera.main.WorldToScreenPoint(item.transform.position);
-            coolTime_Ride.value += (coolTime_Ride.maxValue / duration) * Time.deltaTime;
-            coolTime_Ride.value = Mathf.Clamp(coolTime_Ride.value, 0, coolTime_Ride.maxValue);
-            yield return null; // 다음 프레임까지 대기
-        }
-
-        coolTime_Ride.value = coolTime_Ride.maxValue;
-        StartCoroutine(ClickButton(item));
-        coolTime_Ride.value = 0;
-        coolTime_Ride.gameObject.SetActive(false);
-    }
-    IEnumerator ClickButton(Vehicle item = null)
-    {
-        switch (vehicle)
-        {
-            case null:
-                if (!item) yield break; // 차에서 탑승할때
-                Debug.Log("ClickButton");
-                vehicle = item;
-                vehicle.SetHp_imageActive(true);
-                transform.SetParent(vehicle.gameObject.transform);
-                transform.localPosition = Vector3.zero;
-                transform.localRotation = Quaternion.Euler(Vector3.zero);
-                rigidbody.constraints = RigidbodyConstraints.FreezeAll;
-                SetColliderEnabled(false);
-                break;
-            default: // 차에서 내릴때
+                yield return null;
                 transform.SetParent(null);
                 transform.position = vehicle.transform.position + (Vector3.right * 3);
-                rigidbody.constraints = RigidbodyConstraints.None;
-                vehicle.SetHp_imageActive(false);
-                vehicle = null;
                 SetColliderEnabled(true);
+                vehicle = null;
+                isride = false;
+                break;
+            case false:
+                if (!item) yield break;
+                Debug.Log("ClickButton");
+                yield return new WaitForSeconds(3f);
+                SetColliderEnabled(isride);
+                isride = true;
+                vehicle = item;
+                transform.SetParent(vehicle.gameObject.transform);
                 break;
         }
         yield break;
     }
-    public void SetColliderEnabled(bool check)
+
+    public override void AddHp(float heal)
     {
-        collider.enabled = check;
-        RenderObject.gameObject.SetActive(check);
+        base.AddHp(heal);
     }
 
-    public override void Dead()
+    public override void GetDamage(float damage)
     {
-        base.Dead();
-        GameManager.Instance.GameOver();
+        base.GetDamage(damage);
+    }
+
+    public void SetColliderEnabled(bool check)
+    {
+        GetComponent<Collider>().enabled = check;
+        meshRenderer.enabled = check;
     }
 }
