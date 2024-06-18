@@ -28,17 +28,16 @@ public class Player : Controller
     CapsuleCollider collider;
     private Animator animator;
     private int money;
+    private int startMoney;
     private float walkAnimationSpeed;
     private float dashPower = 50f;
     private float dashCooldown = 2f;
     private float dashDuration = 0.5f;
-    private bool canDash;
     private bool isride;
+    private bool canDash;
     private bool isDashing;
     private bool isclicked;
     private Vector3 dashTarget;
-
-    [SerializeField] private DBManager dbManager; // DB 매니저
 
     public override void AddHp(float heal) => base.AddHp(heal);
     public override void GetDamage(float damage) => base.GetDamage(damage);
@@ -54,7 +53,8 @@ public class Player : Controller
         animator = GetComponent<Animator>();
         collider = GetComponent<CapsuleCollider>();
         walkSpeed = 10;
-        money = 1000;
+        money = 0; // db에서 money 값을 받아와서 넣어 줘야 함
+        startMoney = money;
         maxHp = 10;
         curHp = maxHp;
         HP_image.fillAmount = maxHp;
@@ -69,6 +69,16 @@ public class Player : Controller
     {
         money += amount;
         moneyText.text = money.ToString();
+    }
+
+    public int GetThisGameMoney()
+    {
+        return money - startMoney;
+    }
+
+    public int GetMoney()
+    {
+        return money;
     }
 
     IEnumerator Dash(Vector3 dashDirection)
@@ -296,7 +306,6 @@ public class Player : Controller
                 transform.localRotation = Quaternion.Euler(Vector3.zero);
                 rigidbody.constraints = RigidbodyConstraints.FreezeAll;
                 SetColliderEnabled(false);
-                vehicle.SetTag("Vehicle");
                 break;
             default: // 차에서 내릴때
                 transform.SetParent(null);
@@ -305,7 +314,6 @@ public class Player : Controller
                 vehicle.SetHp_imageActive(false);
                 vehicle = null;
                 SetColliderEnabled(true);
-                vehicle.SetTag(null);
                 break;
         }
         yield break;
@@ -314,5 +322,11 @@ public class Player : Controller
     {
         collider.enabled = check;
         RenderObject.gameObject.SetActive(check);
+    }
+
+    public override void Dead()
+    {
+        base.Dead();
+        GameManager.Instance.GameOver();
     }
 }

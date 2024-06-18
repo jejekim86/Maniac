@@ -3,6 +3,7 @@ using System.Data;
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Drawing;
 
 public class DBManagerTest : MonoBehaviour
 {
@@ -60,7 +61,7 @@ public class DBManagerTest : MonoBehaviour
 
         try
         {
-            if (GetRecordHighScore(out HighScore dbScore, score.userID) == false)
+            if (GetRecordHighScore(out HighScore dbScore, score.charactorName, score.userID) == false)
                 return false;
 
             if (score.money < dbScore.money)
@@ -72,7 +73,7 @@ public class DBManagerTest : MonoBehaviour
 
             SqlConn.Open();
 
-            cmd.CommandText = $"Update User_Record Set Money = {score.money}, Stars = {score.stars}, Life_Time = '{score.lifeTime}' Where User_Id = {score.userID}";
+            cmd.CommandText = $"Update users_charactor Set Money = {score.money}, Stars_Record = {score.stars}, Life_Time_Record = '{score.lifeTime}' Where User_Id = {score.userID} AND Charactor_Name = '{score.charactorName}'";
 
             int result = cmd.ExecuteNonQuery();
 
@@ -93,7 +94,7 @@ public class DBManagerTest : MonoBehaviour
         }
     }
 
-    public bool GetRecordHighScore(out HighScore highScore, int userID = 1)
+    public bool GetRecordHighScore(out HighScore highScore, string character, int userID = 1)
     {
         highScore = new HighScore();
 
@@ -107,15 +108,16 @@ public class DBManagerTest : MonoBehaviour
         {
             SqlConn.Open();
 
-            cmd.CommandText = $"Select * From User_Record Where User_Id = {userID}";
+            cmd.CommandText = $"Select * From users_charactor Where User_Id = {userID} And Charactor_Name = '{character}'";
             MySqlDataReader reader = cmd.ExecuteReader();
 
             if (reader.Read())
             {
-                highScore.userID = reader.GetInt32(0);
-                highScore.stars = reader.GetInt32(1);
-                highScore.money = reader.GetInt32(2);
-                highScore.lifeTime = reader.GetInt32(3);
+                highScore.charactorName = reader.GetString(0);
+                highScore.userID = reader.GetInt32(1);
+                highScore.stars = reader.GetInt32(3);
+                highScore.money = reader.GetInt32(4);
+                highScore.lifeTime = reader.GetInt32(5);
 
                 SqlConn.Close();
                 return true;
@@ -236,4 +238,40 @@ public class DBManagerTest : MonoBehaviour
             return -1;
         }
     }
+
+    public bool SetMoney(int money, string charactor, int userID = 1)
+    {
+        if (SqlConn == null)
+        {
+            Debug.LogError("SetMoney 메서드에서 SqlConn이 null입니다.");
+            return false;
+        }
+        try
+        {
+            if (SqlConn.State == System.Data.ConnectionState.Closed)
+            {
+                SqlConn.Open();   // DB 연결
+            }
+
+            cmd.CommandText = $"Update Users_Charactor set money = {money} Where User_Id = {userID} AND Charactor_Name = '{charactor}'";
+            int result = cmd.ExecuteNonQuery();
+
+            if (result < 0)
+            {
+                Debug.Log("데이터 업데이트에 실패했습니다.");
+                SqlConn.Close();  // DB 연결 해제
+                return false;
+            }
+
+            SqlConn.Close();  // DB 연결 해제
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("예외 발생: " + e.ToString());
+            SqlConn.Close();  // DB 연결 해제
+            return false;
+        }
+    }
+
 }

@@ -1,6 +1,12 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Resources/Animations.meta
+guid: 2326ef305d539b24a86ca2f2705fa004
+folderAsset: yes
+DefaultImporter:
+========
 guid: 15b657f7609f3fe49aeabcfe3cf6062c
 PrefabImporter:
+>>>>>>>> main:Assets/Prefabs/UpgradePanel.prefab.meta
   externalObjects: {}
   userData: 
   assetBundleName: 

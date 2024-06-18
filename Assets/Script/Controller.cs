@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public abstract class Controller : MonoBehaviour
 {
     protected float walkSpeed;
-    protected float maxHp;
+    protected float maxHp; 
     [SerializeField] protected Image HP_image;
     public abstract void Move();
 
@@ -27,13 +27,17 @@ public abstract class Controller : MonoBehaviour
         HP_image.fillAmount = curHp / maxHp;
     }
 
+    public virtual void Dead()
+    {
+        Debug.Log("사망함");
+        transform.position = Vector3.zero;
+    }
+
     public virtual void GetDamage(float damage)
     {
         if (curHp <= 0)
         {
-            Debug.Log("사망함");
-            // 여기서 게임 오버 결과창 표시
-            transform.position = Vector3.zero;
+            Dead();
         }
         curHp -= damage;
         HP_image.fillAmount = curHp / maxHp;

@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using System.Xml.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public sealed class GameManager : MonoBehaviour
@@ -54,7 +56,15 @@ public sealed class GameManager : MonoBehaviour
     [SerializeField] private Button checkButton;
     [SerializeField] private Text timerText;
     [SerializeField] private Image[] images;
-    public Player Player { get; private set; }
+    [SerializeField] private Player player;
+    [SerializeField] private GameObject resultUI;
+
+    public Player Getplayer() => player;
+    
+
+    public HighScore score = new HighScore();
+
+    public int money = 0;
 
     int Level = 0;
     float curTime;
@@ -93,12 +103,7 @@ public sealed class GameManager : MonoBehaviour
 
     private void Start()
     {
-        maxTime = 300f - 300f * upgradeData.gameTime;
-
-        if (timerText)
-        {
-            StartCoroutine(StartTimer());
-        }
+        GameStart();
         if (backButton)
         {
             backButton.onClick.AddListener(StartButtonOnClick);
@@ -110,6 +115,21 @@ public sealed class GameManager : MonoBehaviour
         if (checkButton)
         {
             checkButton.onClick.AddListener(CheckButtonOnClick);
+        }
+    }
+
+    public void GameStart()
+    {
+        // 게임 시작시 id를 받아오는 것으로 변경 해야함
+        score.userID = 1;
+        // 캐릭터 선택시 이름을 받아오게 해야함
+        score.charactorName = "Santa";
+
+        maxTime = 300f - 300f * upgradeData.gameTime;
+
+        if (timerText)
+        {
+            StartCoroutine(StartTimer());
         }
     }
 
@@ -135,12 +155,28 @@ public sealed class GameManager : MonoBehaviour
 
             if (curTime <= 0)
             {
+                Time.timeScale = 0;
+                score.lifeTime = (int)(maxTime - curTime);
+                score.stars = Level;
+                score.money = player.GetThisGameMoney();
+                GameOverUI gameOverUI = Instantiate(resultUI).GetComponent<GameOverUI>();
+                gameOverUI.SetGameScore(score, true);
                 Debug.Log("생존 성공"); // 결과 창 출력 코드로 변경
                 curTime = 0;
                 yield break;
             }
 
         }
+    }
+
+    public void GameOver()
+    {
+        Time.timeScale = 0;
+        score.lifeTime = (int)(maxTime - curTime);
+        score.stars = Level;
+        score.money = player.GetThisGameMoney();
+        GameOverUI gameOverUI = Instantiate(resultUI).GetComponent<GameOverUI>();
+        gameOverUI.SetGameScore(score, false);
     }
 
     public void StartButtonOnClick()

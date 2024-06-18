@@ -28,9 +28,20 @@ public class EnemyAttackState : MonoBehaviour, State
             enemy = GetComponent<Enemy>();
         }
 
-        ani.SetBool("isAttack", true); // 공격 애니메이션 시작
-        enemy.Attack();
-        weapon.SetActive(true); // 무기 활성화
+        if (ani != null)
+        {
+            ani.SetBool("isAttack", true); // 공격 애니메이션 시작
+        }
+
+        if (enemy != null)
+        {
+            enemy.Attack();
+        }
+
+        if (weapon != null)
+        {
+            weapon.SetActive(true); // 무기 활성화
+        }
     }
 
     public void UpdateState()
@@ -51,19 +62,32 @@ public class EnemyAttackState : MonoBehaviour, State
         }
 
         // 공격 시 위치 고정
-        enemyAgent.SetDestination(transform.position);
+        if (enemyAgent != null)
+        {
+            enemyAgent.SetDestination(transform.position);
+        }
     }
 
     private IEnumerator Attack()
     {
-        enemy.Attack();
+        if (enemy != null)
+        {
+            enemy.Attack();
+        }
         yield return new WaitForSeconds(coolTime); // 쿨타임 동안 대기
         isAttack = false; // 공격이 끝났음을 표시
     }
 
     public void ExitState()
     {
-        ani.SetBool("isAttack", false); // 공격 애니메이션 종료
-        weapon.SetActive(false); // 무기 비활성화
+        if (ani != null)
+        {
+            ani.SetBool("isAttack", false); // 공격 애니메이션 종료
+        }
+
+        if (weapon != null)
+        {
+            weapon.SetActive(false); // 무기 비활성화
+        }
     }
 }

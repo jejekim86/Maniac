@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 public class SkillUpgradeManager : MonoBehaviour
 {
-    //[SerializeField] private PlayerUpgradeManager playerUpgradeManager; // PlayerUpgradeManager 스크립트 참조
-
     static DBConnectionInfo dBConnectionInfo = new DBConnectionInfo
     {
         ipAddress = "localhost",
@@ -215,6 +213,10 @@ public class SkillUpgradeManager : MonoBehaviour
                 weaponButton.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
                 weaponLevelText.text = "구매됨";
                 weaponLevelText.gameObject.SetActive(true);
+
+                // Gun 활성화
+                Transform gunTransform = GameObject.Find("Inven/Gun/Gun").transform;
+                gunTransform.gameObject.SetActive(true);
             }
             else
             {
@@ -319,6 +321,13 @@ public class SkillUpgradeManager : MonoBehaviour
         else
         {
             Debug.LogError($"이미지를 로드할 수 없습니다: {imageIdentityPath}");
+        }
+
+        if (identityLevel > 0)
+        {
+            // Dash 활성화
+            Transform dashTransform = GameObject.Find("Inven/Dash/Dash").transform;
+            dashTransform.gameObject.SetActive(true);
         }
 
         EventTrigger trigger = identityButton.AddComponent<EventTrigger>();
@@ -475,6 +484,10 @@ public class SkillUpgradeManager : MonoBehaviour
 
                     Image weaponRefund = weaponText.transform.GetChild(0).GetChild(6).GetComponent<Image>();
                     weaponRefund.gameObject.SetActive(true);
+
+                    // 무기 정보 창 흔들기
+                    StartButtonShake(weaponText);
+                    StartCoroutine(StopButtonShakeAfterDelay(weaponText, 1f));
                 }
 
                 // Gun 활성화
@@ -592,6 +605,14 @@ public class SkillUpgradeManager : MonoBehaviour
             refundImage.gameObject.SetActive(newLevel > 0 || (itemType == ItemType.Weapon && dbManager.WeaponIsBuy(itemName, currentCharactor, playerId) > 0));
 
             UpdateSkillPrices();
+
+            // 정보 창 흔들기
+            if (skillInfoPanels.TryGetValue(itemName, out GameObject skillInfoPanel))
+            {
+                StartButtonShake(skillInfoPanel);
+                StartCoroutine(StopButtonShakeAfterDelay(skillInfoPanel, 1f));
+            }
+
             Debug.Log($"{itemType} 환불에 성공했습니다: {itemName}");
         }
         else
