@@ -19,7 +19,12 @@ public class Vehicle : Controller
 
 
     public override void AddHp(float heal) => base.AddHp(heal);
-    public override void GetDamage(float damage) => base.GetDamage(damage);
+    public override void GetDamage(float damage)
+    {
+        if (curHp <= 0) curHp = maxHp;
+        curHp -= damage;
+        HP_image.fillAmount = curHp / maxHp;
+    }
     private void Awake()
     {
         rigidbody = GetComponent<Rigidbody>();
