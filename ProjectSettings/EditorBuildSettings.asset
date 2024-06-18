@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/SkillUpgrade.unity
     guid: 4244c177aa953ec44b7a170ca9b71877
   - enabled: 1
+    path: Assets/Scenes/PrototypeMap.unity
+    guid: 2cbae5741bf9ceb4c8d8dfd68a6e9a8a
+  - enabled: 0
     path: Assets/Scenes/Prototype.unity
     guid: b74ab1c078980454eab3a6a144acaf9e
   m_configObjects: {}
