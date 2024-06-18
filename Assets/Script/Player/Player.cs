@@ -150,7 +150,7 @@ public class Player : Controller
             }
         }
     }
-
+    private bool onclick = false;
     private IEnumerator UpdateCooldownSlider(Slider slider, float cooldown)
     {
         slider.gameObject.SetActive(true);
@@ -169,7 +169,9 @@ public class Player : Controller
     private void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.CompareTag("Vehicle"))
+        {
             Interact(collision.gameObject.GetComponent<Vehicle>());
+        }
     }
     
     //private void OnCollisionEnter(Collision collision)
@@ -192,6 +194,7 @@ public class Player : Controller
                 break;
             default:
                 vehicle.Move();
+                transform.localPosition = Vector3.zero;
                 if (Input.GetKeyDown(KeyCode.E))
                     StartCoroutine(ClickButton());
                 break;
@@ -222,12 +225,18 @@ public class Player : Controller
         switch (isride)
         {
             case true:
-                if (Input.GetKeyDown(KeyCode.E))
+                if (Input.GetKeyDown(KeyCode.E) &&  !onclick)
+                {
+                    onclick = true;
                     StartCoroutine(ClickButton(null));
+                }
                 break;
             default:
-                if (Input.GetKeyDown(KeyCode.E))
+                if (Input.GetKeyDown(KeyCode.E) && !onclick)
+                {
+                    onclick = true;
                     StartCoroutine(IncreaseSlider(item));
+                }
                 break;
         }
     }
@@ -266,6 +275,7 @@ public class Player : Controller
                 rigidbody.constraints = RigidbodyConstraints.FreezeAll;
                 vehicle.gameObject.tag = "Ride";
                 SetColliderEnabled(false);
+                onclick = false;
                 break;
             default: // 차에서 내릴때
                 transform.SetParent(null);
@@ -275,8 +285,10 @@ public class Player : Controller
                 vehicle.gameObject.tag = "Vehicle";
                 vehicle = null;
                 SetColliderEnabled(true);
+                onclick = false;
                 break;
         }
+        
         yield break;
     }
 
