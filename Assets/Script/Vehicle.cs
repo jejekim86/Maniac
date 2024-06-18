@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Vehicle : Controller
@@ -61,6 +62,46 @@ public class Vehicle : Controller
 
 
     }
+    private float resetThreshold = 90f; // 차량이 뒤집히는 각도 임계값
+    private float resetSpeed = 2f; // 차량을 복원하는 속도
+    private void FixedUpdate()
+    {
+        float currentXRotation = NormalizeAngle(transform.eulerAngles.x);
+        float currentZRotation = NormalizeAngle(transform.eulerAngles.z);
+
+        // X축 또는 Z축이 임계값 이상으로 기울어졌는지 확인
+        if (Mathf.Abs(currentXRotation) > resetThreshold || Mathf.Abs(currentZRotation) > resetThreshold)
+            StartCoroutine(ResetRotation(currentXRotation, currentZRotation));
+    }
+    private float NormalizeAngle(float angle)
+    {
+        // 각도를 -180도에서 180도 사이로 변환
+        if (angle > 180)
+            angle -= 360;
+        return angle;
+    }
+    private IEnumerator ResetRotation(float currentXRotation, float currentZRotation)
+    {
+        Quaternion targetRotation = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
+
+        // 차량이 목표 회전 상태로 자연스럽게 회전
+        while (Quaternion.Angle(transform.rotation, targetRotation) > 0.1f)
+        {
+            float step = resetSpeed * Time.deltaTime;
+
+            // X축과 Z축 회전 방향을 결정
+            float newXRotation = Mathf.MoveTowardsAngle(transform.eulerAngles.x, 0f, step);
+            float newZRotation = Mathf.MoveTowardsAngle(transform.eulerAngles.z, 0f, step);
+
+            // 회전 적용
+            transform.eulerAngles = new Vector3(newXRotation, transform.eulerAngles.y, newZRotation);
+
+            yield return null;
+        }
+
+        // 최종적으로 정확하게 0도로 설정
+        transform.rotation = targetRotation;
+    }
 
     public void ApplyBrakeTorque(float value)
     {
@@ -83,5 +124,11 @@ public class Vehicle : Controller
         {
             rigidbody.velocity = Vector3.zero;
         }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+            collision.gameObject.GetComponent<Enemy>().GetDamage(15);
     }
 }
