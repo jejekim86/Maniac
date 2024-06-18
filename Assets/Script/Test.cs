@@ -1,18 +1,27 @@
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using Unity.VisualScripting;
+using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Test : Controller
 {
-    MeshRenderer meshRenderer;
-    CapsuleCollider collider;
-    Vehicle vehicle;
     Vector3 translation;
+    CapsuleCollider collider;
+    [SerializeField] float movespeed;
+    [SerializeField] Weapon longRangeWeapon;
     private void Start()
     {
-        rigidbody = GetComponent<Rigidbody>();
-        meshRenderer = GetComponent<MeshRenderer>();
         collider = GetComponent<CapsuleCollider>();
+        meshRenderer = GetComponent<MeshRenderer>();
+        rigidbody = GetComponent<Rigidbody>();
+        //rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+        isride = false;
+        HP_image = null;
+        vehicle = null;
     }
 
     public override void Move()
@@ -20,7 +29,7 @@ public class Test : Controller
         float horizontalMove = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
-        float speed = 5;
+        float speed = movespeed;
 
         translation = new Vector3(horizontalMove, 0, vertical);
         translation *= speed * Time.fixedDeltaTime;
@@ -29,27 +38,27 @@ public class Test : Controller
 
     }
 
+
     IEnumerator ClickButton(Vehicle item = null)
     {
-        switch (vehicle != null)
+        switch (isride)
         {
             case true: // 차에서 내릴때
                 yield return null;
-                rigidbody.constraints = RigidbodyConstraints.None;
-                Debug.Log("rigidbody.constraints");
                 transform.SetParent(null);
                 transform.position = vehicle.transform.position + (Vector3.right * 3);
+                isride = false;
                 vehicle = null;
-                TestSetColliderEnabled(true);
+                SetColliderEnabled(true);
                 break;
             case false:
                 if (!item) yield break; // 차에서 탑승할때
                 Debug.Log("ClickButton");
                 yield return new WaitForSeconds(3f);
+                isride = true;
                 vehicle = item;
                 transform.SetParent(vehicle.gameObject.transform);
-                TestSetColliderEnabled(false);
-                rigidbody.constraints = RigidbodyConstraints.FreezeAll;
+                SetColliderEnabled(false);
                 break;
         }
         yield break;
@@ -61,9 +70,13 @@ public class Test : Controller
         if (collision.gameObject.CompareTag("Vehicle"))
         {
             if (Input.GetKeyDown(KeyCode.E))
+            {
                 StartCoroutine(ClickButton(collision.gameObject.GetComponent<Vehicle>()));
+            }
         }
     }
+
+
 
     private void FixedUpdate()
     {
@@ -82,7 +95,25 @@ public class Test : Controller
         }
     }
 
-    public void TestSetColliderEnabled(bool check)
+    private void Update()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            if (longRangeWeapon) return;
+            if (longRangeWeapon.Attack())
+                Debug.Log("Attack");
+
+
+            Debug.Log("Input.GetMouseButton(0)");
+        }
+    }
+
+    public void TestSetLongRangeWeapon(Weapon weapon)
+    {
+        longRangeWeapon = weapon;
+    }
+
+    public void SetColliderEnabled(bool check)
     {
         collider.isTrigger = !check;
         meshRenderer.enabled = check;

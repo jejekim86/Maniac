@@ -72,34 +72,28 @@ public class Enemy : MonoBehaviour
         {
             return;
         }
-
-        if (fireTr != null) // fireTr이 null인지 확인
-        {
-            Bullet newBullet;
-            PoolManager.instance.bulletPool.GetObject(out newBullet);
-            newBullet.SetDirection(fireTr);
-            //newBullet.transform.position = fireTr.transform.position;
-            //newBullet.transform.rotation = fireTr.rotation;
-        }
+        Bullet newBullet;
+        PoolManager.instance.bulletPool.GetObject(out newBullet);
+        newBullet.SetDirection(fireTr);
+        //newBullet.transform.position = fireTr.transform.position;
+        //newBullet.transform.rotation = fireTr.rotation;
         timeCount = 0;
     }
+
 
     public void GetDamage(float damage)
     {
         curHp -= damage;
         if (curHp <= 0)
         {
-            SpawnItem();
+            // 적을 다시 풀에 집어 넣기 전에 아이템을 생성
+            int itemIndex = Random.Range(0, itemSpawn.itemPrefabs.Length); // 랜덤 인덱스 선택
+            MonoBehaviour item = ItemSpawn.GetItem(itemIndex); // 선택된 인덱스의 아이템을 풀에서 가져옴
+            item.transform.position = transform.position; // 아이템을 적 위치에 생성
+
             spawner.objectPool.PutInPool(this); // 적을 다시 풀에 집어 넣음
             Debug.Log("적 사망");
         }
-    }
-
-    private void SpawnItem()
-    {
-        int itemIndex = Random.Range(0, itemSpawn.itemPrefabs.Length); // 랜덤 인덱스 선택
-        MonoBehaviour item = ItemSpawn.GetItem(itemIndex); // 선택된 인덱스의 아이템을 풀에서 가져옴
-        item.transform.position = transform.position; // 아이템을 적 위치에 생성
     }
 
     private void UpdateState(AI state)
@@ -117,5 +111,4 @@ public class Enemy : MonoBehaviour
                 break;
         }
     }
-
 }

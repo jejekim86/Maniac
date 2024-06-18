@@ -16,7 +16,7 @@ public class NPC : MonoBehaviour
         if (other.CompareTag("Player"))
         {
 
-            // 패널 활성화
+            // 상점 코드
             upgaradePanel.SetActive(true);
 
             // 게임 멈추기
@@ -32,7 +32,8 @@ public class NPC : MonoBehaviour
 
     private void PauseGame()
     {
+        gamePaused = true;
         // 게임 일시 정지
-        Time.timeScale = 0f;
+        //Time.timeScale = 0f;
     }
 }

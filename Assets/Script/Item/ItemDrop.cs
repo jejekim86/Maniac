@@ -7,16 +7,13 @@ public class ItemDrop : MonoBehaviour
     [SerializeField] private GameObject itemPrefab; // æ∆¿Ã≈€ «¡∏Æ∆’
     [SerializeField] private string itemType;
     [SerializeField] private float rotationSpeed;
-
+    
     float y;
 
     void Update()
     {
-        if (CompareTag("Item"))
-        {
-            y += Time.deltaTime * rotationSpeed;
-            itemPrefab.transform.rotation = Quaternion.Euler(0, y, 0);
-        }
+        y += Time.deltaTime * rotationSpeed;
+        itemPrefab.transform.rotation = Quaternion.Euler(0, y, 0);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -25,7 +22,7 @@ public class ItemDrop : MonoBehaviour
         {
             Debug.Log($"{itemType} »πµÊ");
             ItemGet itemGet = other.GetComponent<ItemGet>();
-
+            
             if (itemGet != null)
             {
                 if (itemType == "Gun")
