@@ -211,15 +211,15 @@ public class Player : Controller
             Interact(collision.gameObject.GetComponent<Vehicle>());
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        rigidbody.constraints = RigidbodyConstraints.FreezeAll;
-    }
-    
-    private void OnCollisionExit(Collision collision)
-    {
-        rigidbody.constraints = RigidbodyConstraints.None;
-    }
+    //private void OnCollisionEnter(Collision collision)
+    //{
+    //    rigidbody.constraints = RigidbodyConstraints.FreezeAll;
+    //}
+    //
+    //private void OnCollisionExit(Collision collision)
+    //{
+    //    rigidbody.constraints = RigidbodyConstraints.None;
+    //}
 
 
 
@@ -229,7 +229,7 @@ public class Player : Controller
         {
             case null:
                 Move();
-                rigidbody.constraints = RigidbodyConstraints.None;
+                //rigidbody.constraints = RigidbodyConstraints.None;
                 break;
             default:
                 vehicle.Move();
