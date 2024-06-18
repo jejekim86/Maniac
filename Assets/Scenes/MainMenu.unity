@@ -1183,6 +1183,7 @@ MonoBehaviour:
   bgmAudioSource: {fileID: 1422851927}
   effectClips:
   - {fileID: 8300000, guid: 93f2be9439c3d754ba973dab42e5e5a5, type: 3}
+  - {fileID: 8300000, guid: c5ba9f5ca2e7c154aa604ce71c2a0197, type: 3}
   bgms:
   - {fileID: 8300000, guid: 7260e46c369011744914223048da6459, type: 3}
   - {fileID: 8300000, guid: 91a0ac7f6ba22e6469afb3f54fdcccac, type: 3}
@@ -1215,7 +1216,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.2
   m_Pitch: 1
   Loop: 0
   Mute: 0

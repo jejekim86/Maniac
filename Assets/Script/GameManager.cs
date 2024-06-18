@@ -83,7 +83,6 @@ public sealed class GameManager : MonoBehaviour
         if (null == instance)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
             Destroy(gameObject);
@@ -115,6 +114,14 @@ public sealed class GameManager : MonoBehaviour
         if (checkButton)
         {
             checkButton.onClick.AddListener(CheckButtonOnClick);
+        }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "game2")
+        {
+            GameStart();
         }
     }
 

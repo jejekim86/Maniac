@@ -105,6 +105,7 @@ public class GameOverUI : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         Time.timeScale = 1f;
+        SoundManager.Instance.PlayBGM(BGM.menuBGM);
         SceneManager.LoadScene("ChooseCharacter");
     }
 }
