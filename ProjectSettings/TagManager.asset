@@ -9,6 +9,7 @@ TagManager:
   - Vehicle
   - Gun
   - NPC
+  - Ride
   layers:
   - Default
   - TransparentFX

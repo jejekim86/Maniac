@@ -10422,6 +10422,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\uC131\uACF5_ 1"
       objectReference: {fileID: 0}
+    - target: {fileID: 470520447109655241, guid: fa4ced2c700c82f4cbbb95c436752cc9,
+        type: 3}
+      propertyPath: m_TagString
+      value: Vehicle
+      objectReference: {fileID: 0}
     - target: {fileID: 537037993133630080, guid: fa4ced2c700c82f4cbbb95c436752cc9,
         type: 3}
       propertyPath: m_UseGravity
@@ -53991,6 +53996,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: man_claus
+      objectReference: {fileID: 0}
+    - target: {fileID: 2116620189788327853, guid: b2e8302ca76cfbf40a6840c45ea39744,
+        type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 2914640652056420520, guid: b2e8302ca76cfbf40a6840c45ea39744,
         type: 3}
