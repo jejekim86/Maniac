@@ -29,38 +29,70 @@ public class Vehicle : Controller
 
     public override void Move()
     {
+        // 조향 제어
         wheelColliders[0].steerAngle = wheelColliders[1].steerAngle = Input.GetAxis("Horizontal") * 30f;
 
-        float currentspeed = rigidbody.velocity.magnitude;
-        currentmotorTorque = (Input.GetAxisRaw("Vertical") * 4000f);
-        // max torque
-        if (currentspeed >= maxSpeed)
-            currentmotorTorque = 0;
-        // Motor torque control
-        for (int i = 0; i < wheelColliders.Length; i++)
+        float currentSpeed = rigidbody.velocity.magnitude;
+        float inputVertical = -1 * Input.GetAxisRaw("Vertical");
+        // 차량의 현재 속도 방향을 확인
+        bool isMovingForward = Vector3.Dot(rigidbody.velocity, (-1 * transform.forward)) > 0;
+        // 현재 모터 토크를 기어 상태와 수직 입력에 따라 결정
+        if (inputVertical < 0)
         {
-            wheelColliders[i].motorTorque = -1 * currentmotorTorque;
-            //Debug.Log("motorTorque : " + wheelColliders[0].motorTorque);
+            if (!isMovingForward)
+            {
+                
+                currentmotorTorque = Mathf.Lerp(currentmotorTorque, 0f, Time.deltaTime * 5f);
+            }
+            else
+            {
+                currentmotorTorque = Mathf.Lerp(currentmotorTorque, inputVertical * 4000f, Time.deltaTime * 2f);
+            }
+        }
+        else if (inputVertical > 0)
+        {
+            if (isMovingForward)
+            {
+                
+                currentmotorTorque = Mathf.Lerp(currentmotorTorque, 0f, Time.deltaTime * 5f);
+            }
+            else
+            {
+                currentmotorTorque = Mathf.Lerp(currentmotorTorque, inputVertical * 2000f, Time.deltaTime * 2f);
+            }
+        }
+        else
+        {
+            currentmotorTorque = Mathf.Lerp(currentmotorTorque, 0f, Time.deltaTime * 2f);
         }
 
-        if (currentBrakeTorque != 0)
-            currentBrakeTorque = Mathf.Lerp(currentBrakeTorque, maxBrakeTorque, brakeSpeed * Time.deltaTime);
-        else
-            currentBrakeTorque = 200;
-        // Apply brake torque if space key is pressed
-        // 스페이스 키가 눌러진 경우 브레이크 토크 적용
+        // 모터 토크 적용 제어
+        for (int i = 0; i < wheelColliders.Length; i++)
+        {
+            wheelColliders[i].motorTorque = currentmotorTorque;
+        }
+
+        // 브레이크 토크 제어
         if (Input.GetKey(KeyCode.Space))
-            currentBrakeTorque = maxBrakeTorque;
+        {
+            currentBrakeTorque = Mathf.Lerp(currentBrakeTorque, maxBrakeTorque, brakeSpeed * Time.deltaTime);
+        }
+        else if (Input.GetAxisRaw("Vertical") == 0)
+        {
+            currentBrakeTorque = Mathf.Lerp(currentBrakeTorque, 200, brakeSpeed * Time.deltaTime);
+        }
         else
+        {
             currentBrakeTorque = 0;
+        }
 
         ApplyBrakeTorque(currentBrakeTorque);
 
         // 입력이 없는 경우 자동 감속
         if (Input.GetAxisRaw("Vertical") == 0)
+        {
             DecelerateVehicle();
-
-
+        }
     }
     private float resetThreshold = 90f; // 차량이 뒤집히는 각도 임계값
     private float resetSpeed = 2f; // 차량을 복원하는 속도
