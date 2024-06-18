@@ -54,6 +54,8 @@ public class GameOverUI : MonoBehaviour, IPointerClickHandler
     {
         thisGameScore = score;
         this.isClear = isClear;
+        if (isClear)
+            SoundManager.Instance.PlayBGM(BGM.victory);
     }
 
     IEnumerator MoveBG()

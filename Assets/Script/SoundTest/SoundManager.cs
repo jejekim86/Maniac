@@ -4,6 +4,7 @@ using UnityEngine;
 
 public enum SoundEffect
 {
+    Cash,
     fireBullet,
     explosion,
     siren
@@ -13,7 +14,8 @@ public enum BGM
 {
     menuBGM,
     inGameDefault,
-    inGameChase
+    inGameChase,
+    victory
 }
 
 public class SoundManager : MonoBehaviour
@@ -28,18 +30,27 @@ public class SoundManager : MonoBehaviour
     private void Awake()
     {
         if(Instance == null)
+        {
             Instance = this;
-        DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
     
     public void PlayBGM(BGM bgm)
     {
         bgmAudioSource.clip = bgms[(int)bgm];
+        bgmAudioSource.loop = true;
         bgmAudioSource.Play();
     }
 
     public void PlaySoundEffect(SoundEffect soundEffect, AudioSource audioSource)
     {
+        audioSource.clip = effectClips[(int)soundEffect];
+        audioSource.Play();
         audioSource.PlayOneShot(effectClips[(int)soundEffect]);
     }
 }
