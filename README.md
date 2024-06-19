@@ -2,6 +2,10 @@
 
 ## MANIAC 모작
 
+C#, SQL
+
+Unity, mysql
+
 **유니티 버전** 2022.3.20f1
 
 MySQL 데이터 베이스 활용
