@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-// 적의 공격 상태를 정의하는 클래스
 public class EnemyAttackState : MonoBehaviour, State
 {
-    [SerializeField] private Transform target; // 공격할 목표
     [SerializeField] private GameObject weapon; // 사용할 무기
 
     [Header("적 공격 정보")]
@@ -14,6 +12,7 @@ public class EnemyAttackState : MonoBehaviour, State
     [SerializeField] private float damage = 5; // 공격 데미지
     [SerializeField] private float attackRange; // 공격 범위
     private bool isAttack;
+    private Transform target; // 공격할 목표
 
     private Animator ani; // 애니메이터 컴포넌트
     private NavMeshAgent enemyAgent; // NavMeshAgent 컴포넌트
@@ -28,10 +27,7 @@ public class EnemyAttackState : MonoBehaviour, State
             enemy = GetComponent<Enemy>();
         }
 
-        if (ani != null)
-        {
-            ani.SetBool("isAttack", true); // 공격 애니메이션 시작
-        }
+        ani.SetBool("isAttack", true); // 공격 애니메이션 시작
 
         if (enemy != null)
         {
@@ -46,6 +42,19 @@ public class EnemyAttackState : MonoBehaviour, State
 
     public void UpdateState()
     {
+        GameObject player = GameObject.FindWithTag("Player");
+        GameObject vehicle = GameObject.FindWithTag("Ride");
+
+        if (player != null)
+        {
+            target = player.transform; // 플레이어 설정
+        }
+
+        else if (vehicle != null)
+        {
+            target = vehicle.transform; // 자동차 설정
+        }
+
         // 공격 중이 아니면 공격 시작
         if (!isAttack)
         {
@@ -62,10 +71,7 @@ public class EnemyAttackState : MonoBehaviour, State
         }
 
         // 공격 시 위치 고정
-        if (enemyAgent != null)
-        {
-            enemyAgent.SetDestination(transform.position);
-        }
+        enemyAgent.SetDestination(transform.position);
     }
 
     private IEnumerator Attack()

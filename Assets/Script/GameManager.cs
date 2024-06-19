@@ -163,24 +163,19 @@ public sealed class GameManager : MonoBehaviour
 
             if (curTime <= 0)
             {
-                GameClear();
+                SoundManager.Instance.PlayBGM(BGM.victory);
+                Time.timeScale = 0;
+                score.lifeTime = (int)(maxTime - curTime);
+                score.stars = Level;
+                score.money = player.GetThisGameMoney();
+                GameOverUI gameOverUI = Instantiate(resultUI).GetComponent<GameOverUI>();
+                gameOverUI.SetGameScore(score, true);
                 Debug.Log("생존 성공"); // 결과 창 출력 코드로 변경
                 curTime = 0;
                 yield break;
             }
 
         }
-    }
-
-    public void GameClear()
-    {
-        SoundManager.Instance.PlayBGM(BGM.victory);
-        Time.timeScale = 0;
-        score.lifeTime = (int)(maxTime - curTime);
-        score.stars = Level;
-        score.money = player.GetThisGameMoney();
-        GameOverUI gameOverUI = Instantiate(resultUI).GetComponent<GameOverUI>();
-        gameOverUI.SetGameScore(score, true);
     }
 
     public void GameOver()

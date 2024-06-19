@@ -83,7 +83,7 @@ public class Bullet : MonoBehaviour
             Terminate();
             PoolManager.instance.bulletPool.PutInPool(this); // 총알을 풀에 다시 넣음
         }
-        else if (other.gameObject.CompareTag("Vehicle"))
+        else if (other.gameObject.CompareTag("Ride"))
         {
             other.gameObject.GetComponent<Vehicle>().GetDamage(0.1f);
             Terminate();

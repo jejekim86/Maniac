@@ -9,6 +9,7 @@ TagManager:
   - Vehicle
   - Gun
   - NPC
+  - Ride
   layers:
   - Default
   - TransparentFX
@@ -20,8 +21,8 @@ TagManager:
   - Enemy
   - Bullet
   - Wall
-  - 
-  - 
+  - Vehicle
+  - Park
   - 
   - 
   - 

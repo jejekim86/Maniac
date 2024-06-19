@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
@@ -23,9 +24,12 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float maxHp = 10f;
     private float curHp;
     private GameObject player;
+    private GameObject vehicle;
 
     private bool playerInVisionRadius;
     private bool playerInAttackRadius;
+    private bool vehicleInVisionRadius;
+    private bool vehicleInAttackRadius;
 
     private void Awake()
     {
@@ -41,29 +45,48 @@ public class Enemy : MonoBehaviour
     private void Update()
     {
         player = GameObject.FindWithTag("Player");
+        vehicle = GameObject.FindWithTag("Ride");
 
         // 플레이어가 시야에 들어왔는지
         playerInVisionRadius = Physics.CheckSphere(transform.position, visionRadius, LayerMask.GetMask("Player"));
+        // 자동차가 시야에 들어왔는지
+        vehicleInVisionRadius = Physics.CheckSphere(transform.position, visionRadius, LayerMask.GetMask("Vehicle"));
 
         // 플레이어가 공격 범위 안에 있는지
         playerInAttackRadius = Physics.CheckSphere(transform.position, attackRadius, LayerMask.GetMask("Player"));
 
-        if (playerInAttackRadius)
-        {
-            UpdateState(AI.Attack);
-        }
-        else if (playerInVisionRadius)
-        {
-            UpdateState(AI.Chase);
-        }
-        else
-        {
-            UpdateState(AI.Patrol);
-        }
+        // 자동차가 공격 범위 안에 있는지
+        vehicleInAttackRadius = Physics.CheckSphere(transform.position, attackRadius, LayerMask.GetMask("Vehicle"));
+
+        HandleStateTransitions();
 
         enemyAI.UpdateCurrentState();
 
         timeCount += Time.deltaTime;
+    }
+
+    private void HandleStateTransitions()
+    {
+        if (playerInAttackRadius)
+        {
+            enemyAI.Transition(attack);
+        }
+        else if (vehicleInAttackRadius)
+        {
+            enemyAI.Transition(attack);
+        }
+        else if (playerInVisionRadius)
+        {
+            enemyAI.Transition(chase);
+        }
+        else if (vehicleInVisionRadius)
+        {
+            enemyAI.Transition(chase);
+        }
+        else
+        {
+            enemyAI.Transition(patrol);
+        }
     }
 
     public void Attack()
@@ -78,8 +101,6 @@ public class Enemy : MonoBehaviour
             Bullet newBullet;
             PoolManager.instance.bulletPool.GetObject(out newBullet);
             newBullet.SetDirection(fireTr);
-            //newBullet.transform.position = fireTr.transform.position;
-            //newBullet.transform.rotation = fireTr.rotation;
         }
         timeCount = 0;
     }
@@ -101,21 +122,4 @@ public class Enemy : MonoBehaviour
         MonoBehaviour item = ItemSpawn.GetItem(itemIndex); // 선택된 인덱스의 아이템을 풀에서 가져옴
         item.transform.position = transform.position; // 아이템을 적 위치에 생성
     }
-
-    private void UpdateState(AI state)
-    {
-        switch (state)
-        {
-            case AI.Patrol:
-                enemyAI.Transition(patrol);
-                break;
-            case AI.Chase:
-                enemyAI.Transition(chase);
-                break;
-            case AI.Attack:
-                enemyAI.Transition(attack);
-                break;
-        }
-    }
-
 }

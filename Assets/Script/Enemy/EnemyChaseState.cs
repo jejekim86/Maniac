@@ -18,13 +18,26 @@ public class EnemyChaseState : MonoBehaviour, State
             enemyAgent = GetComponent<NavMeshAgent>();
             enemy = GetComponent<Enemy>();
         }
-
-        target = GameObject.FindWithTag("Player").transform;
+                        
         ani.SetBool("isRunning", true);
     }
 
     public void UpdateState()
     {
+
+        GameObject player = GameObject.FindWithTag("Player");
+        GameObject vehicle = GameObject.FindWithTag("Ride");
+
+        if (player != null)
+        {
+            target = player.transform; // 플레이어 설정
+        }
+
+        else if (vehicle != null)
+        {
+            target = vehicle.transform; // 자동차 설정
+        }
+
         if (target != null)
         {
             enemyAgent.SetDestination(target.position);
