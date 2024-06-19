@@ -61,11 +61,11 @@ public class ItemDrop : MonoBehaviour
             ItemGet itemGet = other.GetComponent<ItemGet>();
             if (itemGet != null)
             {
-                if (itemType == "Gun")
+                /*if (itemType == "Gun")
                 {
                     itemGet.ItemGet_Gun(other.gameObject);
-                }
-                else if (itemType == "Money")
+                }*/
+                if (itemType == "Money")
                 {
                     itemGet.ItemGet_Money(other.gameObject);
                 }
