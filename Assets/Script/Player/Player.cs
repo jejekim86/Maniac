@@ -282,6 +282,8 @@ public class Player : Controller
                 transform.SetParent(null);
                 transform.position = vehicle.transform.position + (Vector3.right * 3);
                 rigidbody.constraints = RigidbodyConstraints.None;
+                rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+                //rigidbody.constraints = RigidbodyConstraints.FreezeRotationZ;
                 vehicle.SetHp_imageActive(false);
                 vehicle.gameObject.tag = "Vehicle";
                 vehicle = null;
