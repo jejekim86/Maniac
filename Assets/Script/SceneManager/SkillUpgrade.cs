@@ -22,6 +22,6 @@ public class SkillUpgrade : MonoBehaviour
     
     private void CheckButtonOnClick()
     {
-        SceneManager.LoadScene("PrototypeMap", LoadSceneMode.Single);
+        SceneManager.LoadScene("Prototype", LoadSceneMode.Single);
     }
 }
